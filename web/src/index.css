@@ -1,0 +1,18 @@
+@import "./font/stylesheet.css";
+
+body {
+    margin: 0;
+    font-family: "Runescape Chat Font Regular", serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: black;
+}
+
+h1, h2, h3, h4, h5, h6, body, p {
+    color: black;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}

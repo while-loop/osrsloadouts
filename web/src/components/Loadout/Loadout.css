@@ -1,0 +1,249 @@
+.Loadout-content {
+    padding-top: 16px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.Loadout-header {
+    color: black;
+    display: flex;
+    font-size: 1em;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.Loadout-top {
+    color: black;
+    display: flex;
+    font-size: 0.5em;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.Loadout-tags {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .5em;
+}
+.Loadout-tags-select {
+    flex: 1;
+    font-size: 1em;
+}
+
+.Loadout-info > * > a {
+    color: #ff9301;
+    text-shadow: 1px 1px black;
+}
+
+.Loadout-description {
+    flex: 1; /* shorthand for: flex-grow: 1, flex-shrink: 1, flex-basis: 0 */
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background: transparent;
+    font-family: "Runescape Chat Font Regular", serif;
+    font-size: 1em;
+}
+
+.Loadout-info {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    padding-left: 16px;
+    align-items: flex-start;
+}
+
+.Loadout-info > *{
+    margin: 2px;
+}
+
+.Loadout-info-stats {
+    display: flex;
+    flex-direction: row;
+}
+
+.Loadout-info-stats > * {
+    margin-right: 6px;
+}
+
+.Inventory {
+    background: url("img/invy.png");
+    display: block;
+    height: 273px;
+    width: 202px;
+    position: relative;
+    margin: 8px;
+}
+
+.Equipment {
+    background: url("img/equip.png");
+    display: block;
+    height: 273px;
+    width: 202px;
+    position: relative;
+    margin: 8px;
+
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
+}
+
+.Equipment-slot {
+    z-index: 1;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Inventory-slot {
+    z-index: 1;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Stats {
+    display: block;
+    position: relative;
+    margin: 8px;
+    color: #ff9301;
+}
+
+.Stats li ul {
+    list-style: none;
+    font-size: 14px;
+    text-shadow: 1px 1px black;
+    text-align: left;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.Stats li {
+    list-style: none;
+    font-size: 14px;
+    text-shadow: 1px 1px black;
+    text-align: left;
+}
+
+
+.Menu {
+    background: #5d5447;
+    font-size: 12px;
+    padding: 0.5px 0.5px 0;
+    font-weight: bold;
+    text-align: left;
+    z-index: 99999;
+    position: fixed;
+
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
+
+    letter-spacing: .4px;
+}
+
+.Menu-header {
+    color: #5d5447;
+    background: black;
+    padding: 1px 3px 0;
+    margin-bottom: 0;
+
+    transform: scaleY(0.9);
+    transform-origin: 0 0;
+}
+
+.Menu-content {
+    padding: 0 3px 0;
+    margin-bottom: 0.5px;
+    border: 0.5px solid black;
+
+    color: #ff9040;
+    text-shadow: 0.5px 0.5px black;
+}
+
+.Menu-option {
+    cursor: default;
+    color: #ff9040;
+}
+
+.Menu-action {
+    color: white;
+}
+
+.Menu-option:hover .Menu-action {
+    color: #ffff03;
+}
+
+.Item-quantity {
+    color: #ffff03;
+    text-shadow: 1px 1px black;
+    font-size: 10px;
+    position: absolute;
+    z-index: 10;
+    left: 2px;
+    top: 0;
+}
+
+
+.modal {
+    font-size: 12px;
+}
+
+.modal > .header {
+    width: 50%;
+    border-bottom: 1px solid gray;
+    font-size: 18px;
+    text-align: center;
+    padding: 5px;
+}
+
+.modal > .content {
+    width: 50%;
+    padding: 10px 5px;
+}
+
+.modal > .actions {
+    width: 50%;
+    padding: 10px 5px;
+    margin: auto;
+    text-align: center;
+}
+
+.modal > .close {
+    cursor: pointer;
+    position: absolute;
+    display: block;
+    padding: 2px 5px;
+    line-height: 12px;
+    right: -10px;
+    top: -10px;
+    font-size: 12px;
+    background: #ffffff;
+    border-radius: 18px;
+    color: black;
+    border: 1px solid #cfcece;
+}
+
+/* Stop the '+' icon from showing when dragging an item */
+.No-add {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}

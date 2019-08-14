@@ -1,0 +1,81 @@
+
+
+https://www.denisbouquet.com/css-forbid-selection-user-select-dragging-ghost-image/
+
+invy slot menu
+    right click - https://dev.to/iamafro/how-to-create-a-custom-context-menu--5d7p
+    drop
+    add items
+        child items (rrune poouch)
+    quantity
+        inventory quanity (ammo, oourrple purrple sweets)
+
+
+
+/
+    recent changes
+
+    popular loadouts
+        best match
+        most copied
+        most viewed
+
+    recent loadouts
+        last created
+        last updated
+
+
+    donate | help | source 
+
+/changes
+    copy github changelog
+
+/login /logout
+    https://github.com/firebase/firebaseui-web
+    https://github.com/firebase/firebaseui-web-react
+    https://maksimivanov.com/posts/firebase-react-tutorial/
+    https://github.com/nazmulidris/starterproject_todolist_react_firebase_ts_md
+
+/search
+
+    loadouts
+        for tag in tags:
+            appened get keysonly().fitlere(tag)
+        getall(keys) 
+
+/loadouts
+
+
+
+    loadouts
+        filters
+            owned
+            shared
+            favourited
+            all
+        sort
+
+    delete
+        check if owner loadout id
+        if so
+            deletee from loadouts table
+            delete all loadout_id from history & faviourtes
+        eelse
+            delete all from history & faviourtes with matched user_id
+
+/u/:username
+
+    username
+    username    rsn
+      joined    rs stats
+    
+          loadouts
+
+
+
+
+features
+--------
+loadout
+    shift click to drop
+

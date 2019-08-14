@@ -1,0 +1,62 @@
+.App {
+    text-align: center;
+    min-height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+    background: url("bg.jpg") repeat-y center top;
+    margin: 0 auto;
+    overflow-y: hidden;
+    padding: 0 20%;
+    display: block;
+    width: auto;
+    max-width: 815px;
+}
+
+.Login-box {
+    background: black;
+    border: 2px solid #382418;
+    display: block;
+    font-size: 0.55em;
+    min-font-size: 0.55em;
+    margin: 10px auto;
+    overflow: hidden;
+    padding: 4px 16px;
+    position: relative;
+    height: auto;
+}
+
+.Content {
+    background: url("scroll.gif") repeat-y top center;
+    padding: 50px 75px;
+    margin-top: 64px;
+    position: relative;
+    display: block;
+}
+
+.Content:before, .Content:after {
+    background: url("scroll_top.gif") no-repeat center top;
+    content: '';
+    height: 50px;
+    left: 0;
+    position: absolute;
+    top: -11px;
+    width: 100%;
+}
+
+.Content:after {
+    background: url("scroll_bottom.gif") no-repeat center bottom;
+    bottom: -11px;
+    top: auto;
+}
+
+.Shadowed {
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.50);
+}
+
+
+a, a:visited {
+    color: white;
+}

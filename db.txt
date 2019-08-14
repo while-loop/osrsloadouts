@@ -1,0 +1,30 @@
+
+
+loadout
+    string      id
+    date        created
+    date        updated
+    string      name
+    string      description
+    string      author
+    int         views   
+    int         copies
+    string      parent      // id of parent loadout
+    []string    favourited  // list of uuid
+    []string    tags
+
+history
+    string  user_id
+    string  loadout_id
+    date    last_viewed
+
+account
+    string  user_id
+    date    created
+    date    updated
+    string  username
+    string  rsn
+    string  _username // lowercased username
+
+
+    
