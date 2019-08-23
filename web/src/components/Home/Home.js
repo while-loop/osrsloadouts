@@ -2,9 +2,15 @@ import React from 'react';
 
 function Home() {
     return (
-        <div>
+        <div style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+        }}>
             <h4>Home</h4>
-            <p> asuhh duu</p>
+            <span>A q p</span>
+            <span>gf nerd</span>
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;W</span>
         </div>
     );
 }

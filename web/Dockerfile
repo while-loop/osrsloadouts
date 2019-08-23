@@ -12,7 +12,6 @@ RUN apk update && apk add make git
 
 COPY . /app
 RUN npm run-script build
-RUN ls -lah /app/build
 
 # production environment
 FROM nginx:1.16.0-alpine

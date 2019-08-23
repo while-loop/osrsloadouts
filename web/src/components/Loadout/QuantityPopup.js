@@ -26,7 +26,7 @@ class QuantityPopup extends React.Component {
                     <span className="close" onClick={this.closeModal}>&times;</span>
                     <input size="7" type="number" placeholder="quantity"
                            autoFocus={true}
-                           onChange={(e) => {if (e.target.value > 0) this.setState({quantity: e.target.value})}}
+                           onChange={(e) => {if (e.target.value > 0) this.setState({quantity: parseInt(e.target.value)})}}
                            onKeyUp={(e) => {
                                if (e.key === "Enter") this.closeModal()
                            }}/>

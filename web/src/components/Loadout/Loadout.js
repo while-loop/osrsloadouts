@@ -10,68 +10,82 @@ import {Link} from "react-router-dom";
 import "./Loadout.css";
 import CreatableSelect from 'react-select/creatable';
 import _ from 'lodash';
+import LoadoutStore from "../../store/LoadoutStore";
+import {toast} from "react-toastify";
+import {TOAST_DELAY} from "../../config/constants";
 
 class Loadout extends React.Component {
+    toastId = null;
 
     constructor(props) {
         super(props);
 
         this.state = {
             id: props.match.params.id,
-            loadout: null,
+            loadout: this.empty(),
+            status: "Loading..."
         };
     }
 
     componentDidMount() {
+        if (this.state.id == null) {
+            let loadout = _.cloneDeep(this.state.loadout);
+            loadout.title = "New Loadout";
+            this.setState({loadout});
+            return;
+        }
 
-        // already 'mapped' data for frontend..
-        this.setState(state => {
-            state.loadout = {
-                id: '00112233-4455-6677-8899-aabbccddeeff',
-                title: "Poor man's Chambers of Xeric",
-                author: 'whileloop',
-                description: "- Drag invy items to switch slots\n" +
-                    "- Right click items for more actions\n" +
-                    "- Shift-click to drop items\n" +
-                    "- Click to visit item wiki\n" +
-                    "- Click empty space to search and add an item\n" +
-                    "- Hover over an invy/equipped item for stat bonuses",
-                created: new Date(2019, 8, 10, 10, 11, 23),
-                updated: new Date(2019, 8, 10, 23, 51, 23),
-                copies: 513,
-                favorites: 123,
-                favorited: true,
-                views: 8675309,
-                tags: ["cox", "raids", "radis1", "chambers", "of", "xeric"],
-                parent: '00112233-4455-6677-8899-aabbccddeeff',
-                inventory: [
-                    [this.z(12899, 1), this.z(11663, 1), this.z(11804, 1), this.z(11665, 1)],
-                    [this.z(12612, 1), this.z(12002, 1), this.z(12954, 1), this.z(4151, 1)],
-                    [this.z(12018, 1), this.z(21009, 1), this.z(12926, 1), this.z(11920, 1)],
-                    [this.z(12625, 1), this.z(3024, 1), this.z(6685, 1), this.z(6685, 1)],
-                    [this.z(10925, 1), this.z(3024, 1), this.z(6685, 1), this.z(6685, 1)],
-                    [this.z(2444, 1), this.z(3024, 1), this.z(6685, 1), this.z(6685, 1)],
-                    [this.z(12695, 1), this.z(3024, 1), this.z(6685, 1), this.z(12791, 1)],
-                ],
-                equipment: {
-                    head: {id: 11664, quantity: 1},
-                    cape: {id: 22109, quantity: 1},
-                    neck: {id: 6585, quantity: 1},
-                    ammo: {id: 21944, quantity: 350},
-                    weapon: {id: 21902, quantity: 1},
-                    body: {id: 13072, quantity: 1},
-                    shield: {id: 11926, quantity: 1},
-                    legs: {id: 13073, quantity: 1},
-                    hands: {id: 8842, quantity: 1},
-                    feet: {id: 22951, quantity: 1},
-                    ring: {id: 22975, quantity: 1},
-                },
-            };
-
-            return {loadout: state.loadout}
+        LoadoutStore.get(this.state.id).then(r => {
+            this.setState({loadout: r.data});
+            this.forceUpdate();
+        }).catch(reason => {
+            console.log("failed to get loadout", reason.response);
+            toast.error("Failed to get loadout: " + reason.toString());
+            this.setState({status: "Not Found", loadout: null})
         })
     }
 
+    empty() {
+        return {
+            id: '',
+            title: "Loading...",
+            author: {
+                id: "",
+                username: "",
+            },
+            description: "",
+            created: new Date(),
+            updated: new Date(),
+            copies: 0,
+            favorites: 0,
+            favorited: false,
+            views: 0,
+            tags: [],
+            parent: '',
+            inventory: [
+                [this.z(null, 1), this.z(null, 1), this.z(null, 1), this.z(null, 1)],
+                [this.z(null, 1), this.z(null, 1), this.z(null, 1), this.z(null, 1)],
+                [this.z(null, 1), this.z(null, 1), this.z(null, 1), this.z(null, 1)],
+                [this.z(null, 1), this.z(null, 1), this.z(null, 1), this.z(null, 1)],
+                [this.z(null, 1), this.z(null, 1), this.z(null, 1), this.z(null, 1)],
+                [this.z(null, 1), this.z(null, 1), this.z(null, 1), this.z(null, 1)],
+                [this.z(null, 1), this.z(null, 1), this.z(null, 1), this.z(null, 1)],
+            ],
+            equipment: {
+                head: {id: null, quantity: 1},
+                cape: {id: null, quantity: 1},
+                neck: {id: null, quantity: 1},
+                ammo: {id: null, quantity: 1},
+                weapon: {id: null, quantity: 1},
+                body: {id: null, quantity: 1},
+                shield: {id: null, quantity: 1},
+                legs: {id: null, quantity: 1},
+                hands: {id: null, quantity: 1},
+                feet: {id: null, quantity: 1},
+                ring: {id: null, quantity: 1},
+            },
+        }
+    }
 
     z(id, q) {
         return {id: id, quantity: q}
@@ -88,32 +102,75 @@ class Loadout extends React.Component {
             sss = [sss];
         }
         const loadout = _.cloneDeep(this.state.loadout);
+        console.log("before loadout", loadout.inventory);
         sss.forEach(ss => {
             loadout.inventory[ss.row][ss.col] = this.z(ss.id, ss.quantity);
         });
-
+        console.log("after loadout", loadout.inventory);
         this.setState({loadout});
+    };
+
+    saveLoadout = () => {
+        console.log(this.state.loadout);
+        this.toastId = toast("Saving loadout...", {autoClose: false});
+        let close = (msg, type = toast.TYPE.INFO) => {
+            toast.update(this.toastId, {render: msg, type: type, autoClose: TOAST_DELAY});
+        };
+        if (this.state.id == null) {
+            LoadoutStore.create(this.state.loadout).then(r => {
+                close("Created ✔");
+                this.props.history.push(`/l/${r.data.id}`)
+            }).catch(reason => {
+                console.log("failed to create loadout", reason.response);
+                close("Failed to create loadout: " + reason.toString(), toast.TYPE.ERROR);
+            })
+        } else {
+            LoadoutStore.update(this.state.id, this.state.loadout).then(r => {
+                close("Saved ✔︎");
+                this.setState({loadout: r.data});
+                this.forceUpdate();
+            }).catch(reason => {
+                let resp = reason.response;
+                console.log("failed to save loadout", reason.response);
+
+                if (resp !== null && resp.status === 403) {
+                    close("Permission denied", toast.TYPE.ERROR);
+                    return
+                }
+
+                close("Failed to save loadout: " + reason.toString(), toast.TYPE.ERROR);
+            })
+        }
     };
 
     render() {
         if (this.state.loadout == null) {
-            return <span>Loading...</span>
+            return <span>{this.state.status}</span>
         }
-
-        console.log("render");
 
         return (
             <div>
-                <h4>{this.state.loadout.title}</h4>
-                <button onClick={() => console.log(this.state.loadout.inventory)}>invy</button>
-                <button onClick={() => console.log(this.state.loadout.equipment)}>equp</button>
+                <h4>
+                    <div contentEditable={true} onBlur={(e) => {
+                        let loadout = _.cloneDeep(this.state.loadout);
+                        loadout.title = e.target.textContent;
+                        this.setState({loadout})
+                    }}>
+                        {this.state.loadout.title}
+                    </div>
+                </h4>
+                <button onClick={this.saveLoadout}>save</button>
                 <div className="Loadout-header">
                     <div className="Loadout-top">
                         <textarea rows={6} className="Loadout-description" value={this.state.loadout.description}
-                                  readOnly/>
+                                  onChange={(e) => {
+                                      let loadout = _.cloneDeep(this.state.loadout);
+                                      loadout.description = e.target.value;
+                                      this.setState({loadout})
+                                  }}/>
                         <div className="Loadout-info">
                         <span>Author: <Link
-                            to={"/u/" + this.state.loadout.author}>{this.state.loadout.author}</Link></span>
+                            to={"/u/" + this.state.loadout.author.username}>{this.state.loadout.author.username}</Link></span>
                             <span>Created: {moment(this.state.loadout.created).format('MMM Do YY, h:mm:ss a')}</span>
                             <span>Updated: {moment(this.state.loadout.updated).format('MMM Do YY, h:mm:ss a')}</span>
                             <div className="Loadout-info-stats">
@@ -174,25 +231,23 @@ class CreatableInputOnly extends React.Component {
     handleKeyDown = (event) => {
         const {inputValue, value} = this.state;
         if (!inputValue) return;
-        switch (event.key) {
-            case 'Enter':
-            case 'Tab':
-                let vals = [...value];
-                inputValue.split(" ").forEach(v => {
-                    v = v.trim();
-                    if (v === "") {
-                        return;
-                    }
+        if (event.key === 'Enter' || event.key === 'Tab') {
+            let vals = [...value];
+            inputValue.split(" ").forEach(v => {
+                v = v.trim().toLowerCase();
+                if (v === "") {
+                    return;
+                }
 
-                    vals.push(this.createOption(v));
-                });
-                vals = [...new Map(vals.map(item => [item.value, item])).values()]
-                this.setState({
-                    inputValue: '',
-                    value: vals,
-                });
-                this.update(vals);
-                event.preventDefault();
+                vals.push(this.createOption(v));
+            });
+            vals = [...new Map(vals.map(item => [item.value, item])).values()];
+            this.setState({
+                inputValue: '',
+                value: vals,
+            });
+            this.update(vals);
+            event.preventDefault();
         }
     };
 
@@ -202,6 +257,14 @@ class CreatableInputOnly extends React.Component {
         }
         this.props.onChange(values.map(v => v.value));
     };
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (_.isEqual(this.props.tags, prevProps.tags)) {
+            return;
+        }
+
+        this.setState({value: this.props.tags.map(t => this.createOption(t))});
+    }
 
     render() {
         const {inputValue, value} = this.state;

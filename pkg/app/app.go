@@ -1,6 +1,14 @@
 package app
 
-import "github.com/gorilla/mux"
+import (
+	"context"
+	auth2 "firebase.google.com/go/auth"
+	"github.com/gorilla/mux"
+	"github.com/while-loop/osrsinvy/pkg/auth"
+	"github.com/while-loop/osrsinvy/pkg/config"
+	"github.com/while-loop/osrsinvy/pkg/stores"
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
 type App struct {
 	rootRouter *mux.Router
@@ -8,24 +16,22 @@ type App struct {
 	doneChan   chan struct{}
 }
 
-func NewApp(handler *mux.Router) *App {
-	return &App{
+func New(handler *mux.Router, db *mongo.Database, authCli *auth2.Client, config *config.Config) (*App, error) {
+	a := &App{
 		rootRouter: handler,
 		closeChan:  make(chan struct{}),
 		doneChan:   make(chan struct{}),
 	}
-}
 
-func (a *App) Run() {
-	apiRouter := a.rootRouter
+	verifier, err := auth.NewAuthVerifier(context.Background(), authCli)
+	if err != nil {
+		return nil, err
+	}
 
-	NewLoadoutService(apiRouter, nil)
-	<-a.closeChan
-	a.doneChan <- struct{}{}
-}
+	ls := stores.NewLoadoutStore(db)
+	us := stores.NewUserStore(db, authCli)
 
-func (a *App) Stop() {
-	a.closeChan <- struct{}{}
-	close(a.closeChan)
-	<-a.doneChan
+	NewLoadoutService(a.rootRouter, ls, verifier)
+	NewUserService(a.rootRouter, us, ls)
+	return a, nil
 }

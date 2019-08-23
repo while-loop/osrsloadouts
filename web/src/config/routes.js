@@ -4,28 +4,70 @@ import App from "../components/App/App";
 import Home from "../components/Home/Home";
 import Loadouts from "../components/Loadouts/Loadouts";
 import Loadout from "../components/Loadout/Loadout";
+import Browse from "../components/Browse/Browse";
+import PrivateRoute from "../utils/PrivateRoute";
+import app, {refreshToken} from "../utils/base"
+import Login from "../components/Login/Login";
+import Account from "../components/Account/Account";
 
-function AppRouter() {
-    return (
-        <Router>
-            <App>
-                <div>
-                    <Route exact path="/" component={Home}/>
+class AppRouter extends React.Component {
+    state = {
+        loading: true,
+        authenticated: false,
+        user: null
+    };
 
-                    <Route path="/account" component={Home}/>
+    componentWillMount() {
+        app.auth().onAuthStateChanged(user => {
+            console.log(new Date(), "onAuthStateChanged", user);
+            if (user) {
+                refreshToken();
+                this.setState({
+                    authenticated: true,
+                    currentUser: user,
+                    loading: false
+                });
+            } else {
+                this.setState({
+                    authenticated: false,
+                    currentUser: null,
+                    loading: false
+                });
+            }
+        });
+    }
 
-                    <Route path="/u/:id" component={Home}/>
+    render() {
+        const {authenticated, loading} = this.state;
 
-                    <Route exact path="/loadouts" component={Loadouts}/>
-                    <Route path="/l/:id" component={Loadout}/>
+        if (loading) {
+            return <p>Loading..</p>;
+        }
 
-                    <Route path="/changes" component={Home}/>
+        return (
+            <Router>
+                <App authenticated={authenticated}>
+                    <div>
+                        <Route exact path="/" component={Home}/>
 
-                    <Route path="/browse" component={Home}/>
-                </div>
-            </App>
-        </Router>
-    )
+                        <Route exact path="/login" component={Login}/>
+                        <PrivateRoute exact path="/account" component={Account} authenticated={authenticated}/>
+
+                        <Route exact path="/u/:id" component={Home}/>
+
+                        <PrivateRoute exact path="/loadouts" component={Loadouts}
+                                      authenticated={authenticated}/>
+                        <Route exact path="/l/:id" component={Loadout}/>
+                        <Route exact path="/loadouts/new" component={Loadout}/>
+
+                        <Route exact path="/changes" component={Home}/>
+
+                        <Route exact path="/browse" component={Browse}/>
+                    </div>
+                </App>
+            </Router>
+        )
+    }
 }
 
 export default AppRouter;

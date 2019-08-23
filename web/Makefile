@@ -3,7 +3,7 @@ SERVICE	 		:= osrsinvy-web
 ORG		 		:= lunchride
 DOCKER_REGISTRY	:= gcr.io
 IMAGE_NAME  	:= ${DOCKER_REGISTRY}/${ORG}/${SERVICE}
-VERSION			:= 0.0.3
+VERSION			:= 0.0.2
 
 .PHONY: deps test build cont cont-nc all deploy help clean
 .DEFAULT_GOAL := build
@@ -18,11 +18,14 @@ clean:
 	@echo "[clean] rm'ing js files"
 	rm -rf build
 
-build: clean ## build service binary file
+version:
+	sed -i '' "s/\"version\": \".*\",/\"version\": \"${VERSION}\",/" package.json
+
+build: clean version ## build service binary file
 	@echo "[build] building js files"
 	npm run-script build
 
-cont: ## build a cached service container
+cont: version ## build a cached service container
 	docker build -t ${IMAGE_NAME} -t ${IMAGE_NAME}:${VERSION} .
 
 cont-nc: ## build a non-cached service container

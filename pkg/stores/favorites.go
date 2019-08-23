@@ -7,15 +7,15 @@ import (
 
 
 type Favorite struct {
-	id string
-	userId string
-	contentId string
-	created *time.Time
+	Id string
+	UserId string
+	ContentId string
+	Created time.Time
 }
 
 type FavoriteStore interface {
 	Get(ctx context.Context, uuid string) (*Favorite, error)
 	Delete(ctx context.Context, uuid string) error
-	GetAll(ctx context.Context, limit, offset int64) ([]*Loadout, error)
+	GetAll(ctx context.Context) ([]*Loadout, error)
 	GetForUser(ctx context.Context, id string) ([]*Favorite, error)
 }

@@ -5,14 +5,13 @@
     align-items: center;
     justify-content: center;
     font-size: calc(10px + 2vmin);
-    color: white;
+    color: black;
     background: url("bg.jpg") repeat-y center top;
     margin: 0 auto;
     overflow-y: hidden;
-    padding: 0 20%;
+    padding: 0 50px;
     display: block;
-    width: auto;
-    max-width: 815px;
+    width: 815px;
 }
 
 .Login-box {
@@ -31,9 +30,10 @@
 .Content {
     background: url("scroll.gif") repeat-y top center;
     padding: 50px 75px;
-    margin-top: 64px;
     position: relative;
     display: block;
+    margin-top: 32px;
+    margin-bottom: 32px;
 }
 
 .Content:before, .Content:after {

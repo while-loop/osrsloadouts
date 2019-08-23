@@ -6,7 +6,7 @@ import QuantityPopup from "./QuantityPopup";
 import InventorySlot from "./InventorySlot";
 import PropTypes from "prop-types";
 import SlotSchema from "./SlotSchema";
-import ItemStore from "../../utils/ItemStore";
+import ItemStore from "../../store/ItemStore";
 
 class EquipmentSlot extends InventorySlot {
     static equipWidth = 202;
@@ -117,7 +117,8 @@ class EquipmentSlot extends InventorySlot {
                     <QuantityPopup quantity={this.props.ss.quantity}
                                    onClose={(q) => {
                                        this.props.ss.quantity = q;
-                                       this.setState({showQuantity: false})
+                                       this.setState({showQuantity: false});
+                                       this.props.quantity(this.props.ss);
                                    }}/>
                 }
                 {
@@ -128,7 +129,7 @@ class EquipmentSlot extends InventorySlot {
                 <div className="Equipment-slot"
                      style={{
                          left: this.style.left + (EquipmentSlot.slotGapX / 2),
-                         top: this.style.top + (EquipmentSlot.slotGapY / 2)+1,
+                         top: this.style.top + (EquipmentSlot.slotGapY / 2) + 1,
                      }}>
 
                     { /****** ITEM QUANTITY ******/
@@ -148,6 +149,7 @@ class EquipmentSlot extends InventorySlot {
 EquipmentSlot.propTypes = {
     remove: PropTypes.func.isRequired,
     insert: PropTypes.func.isRequired,
+    quantity: PropTypes.func.isRequired,
     ss: PropTypes.instanceOf(SlotSchema)
 };
 

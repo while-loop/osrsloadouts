@@ -2,7 +2,7 @@ import Inventory from "./Inventory";
 import Select, {components} from "react-select";
 import React from "react";
 import InventorySlot from "./InventorySlot";
-import ItemStore from "../../utils/ItemStore";
+import ItemStore from "../../store/ItemStore";
 import PropTypes from "prop-types";
 
 class ItemSelector extends React.Component {

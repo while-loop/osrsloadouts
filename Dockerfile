@@ -1,4 +1,4 @@
-FROM micanzhang/golang-kit:1.12 as builder
+FROM golang:1.12.9-alpine as builder
 MAINTAINER cvballa3g0@gmail.com
 
 RUN apk update && apk add git make bzr

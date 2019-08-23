@@ -1,17 +1,17 @@
 # service specific vars
-TARGET	 		:= osrsinvy
-VERSION			:= 0.0.1
+SERVICE	 		:= osrsinvy
+VERSION			:= 0.0.2
 ORG		 		:= lunchride
 COMMIT      	:= $(shell git rev-parse --short HEAD)
 BUILD_TIME		:= $(shell date -u '+%Y-%m-%d_%H:%M:%S')
 PACKAGE 		:= $(shell grep module go.mod | awk '{ print $$2; }')
 DOCKER_REGISTRY	:= gcr.io
-IMAGE_NAME  	:= ${DOCKER_REGISTRY}/${ORG}/${SERVICE}
+IMAGE_NAME  	:= ${DOCKER_REGISTRY}/${ORG}/${SERVICE}-api
 GOFLAGS			:= -mod=vendor
 
 .PHONY: proto deps test build cont cont-nc all deploy help clean lint
 .DEFAULT_GOAL := build
-SHELL:=/bin/bash
+SHELL:=/bin/sh
 GO111MODULE=on
 
 help: ## halp
@@ -23,28 +23,32 @@ build: clean ## build service binary file
 	@echo "[build] building go binary"
 	@go build \
 		-ldflags "-s -w \
-		-X ${PACKAGE}.Version=${VERSION} \
-		-X ${PACKAGE}.Commit=${COMMIT} \
-		-X ${PACKAGE}.BuildTime=${BUILD_TIME} \
-		-X ${PACKAGE}.Name=${TARGET}" \
-		-o ${GOPATH}/bin/${TARGET} ./cmd/${TARGET}
-	${GOPATH}/bin/${TARGET} -v
+		-X ${PACKAGE}/pkg.Version=${VERSION} \
+		-X ${PACKAGE}/pkg.Commit=${COMMIT} \
+		-X ${PACKAGE}/pkg.BuildTime=${BUILD_TIME} \
+		-X ${PACKAGE}/pkg.Name=${SERVICE}" \
+		-o ${GOPATH}/bin/${SERVICE} ./cmd/${SERVICE}
+	${GOPATH}/bin/${SERVICE} -v
 
 clean: ## remove service bin from $GOPATH/bin
 	@echo "[clean] removing ${SERVICE} files"
-	rm -f ${GOPATH}/bin/${TARGET}
+	rm -f ${GOPATH}/bin/${SERVICE}
 
 cont: ## build a cached service container
-	docker build -t ${IMAGE_NAME} -t ${IMAGE_NAME}:${VERSION} ../../
+	docker build -t ${IMAGE_NAME} -t ${IMAGE_NAME}:${VERSION} .
 
 cont-nc: ## build a non-cached service container
-	docker build --no-cache -t ${IMAGE_NAME} -t ${IMAGE_NAME}:${VERSION} ../../
+	docker build --no-cache -t ${IMAGE_NAME} -t ${IMAGE_NAME}:${VERSION} .
 
 deploy: ## deploy lastest built container to docker hub
-	echo deploy
+	gcloud beta run deploy ${SERVICE}-api \
+	--image ${IMAGE_NAME}:${VERSION} \
+	--platform=managed  \
+	--allow-unauthenticated \
+	--set-env-vars OSRSINVY_MONGO_ADDR="${OSRSINVY_MONGO_ADDR}",OSRSINVY_MONGO_DB=${OSRSINVY_MONGO_DB}
 
 push: ## deploy lastest built container to docker hub
-	docker push ${IMAGE_NAME}
+	docker push ${IMAGE_NAME}:${VERSION}
 
 deps: ## get service pkg + test deps
 	@echo "[deps] getting go deps"
@@ -61,10 +65,23 @@ test: lint ## test service code
 	@echo "[test] running tests w/ cover"
 	go test ./... -cover
 
-
 test-all: lint ## test service code
 	@echo "[test] running tests w/ cover"
 	go test ./... -race -cover
 
-indexes: ## -
-	gcloud datastore indexes create index.yaml
+db:
+	docker run -d \
+	--name osrsinvy-mongo \
+	-v `pwd`/tmp/db:/data/db \
+	-v `pwd`/scripts:/docker-entrypoint-initdb.d \
+	-e MONGO_INITDB_DATABASE=osrsinvy \
+	-p 27017:27017 \
+	mongo:4.0.12-xenial
+
+release-all:
+	make cont && make -C web cont
+	make push && make -C web push
+	honcho run -e .env make deploy && make -C web deploy
+
+mongo:
+	mongo "mongodb+srv://osrsinvy-u1age.gcp.mongodb.net/osrsinvy" --username osrsinvy

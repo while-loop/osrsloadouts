@@ -1,12 +1,13 @@
 import React from 'react';
 import './Loadout.css'
-import ItemStore from "../../utils/ItemStore";
+import ItemStore from "../../store/ItemStore";
 import PropTypes from 'prop-types';
 import Menu from "./Menu";
 import QuantityPopup from "./QuantityPopup";
 import SlotSchema from "./SlotSchema";
 import ItemSelector from "./ItemSelector";
 import _ from "lodash";
+import {toast} from "react-toastify";
 
 
 class InventorySlot extends React.Component {
@@ -20,6 +21,8 @@ class InventorySlot extends React.Component {
             menuOptions: this.getMenuOptions(),
             showMenu: false,
             showQuantity: false,
+            id: null,
+            quantity: null,
         };
     }
 
@@ -42,7 +45,7 @@ class InventorySlot extends React.Component {
         opts.push({action: 'Drop', onClick: () => this.removeItem(), includeName: true});
 
         if (item != null) {
-            opts.push({action: 'Examine', onClick: () => alert(item.examine), includeName: true});
+            opts.push({action: 'Examine', onClick: () => toast.info(item.examine), includeName: true});
         }
 
         return opts;
@@ -101,27 +104,6 @@ class InventorySlot extends React.Component {
         }
 
         this._getItemInfo();
-        //
-        //     this.forceUpdate();
-        // }
-        // if (prevProps.ss.id !== null && this.props.ss.id == null) {
-        //     // empty slot now
-        //     this.props.ss.reset();
-        //     return;
-        // }
-        //
-        // if (this.props.ss.id == null || this.props.ss.id === prevProps.ss.id) {
-        //     // new slot, same item
-        //     return
-        // }
-        //
-        // // new slot, new item
-        // if (this.props.ss.info == null) {
-        //     this._getItemInfo();
-        // } else {
-        //     // new slot, have info, refresh options
-        //     this.setState({menuOptions: this.getMenuOptions()})
-        // }
     }
 
     _getItemInfo() {
@@ -131,7 +113,11 @@ class InventorySlot extends React.Component {
 
         ItemStore.getItemInfo(this.props.ss.id).then(resp => {
             this.props.ss.info = resp.data;
-            this.setState({menuOptions: this.getMenuOptions(this.props.ss.info)})
+            this.setState({
+                menuOptions: this.getMenuOptions(this.props.ss.info),
+                id: resp.data.id,
+                quantity: this.props.ss.quantity,
+            })
         }).catch(reason => {
             console.log("failed to get slot item info", reason);
         })
@@ -219,7 +205,8 @@ class InventorySlot extends React.Component {
                     <QuantityPopup quantity={this.props.ss.quantity}
                                    onClose={(q) => {
                                        this.props.ss.quantity = q;
-                                       this.setState({showQuantity: false})
+                                       this.setState({showQuantity: false});
+                                       this.props.quantity(this.props.ss);
                                    }}
                     />
                 }
@@ -266,6 +253,7 @@ InventorySlot.propTypes = {
     top: PropTypes.number.isRequired,
     swap: PropTypes.func.isRequired,
     remove: PropTypes.func.isRequired,
+    quantity: PropTypes.func.isRequired,
     insert: PropTypes.func.isRequired,
     ss: PropTypes.instanceOf(SlotSchema)
 };

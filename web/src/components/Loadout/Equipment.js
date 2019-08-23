@@ -6,21 +6,25 @@ class Equipment extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
+        this.props = {
             items: {
-                head:  this.z("head"),
-                cape:  this.z("cape"),
-                neck:  this.z("neck"),
-                ammo:  this.z("ammo"),
+                head: this.z("head"),
+                cape: this.z("cape"),
+                neck: this.z("neck"),
+                ammo: this.z("ammo"),
                 weapon: this.z("weapon"),
-                body:  this.z("body"),
+                body: this.z("body"),
                 shield: this.z("shield"),
-                legs:  this.z("legs"),
+                legs: this.z("legs"),
                 hands: this.z("hands"),
-                feet:  this.z("feet"),
-                ring:  this.z("ring"),
+                feet: this.z("feet"),
+                ring: this.z("ring"),
             },
         };
+    }
+
+    componentDidMount() {
+        window.initosrstooltip();
     }
 
     z(slotType) {
@@ -29,9 +33,8 @@ class Equipment extends React.Component {
         return ss;
     }
 
-    componentDidMount() {
+    toSS() {
         let items = {};
-
         Object.entries(this.props.items).forEach(([slotType, data]) => {
                 let ss = new SlotSchema();
                 if (data !== null) {
@@ -42,30 +45,18 @@ class Equipment extends React.Component {
                 items[slotType] = ss;
             }
         );
-
-        this.setState({items});
+        return items;
     }
 
-    remove = (ss) => {
+    changed = (ss) => {
         this.props.onEquipChange(ss);
-        // this.setState(state => {
-        //     state.items[ss.slotType] = ss;
-        //     return {items: state.items}
-        // });
-    };
-
-    insert = (ss) => {
-        this.props.onEquipChange(ss);
-        // this.setState(state => {
-        //     state.items[ss.slotType] = ss;
-        //     return {items: state.items}
-        // });
     };
 
     render() {
         let slots = [];
-        Object.entries(this.state.items).forEach(([slotType, ss]) => {
-            slots.push(<EquipmentSlot key={slotType} ss={ss} remove={this.remove} insert={this.insert}/>)
+        Object.entries(this.toSS()).forEach(([slotType, ss]) => {
+            slots.push(<EquipmentSlot key={slotType} ss={ss} remove={this.changed} insert={this.changed}
+                                      quantity={this.changed}/>)
         });
 
         return (

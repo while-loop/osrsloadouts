@@ -1,6 +1,6 @@
 import React from 'react';
 import './Loadout.css'
-import ItemStore from "../../utils/ItemStore";
+import ItemStore from "../../store/ItemStore";
 import _ from 'lodash';
 
 class Stats extends React.Component {
@@ -73,7 +73,7 @@ class Stats extends React.Component {
         let bonuses = this.zero();
 
         for (let [key, value] of Object.entries(items)) {
-            if (value == null || value.id == null) {
+            if (value == null || value.id == null || key == null) {
                 continue;
             }
 

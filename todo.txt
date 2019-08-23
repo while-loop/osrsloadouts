@@ -1,5 +1,7 @@
 
-
+iam auth https://medium.com/firebase-developers/using-the-firebase-admin-sdk-for-net-in-google-cloud-run-e44b12758bf7
+https://stackoverflow.com/a/40962187/1763944
+https://javebratt.com/hide-firebase-api/
 https://www.denisbouquet.com/css-forbid-selection-user-select-dragging-ghost-image/
 
 invy slot menu

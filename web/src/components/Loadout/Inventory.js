@@ -28,7 +28,7 @@ class Inventory extends React.Component {
     }
 
     swap = (ss1, ss2) => {
-        let sa = this.state.items;
+        let sa = _.cloneDeep(this.state.items);
         let item1 = sa[ss1.row][ss1.col];
         let item2 = sa[ss2.row][ss2.col];
 
@@ -45,6 +45,10 @@ class Inventory extends React.Component {
         item2.id = i1;
         item2.quantity = q1;
         this.props.onInvyChange([item1, item2]);
+    };
+
+    quantity = (ss) => {
+        this.props.onInvyChange(ss);
     };
 
     insert = (ss) => {
@@ -66,7 +70,8 @@ class Inventory extends React.Component {
                 item.col = j;
 
                 slots.push(
-                    <InventorySlot swap={this.swap} insert={this.insert} remove={this.remove} ss={item} key={item.key()}
+                    <InventorySlot swap={this.swap} quantity={this.quantity} insert={this.insert} remove={this.remove}
+                                   ss={item} key={item.key()}
                                    id={item.key()} left={left} top={top}/>
                 );
             }
@@ -80,11 +85,10 @@ class Inventory extends React.Component {
             return;
         }
 
-        this.forceUpdate();
+        this.setState({items: this.toSS()});
     }
 
-    componentDidMount() {
-        window.initosrstooltip();
+    toSS() {
         let items = this.state.items;
 
         for (let i = 0; i < this.props.items.length; i++) {
@@ -97,7 +101,12 @@ class Inventory extends React.Component {
             }
         }
 
-        this.setState({items: items});
+        return items;
+    }
+
+    componentDidMount() {
+        window.initosrstooltip();
+        this.setState({items: this.toSS()});
     }
 
     render() {
