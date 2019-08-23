@@ -23,11 +23,9 @@ export function currentUser() {
 axios.interceptors.request.use(async config => {
     if (config.url.includes(process.env.REACT_APP_API_URL)) {
         if (tokenRes == null || (new Date(tokenRes.expirationTime) - new Date() <= 0)) {
-            console.log("null or expired ", tokenRes);
             tokenRes = await idToken(true);
         }
 
-        console.log(tokenRes);
         config.headers.Authorization = tokenRes.token;
     }
     return config;
