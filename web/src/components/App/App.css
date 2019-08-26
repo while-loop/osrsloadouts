@@ -19,12 +19,12 @@
     border: 2px solid #382418;
     display: block;
     font-size: 0.55em;
-    min-font-size: 0.55em;
     margin: 10px auto;
     overflow: hidden;
     padding: 4px 16px;
     position: relative;
     height: auto;
+    width: 730px;
 }
 
 .Content {
