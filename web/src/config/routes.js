@@ -19,7 +19,6 @@ class AppRouter extends React.Component {
 
     componentWillMount() {
         app.auth().onAuthStateChanged(user => {
-            console.log(new Date(), "onAuthStateChanged", user);
             if (user) {
                 refreshToken();
                 this.setState({

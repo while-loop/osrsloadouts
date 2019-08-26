@@ -148,6 +148,9 @@ class Loadout extends React.Component {
             return <span>{this.state.status}</span>
         }
 
+        let created = moment(this.state.loadout.created);
+        let updated = moment(this.state.loadout.updated);
+
         return (
             <div>
                 <h4>
@@ -171,8 +174,8 @@ class Loadout extends React.Component {
                         <div className="Loadout-info">
                         <span>Author: <Link
                             to={"/u/" + this.state.loadout.author.username}>{this.state.loadout.author.username}</Link></span>
-                            <span>Created: {moment(this.state.loadout.created).format('MMM Do YY, h:mm:ss a')}</span>
-                            <span>Updated: {moment(this.state.loadout.updated).format('MMM Do YY, h:mm:ss a')}</span>
+                            <span title={created.format('MMM Do YY, h:mm:ss a')}>Created: {created.format('MMM Do YYYY')}</span>
+                            <span title={updated.format('MMM Do YY, h:mm:ss a')}>Updated: {updated.fromNow()}</span>
                             <div className="Loadout-info-stats">
                                 <span title="views"><FontAwesomeIcon
                                     icon={faEye}/>: {Humanize.compactInteger(this.state.loadout.views, 1)}</span>

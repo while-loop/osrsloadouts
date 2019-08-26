@@ -26,12 +26,14 @@ axios.interceptors.request.use(async config => {
             tokenRes = await idToken(true);
         }
 
-        config.headers.Authorization = tokenRes.token;
+        if (tokenRes != null) { // user might not be logged in
+            config.headers.Authorization = tokenRes.token;
+        }
     }
     return config;
 });
 
-export function refreshToken(force=false) {
+export function refreshToken(force = false) {
     currentUser().getIdTokenResult(force).then(result => {
         tokenRes = result;
     }).catch(reason => {
