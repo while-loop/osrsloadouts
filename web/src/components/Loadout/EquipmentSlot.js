@@ -129,7 +129,7 @@ class EquipmentSlot extends InventorySlot {
                 <div className="Equipment-slot"
                      style={{
                          left: this.style.left + (EquipmentSlot.slotGapX / 2),
-                         top: this.style.top + (EquipmentSlot.slotGapY / 2) + 1,
+                         top: this.style.top + (EquipmentSlot.slotGapY / 2) + 0.5,
                      }}>
 
                     { /****** ITEM QUANTITY ******/
