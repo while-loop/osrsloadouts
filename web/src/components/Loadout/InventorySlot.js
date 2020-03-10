@@ -137,7 +137,12 @@ class InventorySlot extends React.Component {
         this._getItemInfo();
     }
 
-    selectItem = () => {
+    selectItem = (e) => {
+        if (e != null && (e.ctrlKey || e.metaKey) && this.props.lastAdded != null) {
+            this.onSelected({id: this.props.lastAdded.id})
+            return;
+        }
+
         this.setState({selecting: true})
     };
 
@@ -255,7 +260,8 @@ InventorySlot.propTypes = {
     remove: PropTypes.func.isRequired,
     quantity: PropTypes.func.isRequired,
     insert: PropTypes.func.isRequired,
-    ss: PropTypes.instanceOf(SlotSchema)
+    ss: PropTypes.instanceOf(SlotSchema),
+    lastAdded: PropTypes.instanceOf(SlotSchema),
 };
 
 export default InventorySlot;

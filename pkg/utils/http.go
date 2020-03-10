@@ -8,7 +8,7 @@ import (
 )
 
 func WriteApiError(w http.ResponseWriter, err *errors.ApiError) {
-	log.Error(err.Err, " ", err.Nice)
+	log.Error(err.Err, " ", err.GetNice())
 	WriteErrorStatus(w, err.Code, err.GetNice())
 }
 

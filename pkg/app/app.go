@@ -29,7 +29,7 @@ func New(handler *mux.Router, db *mongo.Database, authCli *auth2.Client, config 
 	}
 
 	ls := stores.NewLoadoutStore(db)
-	us := stores.NewUserStore(db, authCli)
+	us := stores.NewUserStore(db, authCli, ls)
 
 	NewLoadoutService(a.rootRouter, ls, verifier)
 	NewUserService(a.rootRouter, us, ls)

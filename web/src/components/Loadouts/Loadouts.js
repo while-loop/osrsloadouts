@@ -72,16 +72,16 @@ class Loadouts extends React.Component {
                             id: "updated",
                             accessor: d => moment(d.updated).format('MMM Do YYYY'),
                         },
-                        {
-                            Header: "Views",
-                            accessor: "views",
-                            width: 50,
-                        },
-                        {
-                            Header: "Favs",
-                            accessor: "favorites",
-                            width: 50.
-                        }
+                        // {
+                        //     Header: "Views",
+                        //     accessor: "views",
+                        //     width: 50,
+                        // },
+                        // {
+                        //     Header: "Favs",
+                        //     accessor: "favorites",
+                        //     width: 50.
+                        // }
                     ]}
                     manual // Forces table not to paginate or sort automatically, so we can handle it server-side
                     filterAll={true}

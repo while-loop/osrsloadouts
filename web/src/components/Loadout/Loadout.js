@@ -3,9 +3,6 @@ import Equipment from "./Equipment";
 import Inventory from "./Inventory";
 import Stats from "./Stats";
 import moment from "moment";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCodeBranch, faEye, faStar} from '@fortawesome/free-solid-svg-icons'
-import * as Humanize from 'humanize-plus';
 import {Link} from "react-router-dom";
 import "./Loadout.css";
 import CreatableSelect from 'react-select/creatable';
@@ -102,11 +99,9 @@ class Loadout extends React.Component {
             sss = [sss];
         }
         const loadout = _.cloneDeep(this.state.loadout);
-        console.log("before loadout", loadout.inventory);
         sss.forEach(ss => {
             loadout.inventory[ss.row][ss.col] = this.z(ss.id, ss.quantity);
         });
-        console.log("after loadout", loadout.inventory);
         this.setState({loadout});
     };
 
@@ -174,16 +169,17 @@ class Loadout extends React.Component {
                         <div className="Loadout-info">
                         <span>Author: <Link
                             to={"/u/" + this.state.loadout.author.username}>{this.state.loadout.author.username}</Link></span>
-                            <span title={created.format('MMM Do YY, h:mm:ss a')}>Created: {created.format('MMM Do YYYY')}</span>
+                            <span
+                                title={created.format('MMM Do YY, h:mm:ss a')}>Created: {created.format('MMM Do YYYY')}</span>
                             <span title={updated.format('MMM Do YY, h:mm:ss a')}>Updated: {updated.fromNow()}</span>
-                            <div className="Loadout-info-stats">
-                                <span title="views"><FontAwesomeIcon
-                                    icon={faEye}/>: {Humanize.compactInteger(this.state.loadout.views, 1)}</span>
-                                <span title="favorites"><FontAwesomeIcon
-                                    icon={faStar}/>: {Humanize.compactInteger(this.state.loadout.favorites, 1)}</span>
-                                <span title="copies"><FontAwesomeIcon
-                                    icon={faCodeBranch}/>: {Humanize.compactInteger(this.state.loadout.copies, 1)}</span>
-                            </div>
+                            {/*<div className="Loadout-info-stats">*/}
+                            {/*    <span title="views"><FontAwesomeIcon*/}
+                            {/*        icon={faEye}/>: {Humanize.compactInteger(this.state.loadout.views, 1)}</span>*/}
+                            {/*    <span title="favorites"><FontAwesomeIcon*/}
+                            {/*        icon={faStar}/>: {Humanize.compactInteger(this.state.loadout.favorites, 1)}</span>*/}
+                            {/*    <span title="copies"><FontAwesomeIcon*/}
+                            {/*        icon={faCodeBranch}/>: {Humanize.compactInteger(this.state.loadout.copies, 1)}</span>*/}
+                            {/*</div>*/}
                         </div>
                     </div>
                     <div className="Loadout-tags">

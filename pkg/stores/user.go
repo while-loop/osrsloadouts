@@ -33,14 +33,16 @@ type UserStore interface {
 type mongoUser struct {
 	coll  *mongo.Collection
 	fauth *auth.Client
+	lStore LoadoutStore
 }
 
 const userColl = "users"
 
-func NewUserStore(db *mongo.Database, auth *auth.Client) UserStore {
+func NewUserStore(db *mongo.Database, auth *auth.Client, lStore LoadoutStore) UserStore {
 	return &mongoUser{
 		coll:  db.Collection(userColl),
 		fauth: auth,
+		lStore: lStore,
 	}
 }
 
@@ -101,13 +103,34 @@ func (m *mongoUser) Update(ctx context.Context, id string, props bson.M) (*User,
 
 	if username, ok := props["username"]; ok {
 		m.setUsername(ctx, id, username.(string))
+
+		if err := m.lStore.MigrateUsername(ctx, id, username.(string)); err != nil {
+			return nil, err
+		}
 	}
 
 	// todo update all loadout author usernames
 	return u, nil
 }
+
 func (m *mongoUser) setUsername(ctx context.Context, id, username string) {
-	if err := m.fauth.SetCustomUserClaims(ctx, id, map[string]interface{}{"username": username}); err != nil {
+	u, err := m.fauth.GetUser(ctx, id)
+	if err != nil {
+		log.Errorf("Failed to set claims for user %s: %v", id, err)
+		// todo logger, this will create data mismatch if failed
+		return
+	}
+
+	if u.CustomClaims == nil {
+		u.CustomClaims = map[string]interface{}{
+			"admin": false,
+			"username": "",
+			"email": u.Email,
+		}
+	}
+
+	u.CustomClaims["username"] = username
+	if err := m.fauth.SetCustomUserClaims(ctx, id, u.CustomClaims); err != nil {
 		log.Errorf("Failed to set claims for user %s: %v", id, err)
 		// todo logger, this will create data mismatch if failed
 	}

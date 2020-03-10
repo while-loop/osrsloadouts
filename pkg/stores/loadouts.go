@@ -70,6 +70,9 @@ type LoadoutStore interface {
 
 	// get all loaduts for a user. all viewed, favourited, and owned
 	GetForUser(ctx context.Context, id string, p *Pagination) (*LoadoutResponse, *errors.ApiError)
+
+	// update all username refs for user id
+	MigrateUsername(ctx context.Context, userId string, newUsername string) *errors.ApiError
 }
 
 type mongoLoadout struct {
@@ -201,4 +204,21 @@ func (m *mongoLoadout) GetForUser(ctx context.Context, id string, p *Pagination)
 
 func (m *mongoLoadout) Search(ctx context.Context) ([]*Loadout, *errors.ApiError) {
 	panic("implement me")
+}
+
+func (m *mongoLoadout) MigrateUsername(ctx context.Context, userId string, newUsername string) *errors.ApiError {
+	find := bson.M{"author.id": userId}
+
+	update := bson.M{
+		"$set": bson.M{
+			"author.username": newUsername,
+		},
+	}
+
+	_, err := m.coll.UpdateMany(ctx, find, update)
+	if err != nil {
+		return errors.NewApif(http.StatusInternalServerError, err,"failed to update loadout username: %s", newUsername)
+	}
+
+	return nil
 }

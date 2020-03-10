@@ -1,12 +1,12 @@
 # service specific vars
-SERVICE	 		:= osrsinvy
-VERSION			:= 0.0.2
-ORG		 		:= lunchride
+SERVICE	 		:= api
+VERSION			:= 0.0.3
+ORG		 		:= osrsloadouts
 COMMIT      	:= $(shell git rev-parse --short HEAD)
 BUILD_TIME		:= $(shell date -u '+%Y-%m-%d_%H:%M:%S')
 PACKAGE 		:= $(shell grep module go.mod | awk '{ print $$2; }')
 DOCKER_REGISTRY	:= gcr.io
-IMAGE_NAME  	:= ${DOCKER_REGISTRY}/${ORG}/${SERVICE}-api
+IMAGE_NAME  	:= ${DOCKER_REGISTRY}/${ORG}/${SERVICE}
 GOFLAGS			:= -mod=vendor
 
 .PHONY: proto deps test build cont cont-nc all deploy help clean lint
@@ -45,7 +45,7 @@ deploy: ## deploy lastest built container to docker hub
 	--image ${IMAGE_NAME}:${VERSION} \
 	--platform=managed  \
 	--allow-unauthenticated \
-	--set-env-vars OSRSINVY_MONGO_ADDR="${OSRSINVY_MONGO_ADDR}",OSRSINVY_MONGO_DB=${OSRSINVY_MONGO_DB}
+	--set-env-vars OSRSLOADOUTS_MONGO_ADDR="${OSRSLOADOUTS_MONGO_ADDR}",OSRSLOADOUTS_MONGO_DB=${OSRSLOADOUTS_MONGO_DB}
 
 push: ## deploy lastest built container to docker hub
 	docker push ${IMAGE_NAME}:${VERSION}
@@ -71,7 +71,7 @@ test-all: lint ## test service code
 
 db:
 	docker run -d \
-	--name osrsinvy-mongo \
+	--name osrsloadouts-mongo \
 	-v `pwd`/tmp/db:/data/db \
 	-v `pwd`/scripts:/docker-entrypoint-initdb.d \
 	-e MONGO_INITDB_DATABASE=osrsinvy \

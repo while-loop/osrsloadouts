@@ -1,9 +1,9 @@
 # service specific vars
-SERVICE	 		:= osrsinvy-web
-ORG		 		:= lunchride
+SERVICE	 		:= osrsloadouts-web
+ORG		 		:= osrsloadouts
 DOCKER_REGISTRY	:= gcr.io
 IMAGE_NAME  	:= ${DOCKER_REGISTRY}/${ORG}/${SERVICE}
-VERSION			:= 0.0.2
+VERSION			:= 0.0.3
 
 .PHONY: deps test build cont cont-nc all deploy help clean
 .DEFAULT_GOAL := build
@@ -47,3 +47,6 @@ release: cont push deploy ## build and deploy a docker container
 test: ## test  code
 	@echo "[test] running tests"
 	@npm run test
+
+dev:
+	NODE_ENV=development npm start

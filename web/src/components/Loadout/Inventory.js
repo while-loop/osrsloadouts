@@ -20,6 +20,7 @@ class Inventory extends React.Component {
                 [this.z(), this.z(), this.z(), this.z()],
                 [this.z(), this.z(), this.z(), this.z()],
             ],
+            lastAdded: null,
         };
     }
 
@@ -53,6 +54,7 @@ class Inventory extends React.Component {
 
     insert = (ss) => {
         this.props.onInvyChange(ss);
+        this.setState({lastAdded: ss})
     };
 
     remove = (ss) => {
@@ -72,7 +74,8 @@ class Inventory extends React.Component {
                 slots.push(
                     <InventorySlot swap={this.swap} quantity={this.quantity} insert={this.insert} remove={this.remove}
                                    ss={item} key={item.key()}
-                                   id={item.key()} left={left} top={top}/>
+                                   id={item.key()} left={left} top={top}
+                                   lastAdded={this.state.lastAdded}/>
                 );
             }
         }
