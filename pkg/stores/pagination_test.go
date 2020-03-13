@@ -18,8 +18,8 @@ func TestPagination_GetSort(t *testing.T) {
 		fields fields
 		want   bson.D
 	}{
-		{"desc", fields{Sort: "-created"}, bson.D{{"created", -1}}},
-		{"asc", fields{Sort: "created"}, bson.D{{"created", 1}}},
+		{"desc", fields{Sort: "-created"}, bson.D{{Key: "created", Value: -1}}},
+		{"asc", fields{Sort: "created"}, bson.D{{Key: "created", Value: 1}}},
 		{"nil", fields{Sort: ""}, nil},
 	}
 	for _, tt := range tests {

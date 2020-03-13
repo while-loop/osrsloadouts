@@ -55,7 +55,7 @@ func Get(ctx context.Context, coll *mongo.Collection, id string, out interface{}
 }
 
 func Update(ctx context.Context, coll *mongo.Collection, id string, in bson.M, out interface{}) *errors.ApiError {
-	update := bson.D{{"$set", in}}
+	update := bson.D{{Key: "$set", Value: in}}
 	res := coll.FindOneAndUpdate(ctx, bson.D{{Key: "_id", Value: id}}, update, options.FindOneAndUpdate().SetReturnDocument(options.After))
 	if res.Err() != nil {
 		if strings.Contains(strings.ToLower(res.Err().Error()), "duplicate key error") {

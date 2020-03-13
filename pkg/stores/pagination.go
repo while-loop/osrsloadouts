@@ -41,7 +41,7 @@ func (p Pagination) GetSort() bson.D {
 		order = -1
 	}
 
-	return bson.D{{strings.TrimPrefix(p.Sort, "-"), order}}
+	return bson.D{{Key: strings.TrimPrefix(p.Sort, "-"), Value: order}}
 }
 
 func asUInt32(key string, vars url.Values, def uint32) uint32 {
