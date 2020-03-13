@@ -1,9 +1,10 @@
 # service specific vars
-SERVICE	 		:= osrsloadouts-web
-ORG		 		:= osrsloadouts
+SERVICE	 		:= web
+ORG		 		:= osrs-loadouts
 DOCKER_REGISTRY	:= gcr.io
 IMAGE_NAME  	:= ${DOCKER_REGISTRY}/${ORG}/${SERVICE}
-VERSION			:= 0.0.3
+VERSION			:= 0.0.5
+GCLOUD_SERVICE	:= ${ORG}-${SERVICE}
 
 .PHONY: deps test build cont cont-nc all deploy help clean
 .DEFAULT_GOAL := build
@@ -33,7 +34,8 @@ cont-nc: ## build a non-cached service container
 	docker build --no-cache -t ${IMAGE_NAME} -t ${IMAGE_NAME}:${VERSION} .
 
 deploy: ## deploy lastest built container to docker hub
-	gcloud beta run deploy ${SERVICE} --image ${IMAGE_NAME}:${VERSION} --platform=managed  --allow-unauthenticated
+	gcloud config set project ${ORG}
+	gcloud beta run deploy ${GCLOUD_SERVICE} --image ${IMAGE_NAME}:${VERSION} --platform=managed  --allow-unauthenticated
 
 push: ## deploy lastest built container to docker hub
 	docker push ${IMAGE_NAME}:${VERSION}

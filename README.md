@@ -1,7 +1,7 @@
 OSRS Invy
 ===========
 
-LunchRide Groups service
+
 
 ```bash
 $ make deps

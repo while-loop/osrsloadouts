@@ -1,6 +1,6 @@
 # service specific vars
 SERVICE	 		:= api
-VERSION			:= 0.0.3
+VERSION			:= 0.0.5
 ORG		 		:= osrs-loadouts
 COMMIT      	:= $(shell git rev-parse --short HEAD)
 BUILD_TIME		:= $(shell date -u '+%Y-%m-%d_%H:%M:%S')
@@ -8,6 +8,7 @@ PACKAGE 		:= $(shell grep module go.mod | awk '{ print $$2; }')
 DOCKER_REGISTRY	:= gcr.io
 IMAGE_NAME  	:= ${DOCKER_REGISTRY}/${ORG}/${SERVICE}
 GOFLAGS			:= -mod=vendor
+GCLOUD_SERVICE	:= ${ORG}-${SERVICE}
 
 .PHONY: proto deps test build cont cont-nc all deploy help clean lint
 .DEFAULT_GOAL := build
@@ -26,13 +27,13 @@ build: clean ## build service binary file
 		-X ${PACKAGE}/pkg.Version=${VERSION} \
 		-X ${PACKAGE}/pkg.Commit=${COMMIT} \
 		-X ${PACKAGE}/pkg.BuildTime=${BUILD_TIME} \
-		-X ${PACKAGE}/pkg.Name=${SERVICE}" \
-		-o ${GOPATH}/bin/${SERVICE} ./cmd/${SERVICE}
-	${GOPATH}/bin/${SERVICE} -v
+		-X ${PACKAGE}/pkg.Name=osrsloadouts" \
+		-o ${GOPATH}/bin/osrsinvy ./cmd/osrsinvy
+	${GOPATH}/bin/osrsinvy -v
 
 clean: ## remove service bin from $GOPATH/bin
 	@echo "[clean] removing ${SERVICE} files"
-	rm -f ${GOPATH}/bin/${SERVICE}
+	rm -f ${GOPATH}/bin/osrsinvy
 
 cont: ## build a cached service container
 	docker build -t ${IMAGE_NAME} -t ${IMAGE_NAME}:${VERSION} .
@@ -41,7 +42,8 @@ cont-nc: ## build a non-cached service container
 	docker build --no-cache -t ${IMAGE_NAME} -t ${IMAGE_NAME}:${VERSION} .
 
 deploy: ## deploy lastest built container to docker hub
-	gcloud beta run deploy ${SERVICE}-api \
+	gcloud config set project ${ORG}
+	gcloud beta run deploy ${GCLOUD_SERVICE} \
 	--image ${IMAGE_NAME}:${VERSION} \
 	--platform=managed  \
 	--allow-unauthenticated \
@@ -85,3 +87,8 @@ release-all:
 
 mongo:
 	mongo "mongodb+srv://osrsinvy-u1age.gcp.mongodb.net/osrsinvy" --username osrsinvy
+
+domains:
+	gcloud config set run/region us-east1
+	gcloud beta run domain-mappings create --service osrs-loadouts-api --platform managed --domain api.osrsloadouts.app
+	gcloud beta run domain-mappings create --service osrs-loadouts-web --platform managed --domain osrsloadouts.app
