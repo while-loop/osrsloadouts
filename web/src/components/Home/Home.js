@@ -9,7 +9,7 @@ function Home() {
         }}>
             <h4>Home</h4>
             <span>A q p</span>
-            <span>gf nerd</span>
+            <span>asdfasdf</span>
             <span>&nbsp;&nbsp;&nbsp;&nbsp;W</span>
         </div>
     );

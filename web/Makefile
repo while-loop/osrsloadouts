@@ -20,7 +20,7 @@ clean:
 	rm -rf build
 
 version:
-	sed -i 's/"version": ".*",/"version": "${VERSION}",/' package.json
+	gsed -i 's/"version": ".*",/"version": "${VERSION}",/' package.json
 
 build: clean version ## build service binary file
 	@echo "[build] building js files"

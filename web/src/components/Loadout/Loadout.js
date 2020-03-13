@@ -14,6 +14,8 @@ import PopupMenu from "../../utils/PopupMenu";
 import TextPopup from "./TextPopup";
 import {loadout2setup, setup2loadout} from "../../utils/inventory-setups";
 import {currentUser} from "../../utils/base";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 
 class Loadout extends React.Component {
     toastId = null;
@@ -26,6 +28,7 @@ class Loadout extends React.Component {
             loadout: this.empty(),
             status: "Loading...",
             showExportImport: null,
+            showGuide: false
         };
     }
 
@@ -144,7 +147,8 @@ class Loadout extends React.Component {
     };
 
     isOwner() {
-        return this.state.loadout.author.id === currentUser().uid
+        let user = currentUser()
+        return user != null && this.state.loadout.author.id === user.uid
     }
 
     render() {
@@ -169,7 +173,8 @@ class Loadout extends React.Component {
                 </h4>
                 <div className="Loadout-header">
                     <div className="Loadout-top">
-                        <textarea focusa readOnly={!this.isOwner()} rows={6} className="Loadout-description" value={this.state.loadout.description}
+                        <textarea focusa readOnly={!this.isOwner()} rows={6} className="Loadout-description"
+                                  value={this.state.loadout.description}
                                   onChange={(e) => {
                                       let loadout = _.cloneDeep(this.state.loadout);
                                       loadout.description = e.target.value;
@@ -177,8 +182,8 @@ class Loadout extends React.Component {
                                   }}/>
                         <div className="Loadout-info">
                             <div className="Loadout-info-stats">
-                                { this.isOwner() && <button onClick={this.saveLoadout}>Save</button>}
-                                <PopupMenu style={{float: "right"}}  options={this.getLoadoutOptions()}/>
+                                {this.isOwner() && <button onClick={this.saveLoadout}>Save</button>}
+                                <PopupMenu style={{float: "right"}} options={this.getLoadoutOptions()}/>
                             </div>
 
 
@@ -204,12 +209,12 @@ class Loadout extends React.Component {
                                                     state.loadout.tags = tags;
                                                 })}/>
                         </div>
-
                     </div>
                 </div>
                 <div className="Loadout-content">
                     <Inventory onInvyChange={this.onInvyChange} items={this.state.loadout.inventory} isOwner={isOwner}/>
-                    <Equipment onEquipChange={this.onEquipChange} items={this.state.loadout.equipment} isOwner={isOwner}/>
+                    <Equipment onEquipChange={this.onEquipChange} items={this.state.loadout.equipment}
+                               isOwner={isOwner}/>
                     <Stats items={this.state.loadout.equipment}/>
                     { /****** QUANTITY POPUP ******/
                         this.state.showExportImport != null &&
@@ -221,6 +226,44 @@ class Loadout extends React.Component {
                                    }}
                         />
                     }
+                    <div style={{fontSize: '.6em'}}>
+                        <br/>
+                        <br/>
+                        <span
+                            style={{cursor: 'pointer'}}
+                            onClick={() => this.setState({showGuide: !this.state.showGuide})}
+                        >
+                            User Guide:&nbsp;&nbsp;&nbsp;&nbsp;
+                            {
+                                this.state.showGuide && <span>Hide</span>
+                            }
+                            {
+                                !this.state.showGuide && <span>Show</span>
+                            }
+                            <FontAwesomeIcon
+                                title="toggle guide"
+                                className="Hoverable"
+                                color="rgba(0, 0, 0, 0.75)"
+                                icon={this.state.showGuide ? faEye : faEyeSlash}
+
+                            />
+
+                        </span>
+                        {
+                            this.state.showGuide &&
+                            <ul style={{textAlign: 'left'}}>
+                                <li>Click an empty inventory/equipment slot to search items</li>
+                                <li>Right click items for menu</li>
+                                <li>Shift+Click to drop item</li>
+                                <li>Ctrl+Click (Cmd+Click on macOS) an empty slot to fill with previously selected item</li>
+                                <li>Drag and Drop items to swap slots</li>
+                                <li>Right click stackable items to set quantity</li>
+                                <li>Export/Import loadouts to the <code style={{fontSize: '.7em'}}><u>Inventory
+                                    Setups</u></code> plugin on <a href="https://runelite.net/plugin-hub">Runelite
+                                    Plugin Hub</a></li>
+                            </ul>
+                        }
+                    </div>
                 </div>
             </div>
         );
@@ -316,7 +359,7 @@ class Loadout extends React.Component {
         loadout.inventory = setUploadout.inventory;
         loadout.equipment = setUploadout.equipment;
         loadout.title = setUploadout.title;
-        this.setState({loadout, showExportImport:null});
+        this.setState({loadout, showExportImport: null});
     }
 }
 

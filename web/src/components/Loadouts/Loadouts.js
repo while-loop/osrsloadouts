@@ -49,7 +49,7 @@ class Loadouts extends React.Component {
                 </Link>
                 <br/>
 
-                <h1>Loadouts</h1>
+                <h1>My Loadouts</h1>
                 <ReactTable
                     columns={[
                         {
