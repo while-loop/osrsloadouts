@@ -1,7 +1,7 @@
 # service specific vars
 SERVICE	 		:= api
 VERSION			:= 0.0.3
-ORG		 		:= osrsloadouts
+ORG		 		:= osrs-loadouts
 COMMIT      	:= $(shell git rev-parse --short HEAD)
 BUILD_TIME		:= $(shell date -u '+%Y-%m-%d_%H:%M:%S')
 PACKAGE 		:= $(shell grep module go.mod | awk '{ print $$2; }')

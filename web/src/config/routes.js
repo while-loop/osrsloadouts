@@ -9,6 +9,7 @@ import PrivateRoute from "../utils/PrivateRoute";
 import app, {refreshToken} from "../utils/base"
 import Login from "../components/Login/Login";
 import Account from "../components/Account/Account";
+import Profile from "../components/Account/Profile";
 
 class AppRouter extends React.Component {
     state = {
@@ -52,7 +53,7 @@ class AppRouter extends React.Component {
                         <Route exact path="/login" component={Login}/>
                         <PrivateRoute exact path="/account" component={Account} authenticated={authenticated}/>
 
-                        <Route exact path="/u/:id" component={Home}/>
+                        <Route exact path="/u/:username" component={Profile}/>
 
                         <PrivateRoute exact path="/loadouts" component={Loadouts}
                                       authenticated={authenticated}/>

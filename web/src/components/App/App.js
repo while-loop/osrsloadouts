@@ -59,7 +59,7 @@ class Footer extends React.Component {
                 <a href="https://github.com/while-loop" target="_blank" rel="noopener noreferrer"><FontAwesomeIcon
                     icon={faGithub}/></a> &nbsp; | &nbsp; v{process.env.REACT_APP_VERSION}
                     <br/>
-                    <a href="https://www.runescape.com/">RuneScape</a>® and <a href="https://www.jagex.com/">Jagex</a>® are trademarks of Jagex Ltd © 2000 - 2019
+                    <a href="https://www.runescape.com/">RuneScape</a>® and <a href="https://www.jagex.com/">Jagex</a>® are trademarks of Jagex Ltd © 2000 - 2020
             </div>
         )
     }

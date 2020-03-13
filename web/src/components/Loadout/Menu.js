@@ -24,6 +24,8 @@ class Menu extends React.Component {
             let name = '';
             if (o.includeName) {
                 name = ` ${this.props.name}`
+            } else if (o.name != null) {
+                name = ` ${o.name}`
             }
 
             return <div key={o.action} onClick={this.onClick(o)} className="Menu-option"><span

@@ -10,6 +10,10 @@ import _ from 'lodash';
 import LoadoutStore from "../../store/LoadoutStore";
 import {toast} from "react-toastify";
 import {TOAST_DELAY} from "../../config/constants";
+import PopupMenu from "../../utils/PopupMenu";
+import TextPopup from "./TextPopup";
+import {loadout2setup, setup2loadout} from "../../utils/inventory-setups";
+import {currentUser} from "../../utils/base";
 
 class Loadout extends React.Component {
     toastId = null;
@@ -20,7 +24,8 @@ class Loadout extends React.Component {
         this.state = {
             id: props.match.params.id,
             loadout: this.empty(),
-            status: "Loading..."
+            status: "Loading...",
+            showExportImport: null,
         };
     }
 
@@ -126,9 +131,9 @@ class Loadout extends React.Component {
                 this.forceUpdate();
             }).catch(reason => {
                 let resp = reason.response;
-                console.log("failed to save loadout", reason.response);
+                console.log("failed to save loadout", resp);
 
-                if (resp !== null && resp.status === 403) {
+                if (resp != null && resp.status === 403) {
                     close("Permission denied", toast.TYPE.ERROR);
                     return
                 }
@@ -138,18 +143,23 @@ class Loadout extends React.Component {
         }
     };
 
+    isOwner() {
+        return this.state.loadout.author.id === currentUser().uid
+    }
+
     render() {
         if (this.state.loadout == null) {
             return <span>{this.state.status}</span>
         }
 
+        let isOwner = this.isOwner()
         let created = moment(this.state.loadout.created);
         let updated = moment(this.state.loadout.updated);
 
         return (
             <div>
                 <h4>
-                    <div contentEditable={true} onBlur={(e) => {
+                    <div contentEditable={this.isOwner()} onBlur={(e) => {
                         let loadout = _.cloneDeep(this.state.loadout);
                         loadout.title = e.target.textContent;
                         this.setState({loadout})
@@ -157,18 +167,23 @@ class Loadout extends React.Component {
                         {this.state.loadout.title}
                     </div>
                 </h4>
-                <button onClick={this.saveLoadout}>save</button>
                 <div className="Loadout-header">
                     <div className="Loadout-top">
-                        <textarea rows={6} className="Loadout-description" value={this.state.loadout.description}
+                        <textarea focusa readOnly={!this.isOwner()} rows={6} className="Loadout-description" value={this.state.loadout.description}
                                   onChange={(e) => {
                                       let loadout = _.cloneDeep(this.state.loadout);
                                       loadout.description = e.target.value;
                                       this.setState({loadout})
                                   }}/>
                         <div className="Loadout-info">
-                        <span>Author: <Link
-                            to={"/u/" + this.state.loadout.author.username}>{this.state.loadout.author.username}</Link></span>
+                            <div className="Loadout-info-stats">
+                                { this.isOwner() && <button onClick={this.saveLoadout}>Save</button>}
+                                <PopupMenu style={{float: "right"}}  options={this.getLoadoutOptions()}/>
+                            </div>
+
+
+                            <span>Author: <Link
+                                to={"/u/" + this.state.loadout.author.username}>{this.state.loadout.author.username}</Link></span>
                             <span
                                 title={created.format('MMM Do YY, h:mm:ss a')}>Created: {created.format('MMM Do YYYY')}</span>
                             <span title={updated.format('MMM Do YY, h:mm:ss a')}>Updated: {updated.fromNow()}</span>
@@ -193,12 +208,115 @@ class Loadout extends React.Component {
                     </div>
                 </div>
                 <div className="Loadout-content">
-                    <Inventory onInvyChange={this.onInvyChange} items={this.state.loadout.inventory}/>
-                    <Equipment onEquipChange={this.onEquipChange} items={this.state.loadout.equipment}/>
+                    <Inventory onInvyChange={this.onInvyChange} items={this.state.loadout.inventory} isOwner={isOwner}/>
+                    <Equipment onEquipChange={this.onEquipChange} items={this.state.loadout.equipment} isOwner={isOwner}/>
                     <Stats items={this.state.loadout.equipment}/>
+                    { /****** QUANTITY POPUP ******/
+                        this.state.showExportImport != null &&
+                        <TextPopup text={this.getExportImportText()}
+                                   showSave={this.state.showExportImport === 'import'}
+                                   onSave={this.saveImport}
+                                   onClose={() => {
+                                       this.setState({showExportImport: null})
+                                   }}
+                        />
+                    }
                 </div>
             </div>
         );
+    }
+
+    getLoadoutOptions() {
+        const opts = [{
+            action: 'Export',
+            onClick: () => this.setState({showExportImport: 'export'}),
+            includeName: false,
+            name: "Loadout"
+        }];
+
+        if (this.isOwner()) {
+            opts.push({
+                    action: 'Import',
+                    onClick: () => this.setState({showExportImport: 'import'}),
+                    includeName: false,
+                    name: "Loadout"
+                },
+                {
+                    action: 'Delete',
+                    onClick: () => {
+                        if (this.state.loadout.id === "") {
+                            return;
+                        }
+                        this.toastId = toast("Deleting loadout...", {autoClose: false});
+                        let close = (msg, type = toast.TYPE.INFO) => {
+                            toast.update(this.toastId, {render: msg, type: type, autoClose: TOAST_DELAY});
+                        };
+                        console.log("delete", this.state.loadout.id)
+                        LoadoutStore.delete(this.state.id).then(r => {
+                            close("Loaded deleted ✔︎");
+                            this.props.history.push(`/loadouts`);
+                        }).catch(reason => {
+                            let resp = reason.response;
+                            console.log("failed to save loadout", reason);
+
+                            if (resp != null && resp.status === 403) {
+                                close("Permission denied", toast.TYPE.ERROR);
+                                return
+                            }
+
+                            close("Failed to save loadout: " + reason.toString(), toast.TYPE.ERROR);
+                        })
+                    },
+                    includeName: false,
+                    name: "Loadout"
+                })
+        }
+
+        return opts
+    }
+
+    getExportImportText() {
+        if (this.state.showExportImport === 'export') {
+            const config = {
+                highlightColor: {
+                    "value": -65536,
+                    "falpha": 0
+                },
+                stackDifference: false,
+                variationDifference: false,
+                highlightDifference: true,
+                filterBank: true,
+                unorderedHighlight: true,
+                name: this.state.loadout.title,
+            }
+            let setup = loadout2setup(this.state.loadout)
+            return JSON.stringify({...setup, ...config});
+        }
+
+        return "";
+    }
+
+    saveImport = (text) => {
+        let cleanup = () => {
+            this.setState({showExportImport: null})
+        }
+        if (text == null) {
+            cleanup()
+            return
+        }
+        text = text.trim()
+        if (text === "") {
+            cleanup()
+            return
+        }
+
+        const setup = JSON.parse(text);
+        const setUploadout = setup2loadout(setup)
+        const loadout = _.cloneDeep(this.state.loadout);
+        loadout.inventory = setUploadout.inventory;
+        loadout.equipment = setUploadout.equipment;
+        loadout.title = setUploadout.title;
+        this.setState({loadout, showExportImport:null});
     }
 }
 

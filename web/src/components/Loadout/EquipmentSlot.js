@@ -81,10 +81,10 @@ class EquipmentSlot extends InventorySlot {
 
     render() {
         let osrsinfo = {};
-        if (!this.state.selecting && !this.state.showMenu && this.props.ss.id !== null) {
+        if (!this.state.selecting && !this.state.showMenu && this.props.ss.id != null) {
             osrsinfo = {
                 className: 'osrstooltip',
-                title: this.props.ss.info && this.props.ss.info.name !== null ? this.props.ss.info.name : '',
+                title: this.props.ss.info && this.props.ss.info.name != null ? this.props.ss.info.name : '',
                 'data-type': this.props.ss.info && this.props.ss.info.equipable ? 'bonuses' : 'short',
                 id: this.props.ss.id
             };
@@ -93,7 +93,7 @@ class EquipmentSlot extends InventorySlot {
         let image = <div onClick={this.selectItem}
                          style={{width: InventorySlot.slotSize, height: InventorySlot.slotSize}}
                          draggable="false"/>;
-        if (this.props.ss.id !== null) {
+        if (this.props.ss.id != null) {
             image = <img onClick={this.viewItem}
                          draggable="false" src={ItemStore.imgUrl(this.props.ss.id)} alt=""/>;
         }
@@ -122,7 +122,7 @@ class EquipmentSlot extends InventorySlot {
                                    }}/>
                 }
                 {
-                    this.props.ss.id !== null &&
+                    this.props.ss.id != null &&
                     <img className="Equipment-slot" style={this.style} src={slot} draggable={false}
                          alt="equipment slot"/>
                 }
@@ -133,7 +133,7 @@ class EquipmentSlot extends InventorySlot {
                      }}>
 
                     { /****** ITEM QUANTITY ******/
-                        this.props.ss.info !== null && this.props.ss.info.stackable &&
+                        this.props.ss.info != null && this.props.ss.info.stackable &&
                         <span className="Item-quantity">{this.normalizeNumber(this.props.ss.quantity)}</span>
                     }
 

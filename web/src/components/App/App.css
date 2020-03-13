@@ -65,3 +65,8 @@ a, a:visited {
     color: #90c040;
     text-decoration: none;
 }
+
+.Hoverable:hover {
+    opacity:0.5;
+    cursor: pointer;
+}

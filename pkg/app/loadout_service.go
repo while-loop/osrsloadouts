@@ -70,6 +70,18 @@ func (a *LoadoutService) deleteLoadout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	claims := auth.GetClaims(r.Context())
+	l, err := a.store.Get(r.Context(), "", "", id)
+	if err != nil {
+		utils.WriteApiError(w, err)
+		return
+	}
+
+	if claims == nil || claims.UserID == "" || claims.UserID != l.Author.Id {
+		utils.WriteErrorStatus(w, http.StatusForbidden, "permission denied")
+		return
+	}
+
 	if err := a.store.Delete(context.Background(), id); err != nil {
 		utils.WriteApiError(w, err)
 		return

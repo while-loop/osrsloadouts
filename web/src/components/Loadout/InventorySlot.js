@@ -34,7 +34,7 @@ class InventorySlot extends React.Component {
 
         if (item != null) {
             opts.push({action: 'Open wiki', onClick: () => this.viewItem(), includeName: false});
-            if (item.stackable) {
+            if (item.stackable && this.props.isOwner) {
                 opts.push({
                     action: Menu.QUANTITY,
                     onClick: () => this.setState({showQuantity: true}),
@@ -42,7 +42,9 @@ class InventorySlot extends React.Component {
                 });
             }
         }
-        opts.push({action: 'Drop', onClick: () => this.removeItem(), includeName: true});
+        if (this.props.isOwner) {
+            opts.push({action: 'Drop', onClick: () => this.removeItem(), includeName: true});
+        }
 
         if (item != null) {
             opts.push({action: 'Examine', onClick: () => toast.info(item.examine), includeName: true});
@@ -124,10 +126,12 @@ class InventorySlot extends React.Component {
     }
 
     removeItem() {
+        let opts = [];
+        if (this.props.isOwner) {
+            opts.push({action: 'Drop', onClick: () => this.removeItem(), includeName: true})
+        }
         this.setState({
-            menuOptions: [
-                {action: 'Drop', onClick: () => this.removeItem(), includeName: true}
-            ],
+            menuOptions: opts,
         });
         this.props.ss.reset();
         this.props.remove(this.props.ss);
@@ -138,6 +142,9 @@ class InventorySlot extends React.Component {
     }
 
     selectItem = (e) => {
+        if (!this.props.isOwner) {
+            return;
+        }
         if (e != null && (e.ctrlKey || e.metaKey) && this.props.lastAdded != null) {
             this.onSelected({id: this.props.lastAdded.id})
             return;
@@ -174,10 +181,10 @@ class InventorySlot extends React.Component {
         }
 
         let osrsinfo = {};
-        if (!this.state.selecting && !this.state.showMenu && this.props.ss.id !== null) {
+        if (!this.state.selecting && !this.state.showMenu && this.props.ss.id != null) {
             osrsinfo = {
                 className: 'osrstooltip',
-                title: this.props.ss.info && this.props.ss.info.name !== null ? this.props.ss.info.name : '',
+                title: this.props.ss.info && this.props.ss.info.name != null ? this.props.ss.info.name : '',
                 'data-type': this.props.ss.info && this.props.ss.info.equipable ? 'bonuses' : 'short',
                 id: this.props.ss.id
             };
@@ -186,7 +193,7 @@ class InventorySlot extends React.Component {
         let image = <div onClick={this.selectItem}
                          style={{width: InventorySlot.slotSize, height: InventorySlot.slotSize}} idx={this.props.id}
                          draggable="false"/>;
-        if (this.props.ss.id !== null) {
+        if (this.props.ss.id != null) {
             image = <img onClick={this.viewItem} idx={this.props.id}
                          draggable="false" src={ItemStore.imgUrl(this.props.ss.id)} alt=""/>;
         }
@@ -217,13 +224,13 @@ class InventorySlot extends React.Component {
                 }
 
                 <div
-                    idx={this.props.id} draggable={this.props.ss.id !== null} onDrop={this.drop}
+                    idx={this.props.id} draggable={this.props.ss.id != null && this.props.isOwner} onDrop={this.drop}
                     onDragStart={this.dragStart} onDragOver={(event) => event.preventDefault()}
                     onDragEnd={this.dragEnd} style={style}
                     className="No-add Inventory-slot">
 
                     { /****** ITEM QUANTITY ******/
-                        this.props.ss.info !== null && this.props.ss.info.stackable &&
+                        this.props.ss.info != null && this.props.ss.info.stackable &&
                         <span className="Item-quantity">{this.normalizeNumber(this.props.ss.quantity)}</span>
                     }
 

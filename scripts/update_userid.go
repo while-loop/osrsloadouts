@@ -24,8 +24,8 @@ func main() {
 		log.Fatal("failed to get db: ", err)
 	}
 
-	oldId := "BsvDd4BnkPavcEL5F3V9JbdPupB3"
-	newId := "iZYVr84r2LRiU8foNeUkDfgxjAR2"
+	oldId := "Z9QKlCsDchMJOsKYjaBpVxDBEbQ2"
+	newId := "CrEWyxRN0GYVePdnZejWlBRYzaJ3"
 	find := bson.M{"author.id": oldId}
 
 	update := bson.M{

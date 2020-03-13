@@ -28,12 +28,12 @@ class Account extends React.Component {
             refreshToken(true);
         }).catch(reason => {
             console.log("failed to update user", reason);
-            if (reason.response !== null && reason.response.status === 409) {
-                this.close("Username already taken");
+            if (reason.response != null && reason.response.status === 409) {
+                this.close("Username already taken", toast.TYPE.ERROR);
                 return
             }
 
-            this.close("Failed to update account: " + reason.toString());
+            this.close("Failed to update account: " + reason.toString(), toast.TYPE.ERROR);
         })
     };
 
@@ -51,7 +51,7 @@ class Account extends React.Component {
             let resp = reason.response;
             console.log("couldn't get user info:", reason);
 
-            if (resp !== null && resp.status === 404) {
+            if (resp != null && resp.status === 404) {
                 this.toastId = toast("Creating account...", {autoClose: false});
                 console.log("user not found, creating...");
 
@@ -63,7 +63,7 @@ class Account extends React.Component {
                     refreshToken(true);
                 }).catch(reason => {
                     console.log("failed to create new user", reason);
-                    this.close("Failed to create account: " + reason.toString());
+                    this.close("Failed to create account: " + reason.toString(), toast.TYPE.ERROR);
                 });
 
                 return;

@@ -59,7 +59,7 @@ func wrapAppHandler(h http.Handler) http.Handler {
 	h = handlers.RecoveryHandler(handlers.PrintRecoveryStack(true))(h)
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Accept", "Accept-Language", "Content-Language", "Origin", "Authorization"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
-	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS", "DELETE"})
 	h = handlers.CORS(
 		headersOk,
 		originsOk,

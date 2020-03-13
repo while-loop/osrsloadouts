@@ -23,6 +23,7 @@ version:
 
 build: clean version ## build service binary file
 	@echo "[build] building js files"
+	@nvm use `cat .nvmrc`
 	npm run-script build
 
 cont: version ## build a cached service container

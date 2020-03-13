@@ -24,6 +24,7 @@ func NewUserService(r *mux.Router, store stores.UserStore, loadoutStore stores.L
 
 	r.HandleFunc("/users", u.createUser).Methods(http.MethodPost)
 	r.HandleFunc("/users/{id}", u.getUser).Methods(http.MethodGet)
+	r.HandleFunc("/users/username/{username}", u.getUserByUsername).Methods(http.MethodGet)
 	r.HandleFunc("/users/{id}/loadouts", u.getUserLoadouts).Methods(http.MethodGet)
 	r.HandleFunc("/users/{id}/feed", u.getFeedLoadouts).Methods(http.MethodGet)
 	r.HandleFunc("/users/{id}", u.deleteUser).Methods(http.MethodDelete)
@@ -31,6 +32,21 @@ func NewUserService(r *mux.Router, store stores.UserStore, loadoutStore stores.L
 	return u
 }
 
+func (u *UserService) getUserByUsername(w http.ResponseWriter, r *http.Request) {
+	username, ok := mux.Vars(r)["username"]
+	if !ok {
+		utils.WriteErrorStatus(w, http.StatusBadRequest, "no username")
+		return
+	}
+
+	user, err := u.store.GetByUsername(context.Background(), username)
+	if err != nil {
+		utils.WriteApiError(w, err)
+		return
+	}
+
+	utils.WriteJson(w, user)
+}
 func (u *UserService) getUser(w http.ResponseWriter, r *http.Request) {
 	id, ok := mux.Vars(r)["id"]
 	if !ok {

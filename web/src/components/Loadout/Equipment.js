@@ -37,7 +37,7 @@ class Equipment extends React.Component {
         let items = {};
         Object.entries(this.props.items).forEach(([slotType, data]) => {
                 let ss = new SlotSchema();
-                if (data !== null) {
+                if (data != null) {
                     ss.id = data.id;
                     ss.quantity = data.quantity;
                 }
@@ -56,7 +56,7 @@ class Equipment extends React.Component {
         let slots = [];
         Object.entries(this.toSS()).forEach(([slotType, ss]) => {
             slots.push(<EquipmentSlot key={slotType} ss={ss} remove={this.changed} insert={this.changed}
-                                      quantity={this.changed}/>)
+                                      quantity={this.changed} isOwner={this.props.isOwner}/>)
         });
 
         return (

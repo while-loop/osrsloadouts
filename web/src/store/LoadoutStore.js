@@ -24,6 +24,7 @@ class LoadoutStore {
 
     static async delete(id) {
         let url = this.baseUrl + `/loadouts/${id}`;
+        console.log("delete uyrl", url)
         return axios.delete(url);
     }
 
