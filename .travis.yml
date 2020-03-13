@@ -32,12 +32,10 @@ before_deploy:
   - echo ${GCLOUD_SERVICE_KEY} | base64 --decode -i > ${HOME}/gcloud-service-key.json
   - gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
   - gcloud auth configure-docker
-  - curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash -s -- -v v2.13.1
-  - helm version
 
 deploy:
   - provider: script
-    script: make context release
+    script: make context release-all
     on:
 #      tags: true
       branch: master

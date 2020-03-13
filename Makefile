@@ -41,8 +41,11 @@ cont: ## build a cached service container
 cont-nc: ## build a non-cached service container
 	docker build --no-cache -t ${IMAGE_NAME} -t ${IMAGE_NAME}:${VERSION} .
 
-deploy: ## deploy lastest built container to docker hub
+context:
 	gcloud config set project ${ORG}
+	gcloud config set run/region us-east1
+
+deploy: context ## deploy lastest built container to docker hub
 	gcloud beta run deploy ${GCLOUD_SERVICE} \
 	--image ${IMAGE_NAME}:${VERSION} \
 	--platform=managed  \
@@ -88,7 +91,6 @@ release-all:
 mongo:
 	mongo "mongodb+srv://osrsinvy-u1age.gcp.mongodb.net/osrsinvy" --username osrsinvy
 
-domains:
-	gcloud config set run/region us-east1
+domains: context
 	gcloud beta run domain-mappings create --service osrs-loadouts-api --platform managed --domain api.osrsloadouts.app
 	gcloud beta run domain-mappings create --service osrs-loadouts-web --platform managed --domain osrsloadouts.app
