@@ -1,5 +1,5 @@
 # build environment
-FROM node:10.16.1-alpine as build
+FROM node:12.18.3-alpine as build
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 
