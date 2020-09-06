@@ -15,6 +15,7 @@ class InventorySlot extends React.Component {
 
     constructor(props) {
         super(props);
+        this.dropVerb = 'Drop';
         this.state = {
             dragging: false,
             items: [],
@@ -43,7 +44,7 @@ class InventorySlot extends React.Component {
             }
         }
         if (this.props.isOwner) {
-            opts.push({action: 'Drop', onClick: () => this.removeItem(), includeName: true});
+            opts.push({action: this.dropVerb, onClick: () => this.removeItem(), includeName: true});
         }
 
         if (item != null) {
@@ -129,7 +130,7 @@ class InventorySlot extends React.Component {
     removeItem() {
         let opts = [];
         if (this.props.isOwner) {
-            opts.push({action: 'Drop', onClick: () => this.removeItem(), includeName: true})
+            opts.push({action: this.dropVerb, onClick: () => this.removeItem(), includeName: true})
         }
         this.setState({
             menuOptions: opts,

@@ -65,6 +65,7 @@ class EquipmentSlot extends InventorySlot {
 
     constructor(props) {
         super(props);
+        this.dropVerb = 'Remove';
         this.state = {
             items: [],
             selecting: false,

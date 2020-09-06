@@ -32,7 +32,7 @@ class Header extends React.Component {
         let loadouts = null;
         let account = (<Link to="/login">Log In</Link>);
         if (this.props.authenticated) {
-            loadouts = (<span><Link to="/loadouts">Loadouts</Link>&nbsp;-&nbsp;</span>);
+            loadouts = (<span><Link to="/loadouts">My Loadouts</Link>&nbsp;-&nbsp;</span>);
             account = (<Link to="/account">My Account</Link>);
         }
 
@@ -42,7 +42,7 @@ class Header extends React.Component {
                     <Link to="/">Home</Link>
                     &nbsp;-&nbsp;
                     {loadouts}
-                    <Link to="/browse">Browse</Link>
+                    <Link to="/browse">Browse Loadouts</Link>
                 </div>
                 <div style={{float: 'right'}}>
                     {account}
