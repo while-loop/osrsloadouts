@@ -55,8 +55,7 @@ class AppRouter extends React.Component {
 
                         <Route exact path="/u/:username" component={Profile}/>
 
-                        <PrivateRoute exact path="/loadouts" component={Loadouts}
-                                      authenticated={authenticated}/>
+                        <PrivateRoute exact path="/loadouts" component={Loadouts} authenticated={authenticated}/>
                         <Route exact path="/l/:id" component={Loadout}/>
                         <Route exact path="/loadouts/new" component={Loadout}/>
 

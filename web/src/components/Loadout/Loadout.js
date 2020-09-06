@@ -148,7 +148,12 @@ class Loadout extends React.Component {
 
     isOwner() {
         let user = currentUser()
-        return user != null && this.state.loadout.author.id === user.uid
+        let author = this.state.loadout.author.id
+        if (author == null || author === "") {
+            return true
+        }
+
+        return user != null && author === user.uid
     }
 
     render() {
