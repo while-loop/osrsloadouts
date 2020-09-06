@@ -94,7 +94,7 @@ class EquipmentSlot extends InventorySlot {
                          style={{width: InventorySlot.slotSize, height: InventorySlot.slotSize}}
                          draggable="false"/>;
         if (this.props.ss.id != null) {
-            image = <img onClick={this.viewItem}
+            image = <img onClick={this.handleItemClick}
                          draggable="false" src={ItemStore.imgUrl(this.props.ss.id)} alt=""/>;
         }
 

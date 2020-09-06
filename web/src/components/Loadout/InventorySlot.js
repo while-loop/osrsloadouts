@@ -33,7 +33,7 @@ class InventorySlot extends React.Component {
         }
 
         if (item != null) {
-            opts.push({action: 'Open wiki', onClick: () => this.viewItem(), includeName: false});
+            opts.push({action: 'Open wiki', onClick: this.openWiki, includeName: false});
             if (item.stackable && this.props.isOwner) {
                 opts.push({
                     action: Menu.QUANTITY,
@@ -72,17 +72,18 @@ class InventorySlot extends React.Component {
         }
     };
 
-    viewItem = (e) => {
+    handleItemClick = (e) => {
         if (e != null && e.shiftKey) {
             // shift click drop
             this.removeItem();
             return;
         }
+    };
 
+    openWiki = () => {
         if (this.props.ss.info == null || this.props.ss.info.wiki_url == null) {
             return;
         }
-
 
         window.open(this.props.ss.info.wiki_url, "_blank");
     };
@@ -194,7 +195,7 @@ class InventorySlot extends React.Component {
                          style={{width: InventorySlot.slotSize, height: InventorySlot.slotSize}} idx={this.props.id}
                          draggable="false"/>;
         if (this.props.ss.id != null) {
-            image = <img onClick={this.viewItem} idx={this.props.id}
+            image = <img onClick={this.handleItemClick} idx={this.props.id}
                          draggable="false" src={ItemStore.imgUrl(this.props.ss.id)} alt=""/>;
         }
 
