@@ -36,6 +36,7 @@ class ItemSelector extends React.Component {
         if (search == null || search === "") {
             return;
         }
+        search = search.toLowerCase();
 
         let opts = this.state.allItems.filter((i) => {
             return i.name.toLowerCase().includes(search)
