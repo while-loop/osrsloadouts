@@ -1,4 +1,5 @@
 import axios from "axios";
+import {BASE_URL} from "../utils/base";
 
 class UserStore {
     static baseUrl = process.env.REACT_APP_API_URL;
@@ -8,7 +9,7 @@ class UserStore {
             return null;
         }
 
-        let url = this.baseUrl + `/users/${id}`;
+        let url = BASE_URL + `/users/${id}`;
         return axios.get(url);
     }
 
@@ -17,21 +18,22 @@ class UserStore {
             return null;
         }
 
-        let url = this.baseUrl + `/users/username/${username}`;
+        let url = BASE_URL + `/users/username/${username}`;
         return axios.get(url);
     }
 
-    static async getLoadoutsByUid(uid, page, limit, sort) {
+    static async getLoadoutsByUid(uid, page, limit, sort, filter) {
         if (uid == null) {
             return null;
         }
 
-        let url = this.baseUrl + `/users/${uid}/loadouts`;
+        let url = BASE_URL + `/users/${uid}/loadouts`;
         return axios.get(url, {
             params: {
                 page: page,
                 limit: limit,
                 sort: sort,
+                filter: filter,
             }
         });
     }
@@ -41,7 +43,7 @@ class UserStore {
             return null;
         }
 
-        let url = this.baseUrl + `/users/${id}`;
+        let url = BASE_URL + `/users/${id}`;
         return axios.put(url, properties);
     }
 
@@ -50,7 +52,7 @@ class UserStore {
             return null;
         }
 
-        let url = this.baseUrl + `/users`;
+        let url = BASE_URL + `/users`;
         return axios.post(url, properties);
     }
 }

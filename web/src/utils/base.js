@@ -3,6 +3,8 @@ import 'firebase/auth';
 import axios from "axios";
 import {toast} from "react-toastify";
 
+export const BASE_URL = process.env.REACT_APP_API_URL;
+
 const app = firebase.initializeApp({
     apiKey: process.env.REACT_APP_FIREBASE_KEY,
     authDomain: process.env.REACT_APP_FIREBASE_DOMAIN,
