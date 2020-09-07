@@ -1,7 +1,6 @@
 package app
 
 import (
-	"context"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/while-loop/osrsinvy/pkg/log"
@@ -39,7 +38,7 @@ func (u *UserService) getUserByUsername(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	user, err := u.store.GetByUsername(context.Background(), username)
+	user, err := u.store.GetByUsername(r.Context(), username)
 	if err != nil {
 		utils.WriteApiError(w, err)
 		return
@@ -54,7 +53,7 @@ func (u *UserService) getUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := u.store.Get(context.Background(), id)
+	user, err := u.store.Get(r.Context(), id)
 	if err != nil {
 		utils.WriteApiError(w, err)
 		return
@@ -130,7 +129,7 @@ func (u *UserService) getUserLoadouts(w http.ResponseWriter, r *http.Request) {
 
 	page := stores.FromRequest(r)
 	log.Info("page ", page)
-	ls, err := u.loadoutstore.GetByUser(context.Background(), id, page)
+	ls, err := u.loadoutstore.GetByUser(r.Context(), id, page)
 	if err != nil {
 		utils.WriteApiError(w, err)
 		return

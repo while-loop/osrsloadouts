@@ -52,6 +52,9 @@ deploy: context ## deploy lastest built container to docker hub
 	--allow-unauthenticated \
 	--set-env-vars OSRSLOADOUTS_MONGO_ADDR="${OSRSLOADOUTS_MONGO_ADDR}",OSRSLOADOUTS_MONGO_DB=${OSRSLOADOUTS_MONGO_DB}
 
+dev:
+	honcho run -e .env go run cmd/osrsinvy/main.go
+
 push: ## deploy lastest built container to docker hub
 	docker push ${IMAGE_NAME}:${VERSION}
 

@@ -3,7 +3,7 @@ import UserStore from "../../store/UserStore";
 import {toast} from "react-toastify";
 import ReactTable from "react-table";
 import moment from "moment";
-import {dateString} from "../../utils/js";
+import {dateString, getSort} from "../../utils/js";
 
 class Profile extends React.Component {
     toastId = null;
@@ -38,14 +38,12 @@ class Profile extends React.Component {
         // Whenever the table model changes, or the user sorts or changes pages, this method gets called and passed the current table model.
         // You can set the `loading` prop of the table to true to use the built-in one or show you're own loading bar if you want.
         this.setState({loading: false});
-        // Request the data however you want.  Here, we'll use our mocked service we created earlier
         if (this.state.user.id == null || this.state.user.id === '') {
             return;
         }
 
 
-        console.log(this.state.user.id, state.pageSize, state.page, state.sorted, state.filtered);
-        UserStore.getByUid(this.state.user.id, state.page, state.pageSize).then(r => {
+        UserStore.getLoadoutsByUid(this.state.user.id, state.page, state.pageSize, getSort(state.sorted)).then(r => {
             this.setState({
                 data: r.data.loadouts || [],
                 pages: Math.ceil(r.data.total / r.data.limit),
@@ -123,8 +121,8 @@ class Profile extends React.Component {
                     pages={pages} // Display the total number of pages
                     loading={loading} // Display the loading overlay when we need it
                     onFetchData={this.fetchData} // Request new data when things change
-                    defaultPageSize={15}
-                    pageSizeOptions={[5, 15, 30]}
+                    defaultPageSize={30}
+                    pageSizeOptions={[15, 30, 60]}
                     noDataText="No loadouts found"
                     className="-striped -highlight"
                     getTdProps={(state, rowInfo, column, instance) => {

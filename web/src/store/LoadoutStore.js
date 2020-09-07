@@ -34,6 +34,8 @@ class LoadoutStore {
             params: {
                 page: page,
                 limit: limit,
+                sort: sort,
+                filter: filter,
             }
         });
     }

@@ -21,7 +21,7 @@ class UserStore {
         return axios.get(url);
     }
 
-    static async getByUid(uid, page, limit) {
+    static async getLoadoutsByUid(uid, page, limit, sort) {
         if (uid == null) {
             return null;
         }
@@ -31,6 +31,7 @@ class UserStore {
             params: {
                 page: page,
                 limit: limit,
+                sort: sort,
             }
         });
     }

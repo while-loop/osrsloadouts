@@ -7,6 +7,7 @@ import UserStore from "../../store/UserStore";
 import {currentUser} from "../../utils/base";
 import moment from "moment";
 import {toast} from "react-toastify";
+import {getSort} from "../../utils/js";
 
 class Loadouts extends React.Component {
     state = {
@@ -22,8 +23,7 @@ class Loadouts extends React.Component {
         // Request the data however you want.  Here, we'll use our mocked service we created earlier
 
 
-        console.log(state.pageSize, state.page, state.sorted, state.filtered);
-        UserStore.getByUid(currentUser().uid, state.page, state.pageSize).then(r => {
+        UserStore.getLoadoutsByUid(currentUser().uid, state.page, state.pageSize, getSort(state.sorted)).then(r => {
             this.setState({
                 data: r.data.loadouts || [],
                 pages: Math.ceil(r.data.total / r.data.limit),
@@ -89,8 +89,8 @@ class Loadouts extends React.Component {
                     pages={pages} // Display the total number of pages
                     loading={loading} // Display the loading overlay when we need it
                     onFetchData={this.fetchData} // Request new data when things change
-                    defaultPageSize={15}
-                    pageSizeOptions={[5, 15, 30]}
+                    defaultPageSize={30}
+                    pageSizeOptions={[15, 30, 60]}
                     noDataText="No loadouts found"
                     className="-striped -highlight"
                     getTdProps={(state, rowInfo, column, instance) => {
