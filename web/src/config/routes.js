@@ -10,6 +10,7 @@ import app, {refreshToken} from "../utils/base"
 import Login from "../components/Login/Login";
 import Account from "../components/Account/Account";
 import Profile from "../components/Account/Profile";
+import Contact from "../components/Contact/Contact";
 
 class AppRouter extends React.Component {
     state = {
@@ -49,6 +50,7 @@ class AppRouter extends React.Component {
                 <App authenticated={authenticated}>
                     <div>
                         <Route exact path="/" component={Home}/>
+                        <Route exact path="/contact" component={Contact}/>
 
                         <Route exact path="/login" component={Login}/>
                         <PrivateRoute exact path="/account" component={Account} authenticated={authenticated}/>

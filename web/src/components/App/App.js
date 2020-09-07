@@ -43,6 +43,8 @@ class Header extends React.Component {
                     &nbsp;-&nbsp;
                     {loadouts}
                     <Link to="/browse">Browse Loadouts</Link>
+                    &nbsp;-&nbsp;
+                    <Link to="/contact">Contact</Link>
                 </div>
                 <div style={{float: 'right'}}>
                     {account}
