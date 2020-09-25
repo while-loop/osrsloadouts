@@ -1,0 +1,5 @@
+creation_rules:
+    # personal & ci/cd
+    - pgp: >-
+        78D82AB8CAE19082C4B7D9334E37876D11DE0C55,
+        EB350E0F79CECDA59C48C045EBA3425A0C73E4BB

@@ -14,7 +14,7 @@ key.pem
 tester
 .env
 .env.*
-
+*.key
 
 ## Go.gitignore ##
 # Binaries for programs and plugins
