@@ -53,7 +53,7 @@ deploy: context ## deploy lastest built container to docker hub
 	--set-env-vars OSRSLOADOUTS_MONGO_ADDR="${OSRSLOADOUTS_MONGO_ADDR}",OSRSLOADOUTS_MONGO_DB=${OSRSLOADOUTS_MONGO_DB}
 
 dev:
-	honcho run -e .env go run cmd/osrsinvy/main.go
+	sops exec-env secrets/dev.env go run cmd/osrsinvy/main.go
 
 push: ## deploy lastest built container to docker hub
 	docker push ${IMAGE_NAME}:${VERSION}
@@ -87,7 +87,7 @@ db:
 	mongo:4.0.12-xenial
 
 backup:
-	honcho run -e <(sops -d secrets/prod.env) ./scripts/backup-mongo.sh
+	sops exec-env secrets/prod.env ./scripts/backup-mongo.sh
 
 db-sync: backup
 	$(eval backup_file=`ls -tr /tmp | grep osrsinvy | sort | tail -n 1`)
@@ -97,7 +97,7 @@ db-sync: backup
 release-all:
 	make cont && make -C web cont
 	make push && make -C web push
-	honcho run -e .env make deploy && make -C web deploy
+	sops exec-env secrets/prod.env 'make deploy && make -C web deploy'
 
 mongo:
 	mongo "mongodb+srv://osrsinvy-u1age.gcp.mongodb.net" --username osrsinvy
