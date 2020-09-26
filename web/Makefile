@@ -8,7 +8,7 @@ GCLOUD_SERVICE	:= ${ORG}-${SERVICE}
 
 .PHONY: deps test build cont cont-nc all deploy help clean
 .DEFAULT_GOAL := build
-SHELL:=/bin/sh
+SHELL:=/bin/bash
 
 help: ## halp
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -24,8 +24,7 @@ version:
 
 build: clean version ## build service binary file
 	@echo "[build] building js files"
-	@nvm use `cat .nvmrc`
-	npm run-script build
+	sops exec-env ../secrets/web.prod.env 'npm run-script build'
 
 cont: version ## build a cached service container
 	docker build -t ${IMAGE_NAME} -t ${IMAGE_NAME}:${VERSION} .
@@ -52,4 +51,7 @@ test: ## test  code
 	@npm run test
 
 dev:
-	NODE_ENV=development npm start
+	NODE_ENV=development sops exec-env ../secrets/web.dev.env 'npm start'
+
+prod:
+	NODE_ENV=production sops exec-env ../secrets/web.prod.env 'npm start'
