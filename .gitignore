@@ -12,9 +12,10 @@ osrs-loadouts-*.json
 cert.pem
 key.pem
 tester
-.env
+*.env
 .env.*
 *.key
+data/
 
 ## Go.gitignore ##
 # Binaries for programs and plugins

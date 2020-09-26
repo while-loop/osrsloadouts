@@ -12,7 +12,7 @@ GCLOUD_SERVICE	:= ${ORG}-${SERVICE}
 
 .PHONY: proto deps test build cont cont-nc all deploy help clean lint
 .DEFAULT_GOAL := build
-SHELL:=/bin/sh
+SHELL:=/bin/bash
 GO111MODULE=on
 
 help: ## halp
@@ -80,11 +80,19 @@ test-all: lint ## test service code
 db:
 	docker run -d \
 	--name osrsloadouts-mongo \
-	-v `pwd`/tmp/db:/data/db \
-	-v `pwd`/scripts:/docker-entrypoint-initdb.d \
+	-v `pwd`/data/db:/data/db \
+	-v `pwd`/scripts/migrations/up:/docker-entrypoint-initdb.d \
 	-e MONGO_INITDB_DATABASE=osrsinvy \
 	-p 27017:27017 \
 	mongo:4.0.12-xenial
+
+backup:
+	honcho run -e <(sops -d secrets/prod.env) ./scripts/backup-mongo.sh
+
+db-sync: backup
+	$(eval backup_file=`ls -tr /tmp | grep osrsinvy | sort | tail -n 1`)
+	echo backup ${backup_file}
+	mongorestore --stopOnError --drop --gzip --archive=/tmp/${backup_file}
 
 release-all:
 	make cont && make -C web cont
@@ -92,7 +100,7 @@ release-all:
 	honcho run -e .env make deploy && make -C web deploy
 
 mongo:
-	mongo "mongodb+srv://osrsinvy-u1age.gcp.mongodb.net/osrsinvy" --username osrsinvy
+	mongo "mongodb+srv://osrsinvy-u1age.gcp.mongodb.net" --username osrsinvy
 
 domains: context
 	gcloud beta run domain-mappings create --service osrs-loadouts-api --platform managed --domain api.osrsloadouts.app
