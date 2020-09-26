@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 BUCKET_NAME=osrsloadouts-backups
 
 BACKUP_NAME="${OSRSLOADOUTS_MONGO_DB}_`date +"%Y%m%d_%H%M%S"`.dump.gz"

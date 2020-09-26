@@ -1,39 +1,29 @@
 name: DB Backup
 on:
   push:
-    branches: [ master ]
+    branches: [ db-backup ]
   workflow_dispatch: {}
   schedule:
       # nightly @ midnight
     - cron: "0 0 * * *"
 
 jobs:
-  update:
-    runs-on: ubuntu-latest
+  backup:
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
       - name: Import GPG key
-        id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v3
         with:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-
-      - name: GPG user IDs
-        run: |
-          echo "fingerprint: ${{ steps.import_gpg.outputs.fingerprint }}"
-          echo "email:       ${{ steps.import_gpg.outputs.email }}"
       - name: Sops Binary Installer
         uses: mdgreenwald/mozilla-sops-action@v1
         with:
           version: 'v3.5.0'
-
-      - name: glcloud install
-        uses: actions-hub/gcloud@master
-        env:
-          PROJECT_ID:  ${{ secrets.PROJECT_ID }}
-          APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-
-      - name: Run a one-line script
+      - name: Backup mongo db
         run: |
-          sops exec-env secrets/prod.env 'bash scripts/backup_mongo.sh'
+          sops -d secrets/service-account.json > /tmp/account.json
+          gcloud auth activate-service-account --key-file=/tmp/account.json
+          gcloud config set project "${{ secrets.PROJECT_ID }}"
+          make backup
