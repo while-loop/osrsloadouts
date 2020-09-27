@@ -23,7 +23,7 @@ const (
 
 type ItemQuantity struct {
 	Quantity int `json:"quantity," bson:"quantity"`
-	Id       int `json:"id," bson:"id"`
+	Id       *int `json:"id," bson:"id"`
 }
 
 type Author struct {
@@ -32,18 +32,18 @@ type Author struct {
 }
 
 type Loadout struct {
-	Id          string                  `json:"id," bson:"_id"`
-	Title       string                  `json:"title" bson:"title"`
-	Author      Author                  `json:"author" bson:"author"`
-	Description string                  `json:"description" bson:"description"`
-	Created     time.Time               `json:"created" bson:"created"`
-	Updated     time.Time               `json:"updated" bson:"updated"`
-	Copies      uint32                  `json:"copies" bson:"copies"`
-	Favorites   uint32                  `json:"favorites" bson:"favorites"`
-	Favorited   bool                    `json:"favorited" bson:"favorited"`
-	Views       uint32                  `json:"views" bson:"views"`
-	Tags        []string                `json:"tags" bson:"tags"`
-	Parent      string                  `json:"parent" bson:"parent"`
+	Id          string                   `json:"id," bson:"_id"`
+	Title       string                   `json:"title" bson:"title"`
+	Author      Author                   `json:"author" bson:"author"`
+	Description string                   `json:"description" bson:"description"`
+	Created     time.Time                `json:"created" bson:"created"`
+	Updated     time.Time                `json:"updated" bson:"updated"`
+	Copies      uint32                   `json:"copies" bson:"copies"`
+	Favorites   uint32                   `json:"favorites" bson:"favorites"`
+	Favorited   bool                     `json:"favorited" bson:"favorited"`
+	Views       uint32                   `json:"views" bson:"views"`
+	Tags        []string                 `json:"tags" bson:"tags"`
+	Parent      string                   `json:"parent" bson:"parent"`
 	Inventory   [7][4]ItemQuantity      `json:"inventory" bson:"inventory"`
 	Equipment   map[string]ItemQuantity `json:"equipment" bson:"equipment"`
 }
@@ -108,7 +108,7 @@ func NewLoadoutStore(db *mongo.Database) LoadoutStore {
 }
 
 func (m *mongoLoadout) Create(ctx context.Context, l *Loadout) (*Loadout, *errors.ApiError) {
-	l.Created = time.Now()
+	l.Created = time.Now().UTC()
 	l.Updated = l.Created
 
 	id, err := Create(ctx, m.coll, l, true)
@@ -123,7 +123,7 @@ func (m *mongoLoadout) Create(ctx context.Context, l *Loadout) (*Loadout, *error
 func (m *mongoLoadout) CreateAll(ctx context.Context, ls []*Loadout) *errors.ApiError {
 	docs := make([]interface{}, len(ls))
 	for i, l := range ls {
-		l.Created = time.Now()
+		l.Created = time.Now().UTC()
 		l.Updated = l.Created
 		m := utils.ToM(l)
 		m["_id"] = uuid.New().String()
@@ -145,7 +145,7 @@ func (m *mongoLoadout) Get(ctx context.Context, id string) (*Loadout, *errors.Ap
 
 func (m *mongoLoadout) Update(ctx context.Context, l *Loadout) (*Loadout, *errors.ApiError) {
 	newM := utils.FilterM(utils.ToM(l), validLoadoutKeys)
-	newM["updated"] = time.Now()
+	newM["updated"] = time.Now().UTC()
 	err := Update(ctx, m.coll, l.Id, newM, &l)
 	if err != nil {
 		return nil, err
@@ -166,10 +166,7 @@ func (m *mongoLoadout) getAll(ctx context.Context, filter bson.M, p *Pagination)
 		Loadouts: nil,
 	}
 
-	opts := options.Find().SetSkip(int64(p.Page * p.Limit)).SetLimit(int64(p.Limit))
-	if p.Sort != "" {
-		opts.SetSort(p.GetSort())
-	}
+	opts := options.Find().SetSkip(int64(p.Page * p.Limit)).SetLimit(int64(p.Limit)).SetSort(p.GetSort())
 
 	cur, err := m.coll.Find(ctx, filter, opts)
 	if err != nil {

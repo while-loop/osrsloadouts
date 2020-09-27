@@ -34,7 +34,7 @@ func FromRequest(r *http.Request) *Pagination {
 
 func (p Pagination) GetSort() bson.D {
 	if p.Sort == "" {
-		return nil
+		p.Sort = "-created"
 	}
 
 	order := 1

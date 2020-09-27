@@ -52,7 +52,7 @@ func (c *LoadoutController) Get(ctx context.Context, id, uid, ip string) (*store
 	}
 	l := lr.Loadouts[0]
 
-	go c.updateViewCount(ctx, l, uid, ip)
+	go c.updateViewCount(context.Background(), l, uid, ip)
 	return l, nil
 }
 
@@ -102,7 +102,7 @@ func (c *LoadoutController) Copy(ctx context.Context, id string, author store.Au
 	}
 
 	go func() {
-		if err := c.lStore.IncrementCounter(ctx, ogId, store.CopiesKey, 1); err != nil {
+		if err := c.lStore.IncrementCounter(context.Background(), ogId, store.CopiesKey, 1); err != nil {
 			log.Warnf("failed to inc copy %s: %v", ogId, err)
 		}
 	}()
@@ -124,14 +124,15 @@ func (c *LoadoutController) GetByUser(ctx context.Context, id string, p *store.P
 
 func (c *LoadoutController) wrapFavs(ctx context.Context, fn func() (*store.LoadoutResponse, *errors.ApiError)) (*store.LoadoutResponse, *errors.ApiError) {
 	favsChan := c.fetchFavs(ctx)
-	defer close(favsChan)
 
 	ls, err := fn()
 	if err != nil {
 		return nil, err
 	}
 
-	c.setFavs(ctx, favsChan, ls.Loadouts)
+	if favsChan != nil {
+		c.setFavs(ctx, favsChan, ls.Loadouts)
+	}
 	return ls, nil
 }
 
@@ -146,7 +147,7 @@ func (c *LoadoutController) fetchFavs(ctx context.Context) chan map[string]store
 		favs, err := c.usStore.GetFavorites(ctx, claims.UserID)
 		if err == nil {
 			favsChan <- favs
-			return nil
+			return favsChan
 		}
 		log.Error(errors.Wrapf(err, "failed to get user favs %s", claims.UserID))
 	}
@@ -174,6 +175,10 @@ func (c *LoadoutController) setFavs(ctx context.Context, favsChan chan map[strin
 }
 
 func (c *LoadoutController) updateViewCount(ctx context.Context, l *store.Loadout, uid string, ip string) {
+	if ip == "" && uid == "" {
+		return
+	}
+
 	viewId := ip
 	if uid != "" {
 		viewId = uid
@@ -192,5 +197,30 @@ func (c *LoadoutController) updateViewCount(ctx context.Context, l *store.Loadou
 			log.Warn(err)
 		}
 	}
+}
+
+func (c *LoadoutController) SetFavorite(ctx context.Context, loadoutId, uid string, fav bool) *errors.ApiError {
+	// make sure this loadout exists
+	_, err := c.lStore.Get(ctx, loadoutId)
+	if err != nil {
+		return err
+	}
+
+	ok, err := c.usStore.SetFavorite(ctx, uid, loadoutId, fav)
+	if err != nil {
+		return err
+	}
+
+	delta := 1
+	if !fav {
+		delta = -1
+	}
+	if ok {
+		if err := c.lStore.IncrementCounter(ctx, loadoutId, store.FavoritesKey, delta); err != nil {
+			log.Warnf("failed to inc fav loadout counter %s %s %t: %v", loadoutId, uid, fav, err)
+		}
+	}
+
+	return nil
 }
 

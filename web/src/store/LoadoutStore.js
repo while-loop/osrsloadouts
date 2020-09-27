@@ -54,6 +54,26 @@ class LoadoutStore {
             }
         });
     }
+
+    static async favoriteLoadout(uid, fav) {
+        if (uid == null) {
+            return null;
+        }
+
+        let url = BASE_URL + `/loadouts/${uid}/favorite`;
+        return axios.post(url, {
+            favorite: fav,
+        });
+    }
+
+    static async copyLoadout(uid) {
+        if (uid == null) {
+            return null;
+        }
+
+        let url = BASE_URL + `/loadouts/${uid}/copy`;
+        return axios.post(url, {});
+    }
 }
 
 export default LoadoutStore;

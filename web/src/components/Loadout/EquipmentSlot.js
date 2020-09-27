@@ -7,6 +7,7 @@ import InventorySlot from "./InventorySlot";
 import PropTypes from "prop-types";
 import SlotSchema from "./SlotSchema";
 import ItemStore from "../../store/ItemStore";
+import {normalizeNumber} from "../../utils/js";
 
 class EquipmentSlot extends InventorySlot {
     static equipWidth = 202;
@@ -135,7 +136,7 @@ class EquipmentSlot extends InventorySlot {
 
                     { /****** ITEM QUANTITY ******/
                         this.props.ss.info != null && this.props.ss.info.stackable &&
-                        <span className="Item-quantity">{this.normalizeNumber(this.props.ss.quantity)}</span>
+                        <span className="Item-quantity">{this.colorNumber(this.props.ss.quantity)}</span>
                     }
 
                     <div {...osrsinfo}>
@@ -145,6 +146,11 @@ class EquipmentSlot extends InventorySlot {
             </div>
         );
     }
+
+    colorNumber = (number) => {
+        const norm = normalizeNumber(number);
+        return <span style={{color: norm.color}}>{norm.number}</span>;
+    };
 }
 
 EquipmentSlot.propTypes = {

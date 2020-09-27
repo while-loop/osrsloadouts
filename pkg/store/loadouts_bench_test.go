@@ -46,7 +46,7 @@ func seedLoadouts(count int, b *testing.B) {
 		log.Fatal(apiErr)
 	}
 
-	start := time.Now()
+	start := time.Now().UTC()
 	loaded := 0
 	loadouts := make([]*Loadout, int(math.Min(500000, float64(count))))
 

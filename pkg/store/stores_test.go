@@ -36,6 +36,10 @@ func getUserStoreB(b testing.TB) UserStore {
 	return NewUserStore(getDb(b))
 }
 
+func getUserStats(b testing.TB) UserStatsStore {
+	return NewUserStatsStore(getDb(b))
+}
+
 func emptyColl(collName string, t testing.TB) {
 	_, err := getDb(t).Collection(collName).DeleteMany(context.Background(), bson.M{})
 	if err != nil {

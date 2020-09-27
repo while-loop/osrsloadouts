@@ -22,13 +22,14 @@ func NewLoadoutService(r *mux.Router, lCtlr *controller.LoadoutController, verif
 	}
 
 	r.HandleFunc("/loadouts", verifier.HandlerFunc(l.createLoadout)).Methods(http.MethodPost)
-	r.HandleFunc("/loadouts/{id}", l.getLoadout).Methods(http.MethodGet)
+	r.HandleFunc("/loadouts/{id}", verifier.HandlerFuncOpt(l.getLoadout)).Methods(http.MethodGet)
 	r.HandleFunc("/loadouts/{id}", verifier.HandlerFunc(l.updateLoadout)).Methods(http.MethodPut)
 	r.HandleFunc("/loadouts/{id}", verifier.HandlerFunc(l.deleteLoadout)).Methods(http.MethodDelete)
 
-	r.HandleFunc("/loadouts", l.getLoadouts).Methods(http.MethodGet)
+	r.HandleFunc("/loadouts", verifier.HandlerFuncOpt(l.getLoadouts)).Methods(http.MethodGet)
 	r.HandleFunc("/loadouts/{id}/copy", verifier.HandlerFunc(l.copyLoadout)).Methods(http.MethodPost)
-	r.HandleFunc("/loadouts/user/{id}", l.getUserLoadouts).Methods(http.MethodGet)
+	r.HandleFunc("/loadouts/{id}/favorite", verifier.HandlerFunc(l.favoriteLoadout)).Methods(http.MethodPost)
+	r.HandleFunc("/loadouts/user/{id}", verifier.HandlerFuncOpt(l.getUserLoadouts)).Methods(http.MethodGet)
 	return l
 }
 
@@ -69,7 +70,7 @@ func (a *LoadoutService) getLoadout(w http.ResponseWriter, r *http.Request) {
 		uid = claims.UserID
 	}
 
-	l, err := a.lCtlr.Get(r.Context(), uid, ip, id)
+	l, err := a.lCtlr.Get(r.Context(), id, uid, ip)
 	if err != nil {
 		utils.WriteApiError(w, err)
 		return
@@ -113,7 +114,7 @@ func (a *LoadoutService) deleteLoadout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	l, err := a.lCtlr.Get(r.Context(), "", "", id)
+	l, err := a.lCtlr.Get(r.Context(), id, "", "")
 	if err != nil {
 		utils.WriteApiError(w, err)
 		return
@@ -180,4 +181,32 @@ func (a *LoadoutService) getUserLoadouts(w http.ResponseWriter, r *http.Request)
 	}
 
 	utils.WriteJson(w, ls)
+}
+
+func (a *LoadoutService) favoriteLoadout(w http.ResponseWriter, r *http.Request) {
+	id, ok := mux.Vars(r)["id"]
+	if !ok {
+		utils.WriteErrorStatus(w, http.StatusBadRequest, "no loadout id")
+		return
+	}
+
+	claims := auth.GetClaims(r.Context())
+	if claims == nil {
+		utils.WriteErrorStatus(w, http.StatusUnauthorized, "no claims found")
+		return
+	}
+
+	var body map[string]bool
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		utils.WriteErrorStatus(w, http.StatusBadRequest, "unable to parse favorite")
+		return
+	}
+
+	err := a.lCtlr.SetFavorite(r.Context(), id, claims.UserID, body["favorite"])
+	if err != nil {
+		utils.WriteApiError(w, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

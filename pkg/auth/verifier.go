@@ -9,6 +9,7 @@ import (
 type Verifier interface {
 	Verify(ctx context.Context, idToken string) (*auth.Token, error)
 	HandlerFunc(handlerFunc http.HandlerFunc) http.HandlerFunc
+	HandlerFuncOpt(handlerFunc http.HandlerFunc) http.HandlerFunc
 }
 
 type firebaseVerifier struct {
@@ -16,7 +17,14 @@ type firebaseVerifier struct {
 }
 
 func (f *firebaseVerifier) HandlerFunc(handlerFunc http.HandlerFunc) http.HandlerFunc {
-	c := &ClaimsHandler{h: handlerFunc, client: f}
+	c := &ClaimsHandler{h: handlerFunc, client: f, optional: false}
+	return func(w http.ResponseWriter, r *http.Request) {
+		c.ServeHTTP(w, r)
+	}
+}
+
+func (f *firebaseVerifier) HandlerFuncOpt(handlerFunc http.HandlerFunc) http.HandlerFunc {
+	c := &ClaimsHandler{h: handlerFunc, client: f, optional: true}
 	return func(w http.ResponseWriter, r *http.Request) {
 		c.ServeHTTP(w, r)
 	}
@@ -32,6 +40,11 @@ type mockVerifier struct {
 func (m *mockVerifier) HandlerFunc(handlerFunc http.HandlerFunc) http.HandlerFunc {
 	panic("implement me")
 }
+
+func (m *mockVerifier) HandlerFuncOpt(handlerFunc http.HandlerFunc) http.HandlerFunc {
+	panic("implement me")
+}
+
 func (m *mockVerifier) Verify(ctx context.Context, idToken string) (*auth.Token, error) {
 	return m.f(ctx, idToken)
 }

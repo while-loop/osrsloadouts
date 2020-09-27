@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/while-loop/osrsinvy/pkg/errors"
+	"github.com/while-loop/osrsinvy/pkg/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
@@ -86,7 +87,7 @@ func (m *mongoUserStats) setFavorite(ctx context.Context, uid string, loadoutId 
 		verb = "undo"
 	}
 
-	action := bson.M{"favorites." + loadoutId: bson.M{"created": time.Now()}}
+	action := bson.M{"favorites." + loadoutId: bson.M{"created": time.Now().UTC()}}
 	update := bson.M{}
 	if favorite {
 		update["$set"] = action
@@ -99,6 +100,8 @@ func (m *mongoUserStats) setFavorite(ctx context.Context, uid string, loadoutId 
 		errors.Newf("failed to %s fav %s %s %t", uid, loadoutId, verb, retried),
 		fmt.Sprintf("Unable to %s favorite", verb),
 	)
+
+	log.Info(filter, favorite, update)
 
 	res, err := m.coll.UpdateOne(ctx, filter, update)
 	if err != nil {
@@ -132,7 +135,7 @@ func (m *mongoUserStats) setViewed(ctx context.Context, uid string, loadoutId st
 	update := bson.M{
 		"$set": bson.M{
 			"views." + loadoutId: bson.M{
-				"created": time.Now(),
+				"created": time.Now().UTC(),
 			},
 		},
 	}

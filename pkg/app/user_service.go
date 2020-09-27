@@ -15,16 +15,16 @@ type UserService struct {
 	uCtlr *controller.UserController
 }
 
-func NewUserService(r *mux.Router, uCtlr *controller.UserController) *UserService {
+func NewUserService(r *mux.Router, uCtlr *controller.UserController, verifier auth.Verifier) *UserService {
 	u := &UserService{
 		uCtlr: uCtlr,
 	}
 
-	r.HandleFunc("/users", u.createUser).Methods(http.MethodPost)
-	r.HandleFunc("/users/{id}", u.getUser).Methods(http.MethodGet)
-	r.HandleFunc("/users/username/{username}", u.getByUsername).Methods(http.MethodGet)
-	r.HandleFunc("/users/{id}", u.deleteUser).Methods(http.MethodDelete)
-	r.HandleFunc("/users/{id}", u.updateUser).Methods(http.MethodPut)
+	r.HandleFunc("/users", verifier.HandlerFunc(u.createUser)).Methods(http.MethodPost)
+	r.HandleFunc("/users/{id}", verifier.HandlerFuncOpt(u.getUser)).Methods(http.MethodGet)
+	r.HandleFunc("/users/username/{username}", verifier.HandlerFuncOpt(u.getByUsername)).Methods(http.MethodGet)
+	r.HandleFunc("/users/{id}", verifier.HandlerFunc(u.deleteUser)).Methods(http.MethodDelete)
+	r.HandleFunc("/users/{id}", verifier.HandlerFunc(u.updateUser)).Methods(http.MethodPut)
 	return u
 }
 

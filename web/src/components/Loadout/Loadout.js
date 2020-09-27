@@ -15,7 +15,9 @@ import TextPopup from "./TextPopup";
 import {loadout2setup, setup2loadout} from "../../utils/inventory-setups";
 import {currentUser} from "../../utils/base";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
+import {faEye, faEyeSlash, faHeart as heartSolid, faCopy} from "@fortawesome/free-solid-svg-icons";
+import {faHeart as heartOutline} from "@fortawesome/free-regular-svg-icons";
+import Humanize from "humanize-plus";
 
 class Loadout extends React.Component {
     toastId = null;
@@ -156,6 +158,47 @@ class Loadout extends React.Component {
         return user != null && author === user.uid
     }
 
+    copyLoadout = () => {
+        if (this.state.loadout.id == null) {
+            return
+        }
+        this.toastId = toast("Copying loadout...", {autoClose: false});
+        let close = (msg, type = toast.TYPE.INFO) => {
+            toast.update(this.toastId, {render: msg, type: type, autoClose: TOAST_DELAY});
+        };
+
+        LoadoutStore.copyLoadout(this.state.loadout.id).then(r => {
+            close("Copied ✔")
+            this.props.history.push(`/l/${r.data.id}`)
+            this.setState({loadout:r.data})
+        }).catch(reason => {
+            console.log("failed to copy loadout", reason);
+            close("Failed to copy loadout: " + reason.toString(), toast.TYPE.ERROR);
+        })
+    }
+    favLoadout = () => {
+        if (this.state.loadout.id == null) {
+            return
+        }
+
+        const newVal = !this.state.loadout.favorited;
+        LoadoutStore.favoriteLoadout(this.state.loadout.id, newVal).then(res => {
+        }).catch(reason => {
+            console.log("failed to fav loadout", reason);
+            toast("Failed to update favorite: " + reason.toString(), {type: toast.TYPE.ERROR, autoClose: TOAST_DELAY});
+            this.setState((state) => {
+                state.loadout.favorited = !newVal;
+                state.loadout.favorites += newVal ? -1 : 1;
+                return state
+            })
+        })
+        this.setState((state) => {
+            state.loadout.favorited = newVal;
+            state.loadout.favorites += newVal ? 1 : -1;
+            return state
+        })
+    }
+
     render() {
         if (this.state.loadout == null) {
             return <span>{this.state.status}</span>
@@ -197,14 +240,26 @@ class Loadout extends React.Component {
                             <span
                                 title={created.format('MMM Do YY, h:mm:ss a')}>Created: {created.format('MMM Do YYYY')}</span>
                             <span title={updated.format('MMM Do YY, h:mm:ss a')}>Updated: {updated.fromNow()}</span>
-                            {/*<div className="Loadout-info-stats">*/}
-                            {/*    <span title="views"><FontAwesomeIcon*/}
-                            {/*        icon={faEye}/>: {Humanize.compactInteger(this.state.loadout.views, 1)}</span>*/}
-                            {/*    <span title="favorites"><FontAwesomeIcon*/}
-                            {/*        icon={faStar}/>: {Humanize.compactInteger(this.state.loadout.favorites, 1)}</span>*/}
-                            {/*    <span title="copies"><FontAwesomeIcon*/}
-                            {/*        icon={faCodeBranch}/>: {Humanize.compactInteger(this.state.loadout.copies, 1)}</span>*/}
-                            {/*</div>*/}
+                            <div className="Loadout-info-stats">
+                                <span title={"views: " + this.state.loadout.views}><FontAwesomeIcon
+                                    icon={faEye}/>: {Humanize.compactInteger(this.state.loadout.views, 1)}</span>
+                                <span
+                                    title={"favorites: " + this.state.loadout.favorites}>
+                                    <FontAwesomeIcon
+                                        style={{cursor: "pointer"}}
+                                        onClick={this.favLoadout}
+                                        icon={this.state.loadout.favorited ? heartSolid : heartOutline}/>
+                                        : {Humanize.compactInteger(this.state.loadout.favorites, 1)}
+                                </span>
+                                <span
+                                    title={"copies: " + this.state.loadout.copies}>
+                                    <FontAwesomeIcon
+                                        style={{cursor: "pointer"}}
+                                        onClick={this.copyLoadout}
+                                        icon={faCopy}/>
+                                        : {Humanize.compactInteger(this.state.loadout.copies, 1)}
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <div className="Loadout-tags">
@@ -260,7 +315,9 @@ class Loadout extends React.Component {
                                 <li>Click an empty inventory/equipment slot to search items</li>
                                 <li>Right click items for menu</li>
                                 <li>Shift+Click to drop item</li>
-                                <li>Ctrl+Click (Cmd+Click on macOS) an empty slot to fill with previously selected item</li>
+                                <li>Ctrl+Click (Cmd+Click on macOS) an empty slot to fill with previously selected
+                                    item
+                                </li>
                                 <li>Drag and Drop items to swap slots</li>
                                 <li>Right click stackable items to set quantity</li>
                                 <li>Export/Import loadouts to the <code style={{fontSize: '.7em'}}><u>Inventory
@@ -425,6 +482,10 @@ class CreatableInputOnly extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (_.isEqual(this.props.tags, prevProps.tags)) {
+            return;
+        }
+
+        if (this.props.tags == null) {
             return;
         }
 

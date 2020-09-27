@@ -8,6 +8,7 @@ import SlotSchema from "./SlotSchema";
 import ItemSelector from "./ItemSelector";
 import _ from "lodash";
 import {toast} from "react-toastify";
+import {normalizeNumber} from "../../utils/js";
 
 
 class InventorySlot extends React.Component {
@@ -233,7 +234,7 @@ class InventorySlot extends React.Component {
 
                     { /****** ITEM QUANTITY ******/
                         this.props.ss.info != null && this.props.ss.info.stackable &&
-                        <span className="Item-quantity">{this.normalizeNumber(this.props.ss.quantity)}</span>
+                        <span className="Item-quantity">{this.colorNumber(this.props.ss.quantity)}</span>
                     }
 
                     <div {...osrsinfo} >
@@ -244,20 +245,9 @@ class InventorySlot extends React.Component {
         )
     }
 
-    normalizeNumber = (number) => {
-        let num = '';
-        let color = '#ffff03';
-        if (number >= 10000000) {
-            color = '#07f97e';
-            num = (number / 1000000).toFixed(0) + 'm';
-        } else if (number >= 100000) {
-            color = 'white';
-            num = (number / 1000).toFixed(0) + 'k';
-        } else {
-            num = String(number)
-        }
-
-        return <span style={{color: color}}>{num}</span>;
+    colorNumber = (number) => {
+        const norm = normalizeNumber(number);
+        return <span style={{color: norm.color}}>{norm.number}</span>;
     };
 }
 

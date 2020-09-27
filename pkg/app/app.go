@@ -37,6 +37,6 @@ func New(handler *mux.Router, db *mongo.Database, authCli *auth2.Client, config 
 	lc := controller.NewLoadoutController(ls, uss, vl)
 	uc := controller.NewUserController(authCli, us, ls)
 	NewLoadoutService(a.rootRouter, lc, verifier)
-	NewUserService(a.rootRouter, uc)
+	NewUserService(a.rootRouter, uc, verifier)
 	return a, nil
 }

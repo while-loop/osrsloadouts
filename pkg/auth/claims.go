@@ -25,8 +25,9 @@ func (c OsrsInvyClaims) ToAuthor() store.Author {
 }
 
 type ClaimsHandler struct {
-	h      http.Handler
-	client Verifier
+	h        http.Handler
+	client   Verifier
+	optional bool
 }
 
 func NewClaimsHandler(h http.Handler, client Verifier) http.Handler {
@@ -42,18 +43,22 @@ func NewClaims(h http.HandlerFunc, client Verifier) http.HandlerFunc {
 
 func (c *ClaimsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	osrsInvyClaims, err := ClaimsFromRequest(r, c.client)
-	if err != nil {
+	if err != nil && !c.optional {
 		utils.WriteApiError(w, err)
 		return
 	}
 
 	log.Info("claims ", osrsInvyClaims)
-
-	c.h.ServeHTTP(w, r.WithContext(WithClaims(r.Context(), osrsInvyClaims)))
+	if osrsInvyClaims != nil {
+		c.h.ServeHTTP(w, r.WithContext(WithClaims(r.Context(), osrsInvyClaims)))
+	}
 }
 
 func GetClaims(ctx context.Context) *OsrsInvyClaims {
 	claimsInf := ctx.Value(keyval)
+	if claimsInf == nil {
+		return nil
+	}
 	return claimsInf.(*OsrsInvyClaims)
 }
 

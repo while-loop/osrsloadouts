@@ -35,6 +35,10 @@ class Equipment extends React.Component {
 
     toSS() {
         let items = {};
+        if (this.props.items == null) {
+            return items;
+        }
+
         Object.entries(this.props.items).forEach(([slotType, data]) => {
                 let ss = new SlotSchema();
                 if (data != null) {

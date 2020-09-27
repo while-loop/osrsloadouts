@@ -23,3 +23,22 @@ export function getSort(sorts) {
 
     return sort;
 }
+
+export function normalizeNumber(number) {
+    let num = '';
+    let color = '#ffff03';
+    if (number >= 10000000) {
+        color = '#07f97e';
+        num = (number / 1000000).toFixed(0) + 'm';
+    } else if (number >= 100000) {
+        color = 'white';
+        num = (number / 1000).toFixed(0) + 'k';
+    } else {
+        num = String(number)
+    }
+
+    return {
+        "number": num,
+        "color": color,
+    }
+}

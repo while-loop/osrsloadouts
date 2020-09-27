@@ -4,6 +4,7 @@ import {toast} from "react-toastify";
 import {dateString} from "../../utils/js";
 import LoadoutTable from "../../utils/LoadoutTable";
 import LoadoutStore from "../../store/LoadoutStore";
+import Loadouts from "../Loadouts/Loadouts";
 
 class Profile extends React.Component {
     toastId = null;
@@ -53,8 +54,8 @@ class Profile extends React.Component {
                     </label>
                 </div>
 
-                {hasUser && <LoadoutTable title={this.state.title} fetchFunc={this.fetchFunc} history={this.props.history}/>}
-                {!hasUser && <LoadoutTable title={this.state.title} fetchFunc={null} history={this.props.history}/>}
+                {hasUser && <LoadoutTable title={this.state.title} fetchFunc={this.fetchFunc} history={this.props.history} cols={Loadouts.COLS}/>}
+                {!hasUser && <LoadoutTable title={this.state.title} fetchFunc={null} history={this.props.history} cols={Loadouts.COLS}/>}
             </div>
         );
     }

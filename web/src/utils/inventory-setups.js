@@ -30,7 +30,7 @@ export function loadout2setup(loadout) {
     }
     slots.forEach(slot => {
         let e = empty;
-        if (slot != null) {
+        if (slot != null && loadout.equipment != null && slot in loadout.equipment) {
             const e_s = loadout.equipment[slot]
             console.log(e_s)
             if (e_s.id != null) {

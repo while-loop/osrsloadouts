@@ -3,7 +3,6 @@ package store
 import (
 	"context"
 	"github.com/while-loop/osrsinvy/pkg/errors"
-	"github.com/while-loop/osrsinvy/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -38,11 +37,12 @@ func (m *mongoViewLog) CanIncView(ctx context.Context, uid string, loadoutId str
 		"loadout_id": loadoutId,
 		"user_id":    uid,
 	}
-	res, err := m.coll.UpdateOne(ctx, filter, utils.ToM(&ViewLog{
-		LoadoutId: loadoutId,
-		Created:   time.Now(),
-		UserId:    uid,
-	}), options.Update().SetUpsert(true))
+
+	res, err := m.coll.UpdateOne(ctx, filter, bson.M{
+		"$set": bson.M{
+			"created": time.Now().UTC(),
+		},
+	}, options.Update().SetUpsert(true))
 	if err != nil {
 		return false, errors.Wrapf(err, "failed to inc view %s %s", uid, loadoutId)
 	}
