@@ -25,7 +25,7 @@ type UserStatsStore interface {
 	Create(ctx context.Context, uid string) *errors.ApiError
 	Get(ctx context.Context, uid string) (*UserStats, *errors.ApiError)
 	GetFavorites(ctx context.Context, uid string) (map[string]Stats, error)
-	SetFavorite(ctx context.Context, uid string, loadoutId string, favorite bool) *errors.ApiError
+	SetFavorite(ctx context.Context, uid string, loadoutId string, favorite bool) (bool, *errors.ApiError)
 	SetViewed(ctx context.Context, uid string, loadoutId string) error
 }
 
@@ -75,11 +75,11 @@ func (m *mongoUserStats) GetFavorites(ctx context.Context, uid string) (map[stri
 
 }
 
-func (m *mongoUserStats) SetFavorite(ctx context.Context, uid string, loadoutId string, favorite bool) *errors.ApiError {
+func (m *mongoUserStats) SetFavorite(ctx context.Context, uid string, loadoutId string, favorite bool) (bool, *errors.ApiError) {
 	return m.setFavorite(ctx, uid, loadoutId, favorite, false)
 }
 
-func (m *mongoUserStats) setFavorite(ctx context.Context, uid string, loadoutId string, favorite, retried bool) *errors.ApiError {
+func (m *mongoUserStats) setFavorite(ctx context.Context, uid string, loadoutId string, favorite, retried bool) (bool, *errors.ApiError) {
 	filter := bson.M{"_id": uid}
 	verb := "set"
 	if !favorite {
@@ -96,28 +96,30 @@ func (m *mongoUserStats) setFavorite(ctx context.Context, uid string, loadoutId 
 
 	unableErr := errors.NewApi(
 		http.StatusInternalServerError,
-		errors.New("failed to %s fav %s %s %t", uid, loadoutId, verb, retried),
+		errors.Newf("failed to %s fav %s %s %t", uid, loadoutId, verb, retried),
 		fmt.Sprintf("Unable to %s favorite", verb),
 	)
 
 	res, err := m.coll.UpdateOne(ctx, filter, update)
 	if err != nil {
-		return unableErr
+		return false, unableErr
 	}
 
-	if res.MatchedCount == 0 {
+	if res.MatchedCount <= 0 {
 		if apiErr := m.Create(ctx, uid); apiErr != nil && retried { // check if retried to prevent infinite recursion loops
-			return unableErr
+			return false, unableErr
 		} else if apiErr != nil {
-			return apiErr
+			return false, apiErr
 		} else {
 			return m.setFavorite(ctx, uid, loadoutId, favorite, true)
 		}
-	} else if res.MatchedCount == 1 || res.ModifiedCount == 1 {
-		return nil
+	} else if res.MatchedCount >= 1 {
+		// return if we're successfully updated the doc.
+		// if it was already fav'd and we fav again, ModifiedCount should return 0.
+		return res.ModifiedCount >= 1, nil
 	}
 
-	return unableErr
+	return false, unableErr
 }
 
 func (m *mongoUserStats) SetViewed(ctx context.Context, uid string, loadoutId string) error {
@@ -135,14 +137,14 @@ func (m *mongoUserStats) setViewed(ctx context.Context, uid string, loadoutId st
 		},
 	}
 
-	unableErr := errors.New("failed to mark view %s %s %t", uid, loadoutId, retried)
+	unableErr := errors.Newf("failed to mark view %s %s %t", uid, loadoutId, retried)
 
 	res, err := m.coll.UpdateOne(ctx, filter, update)
 	if err != nil {
 		return errors.Wrapf(err, "failed to mark view %s %s %t", uid, loadoutId, retried)
 	}
 
-	if res.MatchedCount == 0 {
+	if res.MatchedCount <= 0 {
 		if apiErr := m.Create(ctx, uid); apiErr != nil && retried { // check if retried to prevent infinite recursion loops
 			return unableErr
 		} else if apiErr != nil {

@@ -13,6 +13,14 @@ import (
 	"time"
 )
 
+type CounterKey string
+
+const (
+	ViewsKey     CounterKey = "views"
+	FavoritesKey CounterKey = "favorites"
+	CopiesKey    CounterKey = "copies"
+)
+
 type ItemQuantity struct {
 	Quantity int `json:"quantity," bson:"quantity"`
 	Id       int `json:"id," bson:"id"`
@@ -38,6 +46,13 @@ type Loadout struct {
 	Parent      string                  `json:"parent" bson:"parent"`
 	Inventory   [7][4]ItemQuantity      `json:"inventory" bson:"inventory"`
 	Equipment   map[string]ItemQuantity `json:"equipment" bson:"equipment"`
+}
+
+func (l *Loadout) Reset() {
+	l.Views = 0
+	l.Favorites = 0
+	l.Copies = 0
+	l.Favorited = false
 }
 
 var validLoadoutKeys = []string{"title", "description", "updated", "tags", "inventory", "equipment"}
@@ -75,6 +90,9 @@ type LoadoutStore interface {
 
 	// update all username refs for user id
 	MigrateUsername(ctx context.Context, userId string, newUsername string) *errors.ApiError
+
+	// update all username refs for user id
+	IncrementCounter(ctx context.Context, id string, counter CounterKey, delta int) error
 }
 
 type mongoLoadout struct {
@@ -203,6 +221,23 @@ func (m *mongoLoadout) MigrateUsername(ctx context.Context, userId string, newUs
 	_, err := m.coll.UpdateMany(ctx, find, update)
 	if err != nil {
 		return errors.NewApif(http.StatusInternalServerError, err, "failed to update loadout username: %s", newUsername)
+	}
+
+	return nil
+}
+
+func (m *mongoLoadout) IncrementCounter(ctx context.Context, id string, counter CounterKey, delta int) error {
+	find := bson.M{"_id": id}
+
+	update := bson.M{
+		"$inc": bson.M{
+			string(counter): delta,
+		},
+	}
+
+	_, err := m.coll.UpdateOne(ctx, find, update)
+	if err != nil {
+		return errors.Newf("failed to inc loadout %s %d: %v", counter, delta, err)
 	}
 
 	return nil

@@ -5,7 +5,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-func New(format string, args ...interface{}) error {
+func New(msg string) error {
+	return errors.New(msg)
+}
+
+func Newf(format string, args ...interface{}) error {
 	return errors.New(fmt.Sprintf(format, args...))
 }
 

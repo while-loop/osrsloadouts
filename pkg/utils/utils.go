@@ -25,6 +25,18 @@ func Keys(obj interface{}, skips []string) []string {
 
 }
 
+func MapKeys(m map[string]interface{}) []string {
+	keys := make([]string, len(m))
+
+	i := 0
+	for k := range m {
+		keys[i] = k
+		i++
+	}
+
+	return keys
+}
+
 func Contains(a string, list []string) bool {
 	if list == nil {
 		return false

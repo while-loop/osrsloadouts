@@ -79,7 +79,6 @@ func (a *LoadoutService) getLoadout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *LoadoutService) updateLoadout(w http.ResponseWriter, r *http.Request) {
-	// todo make sure current user == author
 	id, ok := mux.Vars(r)["id"]
 	if !ok {
 		utils.WriteErrorStatus(w, http.StatusBadRequest, "no loadout id")

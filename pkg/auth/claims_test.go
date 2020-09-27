@@ -39,7 +39,7 @@ func TestClaimWithNoTier(t *testing.T) {
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, r)
 
-	// todo
+	// todo check r for OSRSClaims
 	a.NoError(nil)
 }
 
