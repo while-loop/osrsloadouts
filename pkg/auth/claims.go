@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/while-loop/osrsinvy/pkg/errors"
 	"github.com/while-loop/osrsinvy/pkg/log"
+	"github.com/while-loop/osrsinvy/pkg/store"
 	"github.com/while-loop/osrsinvy/pkg/utils"
 	"net/http"
 )
@@ -14,6 +15,13 @@ type OsrsInvyClaims struct {
 	Roles    []string
 	UserID   string
 	Username string
+}
+
+func (c OsrsInvyClaims) ToAuthor() store.Author {
+	return store.Author{
+		Id:       c.UserID,
+		Username: c.Username,
+	}
 }
 
 type ClaimsHandler struct {

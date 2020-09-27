@@ -3,42 +3,39 @@ package app
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"github.com/while-loop/osrsinvy/pkg/log"
-	"github.com/while-loop/osrsinvy/pkg/stores"
+	"github.com/while-loop/osrsinvy/pkg/auth"
+	"github.com/while-loop/osrsinvy/pkg/controller"
+	"github.com/while-loop/osrsinvy/pkg/store"
 	"github.com/while-loop/osrsinvy/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
 )
 
 type UserService struct {
-	store        stores.UserStore
-	loadoutstore stores.LoadoutStore
+	uCtlr *controller.UserController
 }
 
-func NewUserService(r *mux.Router, store stores.UserStore, loadoutStore stores.LoadoutStore) *UserService {
+func NewUserService(r *mux.Router, uCtlr *controller.UserController) *UserService {
 	u := &UserService{
-		store:        store,
-		loadoutstore: loadoutStore,
+		uCtlr: uCtlr,
 	}
 
 	r.HandleFunc("/users", u.createUser).Methods(http.MethodPost)
 	r.HandleFunc("/users/{id}", u.getUser).Methods(http.MethodGet)
-	r.HandleFunc("/users/username/{username}", u.getUserByUsername).Methods(http.MethodGet)
-	r.HandleFunc("/users/{id}/loadouts", u.getUserLoadouts).Methods(http.MethodGet)
-	r.HandleFunc("/users/{id}/feed", u.getFeedLoadouts).Methods(http.MethodGet)
+	r.HandleFunc("/users/username/{username}", u.getByUsername).Methods(http.MethodGet)
 	r.HandleFunc("/users/{id}", u.deleteUser).Methods(http.MethodDelete)
 	r.HandleFunc("/users/{id}", u.updateUser).Methods(http.MethodPut)
 	return u
 }
 
-func (u *UserService) getUserByUsername(w http.ResponseWriter, r *http.Request) {
+func (u *UserService) getByUsername(w http.ResponseWriter, r *http.Request) {
 	username, ok := mux.Vars(r)["username"]
 	if !ok {
 		utils.WriteErrorStatus(w, http.StatusBadRequest, "no username")
 		return
 	}
 
-	user, err := u.store.GetByUsername(r.Context(), username)
+	user, err := u.uCtlr.GetByUsername(r.Context(), username)
 	if err != nil {
 		utils.WriteApiError(w, err)
 		return
@@ -46,6 +43,7 @@ func (u *UserService) getUserByUsername(w http.ResponseWriter, r *http.Request) 
 
 	utils.WriteJson(w, user)
 }
+
 func (u *UserService) getUser(w http.ResponseWriter, r *http.Request) {
 	id, ok := mux.Vars(r)["id"]
 	if !ok {
@@ -53,7 +51,7 @@ func (u *UserService) getUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := u.store.Get(r.Context(), id)
+	user, err := u.uCtlr.Get(r.Context(), id)
 	if err != nil {
 		utils.WriteApiError(w, err)
 		return
@@ -63,9 +61,7 @@ func (u *UserService) getUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *UserService) createUser(w http.ResponseWriter, r *http.Request) {
-	// todo check if admin or is user
-	// todo whitelist props
-	user := new(stores.User)
+	user := new(store.User)
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		utils.WriteErrorStatus(w, http.StatusBadRequest, "unable to decode user")
 		return
@@ -76,7 +72,14 @@ func (u *UserService) createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := u.store.Create(r.Context(), user)
+	// createUser should already have a UUID given by firebase. make sure
+	// the given ID matches firebase claims.
+	if apiErr := auth.HasAuthorization(r.Context(), user.Id); apiErr != nil {
+		utils.WriteApiError(w, apiErr)
+		return
+	}
+
+	user, err := u.uCtlr.Create(r.Context(), user)
 	if err != nil {
 		utils.WriteApiError(w, err)
 		return
@@ -86,13 +89,25 @@ func (u *UserService) createUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *UserService) deleteUser(w http.ResponseWriter, r *http.Request) {
-	_, ok := mux.Vars(r)["id"]
+	id, ok := mux.Vars(r)["id"]
 	if !ok {
 		utils.WriteErrorStatus(w, http.StatusBadRequest, "no user id")
 		return
 	}
 
-	// todo check if admin
+	apiErr := auth.HasAuthorization(r.Context(), id)
+	if apiErr != nil {
+		utils.WriteApiError(w, apiErr)
+		return
+	}
+
+	apiErr = u.uCtlr.Delete(r.Context(), id)
+	if apiErr != nil {
+		utils.WriteApiError(w, apiErr)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func (u *UserService) updateUser(w http.ResponseWriter, r *http.Request) {
@@ -102,42 +117,22 @@ func (u *UserService) updateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// todo check if admin or is user
-	// todo whitelist props
+	if apiErr := auth.HasAuthorization(r.Context(), id); apiErr != nil {
+		utils.WriteApiError(w, apiErr)
+		return
+	}
+
 	props := bson.M{}
 	if err := json.NewDecoder(r.Body).Decode(&props); err != nil {
 		utils.WriteErrorStatus(w, http.StatusBadRequest, "unable to decode user props "+id)
 		return
 	}
 
-	user, err := u.store.Update(r.Context(), id, props)
+	user, err := u.uCtlr.Update(r.Context(), id, props)
 	if err != nil {
 		utils.WriteApiError(w, err)
 		return
 	}
 
 	utils.WriteJson(w, user)
-}
-
-func (u *UserService) getUserLoadouts(w http.ResponseWriter, r *http.Request) {
-	v := mux.Vars(r)
-	id, ok := v["id"]
-	if !ok {
-		utils.WriteErrorStatus(w, http.StatusBadRequest, "no user id")
-		return
-	}
-
-	page := stores.FromRequest(r)
-	log.Info("page ", page)
-	ls, err := u.loadoutstore.GetByUser(r.Context(), id, page)
-	if err != nil {
-		utils.WriteApiError(w, err)
-		return
-	}
-
-	utils.WriteJson(w, ls)
-}
-
-func (u *UserService) getFeedLoadouts(w http.ResponseWriter, r *http.Request) {
-
 }

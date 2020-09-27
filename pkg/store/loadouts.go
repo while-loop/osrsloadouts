@@ -1,4 +1,4 @@
-package stores
+package store
 
 import (
 	"context"
@@ -51,12 +51,9 @@ type LoadoutResponse struct {
 
 type LoadoutStore interface {
 	// get loadout for user. also incr view if havent seen this ip or uid
-	Get(ctx context.Context, uid, ip, id string) (*Loadout, *errors.ApiError)
+	Get(ctx context.Context, id string) (*Loadout, *errors.ApiError)
 
 	Delete(ctx context.Context, id string) *errors.ApiError
-
-	// copy and reset all stats info
-	Copy(ctx context.Context, id string, author Author) (*Loadout, *errors.ApiError)
 
 	// update `updated` field
 	Update(ctx context.Context, l *Loadout) (*Loadout, *errors.ApiError)
@@ -118,15 +115,12 @@ func (m *mongoLoadout) CreateAll(ctx context.Context, ls []*Loadout) *errors.Api
 	return CreateAll(ctx, m.coll, docs)
 }
 
-func (m *mongoLoadout) Get(ctx context.Context, uid, ip, id string) (*Loadout, *errors.ApiError) {
+func (m *mongoLoadout) Get(ctx context.Context, id string) (*Loadout, *errors.ApiError) {
 	l := new(Loadout)
 	err := Get(ctx, m.coll, id, &l)
 	if err != nil {
 		return nil, err
 	}
-
-	// todo update view count in view collections
-	// check if user has favorited from favorite collection
 
 	return l, nil
 }
@@ -144,28 +138,6 @@ func (m *mongoLoadout) Update(ctx context.Context, l *Loadout) (*Loadout, *error
 
 func (m *mongoLoadout) Delete(ctx context.Context, id string) *errors.ApiError {
 	return Delete(ctx, m.coll, id)
-}
-
-func (m *mongoLoadout) Copy(ctx context.Context, id string, author Author) (*Loadout, *errors.ApiError) {
-	l, err := m.Get(ctx, "", "", id)
-	if err != nil {
-		return nil, err
-	}
-
-	l.Author = author
-	l.Parent = id
-	l.Created = time.Now()
-	l.Updated = l.Created
-	l.Copies = 0
-	l.Favorites = 0
-	l.Views = 0
-
-	l, err = m.Create(ctx, l)
-	if err != nil {
-		return nil, err
-	}
-
-	return l, nil
 }
 
 func (m *mongoLoadout) getAll(ctx context.Context, filter bson.M, p *Pagination) (*LoadoutResponse, *errors.ApiError) {

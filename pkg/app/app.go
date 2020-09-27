@@ -6,7 +6,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/while-loop/osrsinvy/pkg/auth"
 	"github.com/while-loop/osrsinvy/pkg/config"
-	"github.com/while-loop/osrsinvy/pkg/stores"
+	"github.com/while-loop/osrsinvy/pkg/controller"
+	"github.com/while-loop/osrsinvy/pkg/store"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -28,10 +29,14 @@ func New(handler *mux.Router, db *mongo.Database, authCli *auth2.Client, config 
 		return nil, err
 	}
 
-	ls := stores.NewLoadoutStore(db)
-	us := stores.NewUserStore(db, authCli, ls)
+	ls := store.NewLoadoutStore(db)
+	us := store.NewUserStore(db)
+	uss := store.NewUserStatsStore(db)
+	vl := store.NewViewLogStore(db)
 
-	NewLoadoutService(a.rootRouter, ls, verifier)
-	NewUserService(a.rootRouter, us, ls)
+	lc := controller.NewLoadoutController(ls, uss, vl)
+	uc := controller.NewUserController(authCli, us, ls)
+	NewLoadoutService(a.rootRouter, lc, verifier)
+	NewUserService(a.rootRouter, uc)
 	return a, nil
 }

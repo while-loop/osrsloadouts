@@ -1,4 +1,4 @@
-package stores
+package store
 
 import (
 	"context"
@@ -53,12 +53,12 @@ func seedLoadouts(count int, b *testing.B) {
 	for loaded < count {
 		for i := 0; i < len(loadouts); i++ {
 			loadouts[i] = &Loadout{
-				Title:       randomWords(1)[0],
-				Author:      Author{
+				Title: randomWords(1)[0],
+				Author: Author{
 					Id:       whileloop.Id,
 					Username: whileloop.Username,
 				},
-				Tags:        randomWords(tagsCount),
+				Tags: randomWords(tagsCount),
 			}
 		}
 
@@ -71,7 +71,6 @@ func seedLoadouts(count int, b *testing.B) {
 
 	b.Logf("created %d loadouts in %v", count, time.Now().Sub(start))
 }
-
 
 func benchmarkQueryByUsername(count int, b *testing.B) {
 	seedLoadouts(count, b)

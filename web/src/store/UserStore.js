@@ -22,22 +22,6 @@ class UserStore {
         return axios.get(url);
     }
 
-    static async getLoadoutsByUid(uid, page, limit, sort, filter) {
-        if (uid == null) {
-            return null;
-        }
-
-        let url = BASE_URL + `/users/${uid}/loadouts`;
-        return axios.get(url, {
-            params: {
-                page: page,
-                limit: limit,
-                sort: sort,
-                filter: filter,
-            }
-        });
-    }
-
     static async update(id, properties) {
         if (properties == null) {
             return null;

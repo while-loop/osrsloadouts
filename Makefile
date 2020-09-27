@@ -65,7 +65,7 @@ deps: ## get service pkg + test deps
 
 lint: ## apply golint
 	@echo "[lint] applying go fmt & vet"
-	gofmt -l .
+	go fmt ./...
 	go vet ./...
 
 release: cont push deploy ## build and deploy a docker container

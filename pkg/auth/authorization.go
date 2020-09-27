@@ -2,18 +2,24 @@ package auth
 
 import (
 	"context"
-	"fmt"
+	"github.com/while-loop/osrsinvy/pkg/errors"
+	"github.com/while-loop/osrsinvy/pkg/utils"
+	"net/http"
 )
 
 // Check if the user has permissions to execute on other users
-func HasAuthorization(ctx context.Context, userId string) error {
+func HasAuthorization(ctx context.Context, userId string) *errors.ApiError {
 	claims := GetClaims(ctx)
 	if claims == nil {
-		return fmt.Errorf("no id token")
+		return errors.NewApi(http.StatusUnauthorized, nil, "no id token")
+	}
+
+	if utils.Contains("admin", claims.Roles) {
+		return nil
 	}
 
 	if claims.UserID != userId {
-		return fmt.Errorf("permission denied")
+		return errors.NewApi(http.StatusForbidden, nil, "permission denied")
 	}
 
 	return nil

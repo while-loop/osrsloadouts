@@ -42,5 +42,5 @@ func NewAuthClient(ctx context.Context, credentialsFile string) (*auth.Client, e
 }
 
 func NewAuthVerifier(ctx context.Context, client *auth.Client) (Verifier, error) {
-	return  &firebaseVerifier{client: client}, nil
+	return &firebaseVerifier{client: client}, nil
 }

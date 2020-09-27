@@ -3,6 +3,7 @@ import UserStore from "../../store/UserStore";
 import {toast} from "react-toastify";
 import {dateString} from "../../utils/js";
 import LoadoutTable from "../../utils/LoadoutTable";
+import LoadoutStore from "../../store/LoadoutStore";
 
 class Profile extends React.Component {
     toastId = null;
@@ -19,7 +20,7 @@ class Profile extends React.Component {
             }
         };
         this.fetchFunc = (page, size, sort, filter) => {
-            return UserStore.getLoadoutsByUid(this.state.user.id, page, size, sort, filter)
+            return LoadoutStore.getLoadoutsByUid(this.state.user.id, page, size, sort, filter)
         }
     }
 

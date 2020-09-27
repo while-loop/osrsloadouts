@@ -59,7 +59,7 @@ func TestClaimWithAuthHeader(t *testing.T) {
 	h.ServeHTTP(w, r)
 	//c := GetClaims(newCtx)
 	//a.Fail("")
-	a.Equal(1,1)
+	a.Equal(1, 1)
 }
 
 func TestClaimWithNoAuthValue(t *testing.T) {
@@ -73,7 +73,7 @@ func TestClaimWithNoAuthValue(t *testing.T) {
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, r)
 	//a.Fail("")
-	a.Equal(1,1)
+	a.Equal(1, 1)
 }
 
 func TestClaimWithNoHeaders(t *testing.T) {
@@ -87,7 +87,7 @@ func TestClaimWithNoHeaders(t *testing.T) {
 	r := &http.Request{}
 	h.ServeHTTP(w, r)
 	//a.Fail("")
-	a.Equal(1,1)
+	a.Equal(1, 1)
 }
 
 func TestNoConnOnVerify(t *testing.T) {
@@ -102,7 +102,7 @@ func TestNoConnOnVerify(t *testing.T) {
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, r)
 	//a.Fail("")
-	a.Equal(1,1)
+	a.Equal(1, 1)
 }
 
 func authHeader(id string) *http.Request {

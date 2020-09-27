@@ -38,6 +38,22 @@ class LoadoutStore {
             }
         });
     }
+
+    static async getLoadoutsByUid(uid, page, limit, sort, filter) {
+        if (uid == null) {
+            return null;
+        }
+
+        let url = BASE_URL + `/loadouts/user/${uid}`;
+        return axios.get(url, {
+            params: {
+                page: page,
+                limit: limit,
+                sort: sort,
+                filter: filter,
+            }
+        });
+    }
 }
 
 export default LoadoutStore;

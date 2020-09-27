@@ -1,4 +1,4 @@
-package stores
+package store
 
 import (
 	"context"
@@ -33,7 +33,7 @@ func getLoadoutsStore(b testing.TB) LoadoutStore {
 }
 
 func getUserStoreB(b testing.TB) UserStore {
-	return NewUserStore(getDb(b), nil, getLoadoutsStore(b))
+	return NewUserStore(getDb(b))
 }
 
 func emptyColl(collName string, t testing.TB) {
@@ -47,7 +47,7 @@ func randomAuthor(t testing.TB) Author {
 	uStore := getUserStoreB(t)
 	id := uuid.New().String()
 	u, err := uStore.Create(context.Background(), &User{
-		Id: id,
+		Id:       id,
 		Username: id,
 	})
 	if err != nil {

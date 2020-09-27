@@ -1,4 +1,4 @@
-package stores
+package store
 
 import (
 	"context"
@@ -14,21 +14,21 @@ func TestSearchByUsername(t *testing.T) {
 	r := require.New(t)
 
 	armaLoadout, err := lStore.Create(ctx, &Loadout{
-		Title:       "This is my GWD title",
-		Author:      author,
-		Tags:        []string{"gwd", "ARMA", "trio"},
+		Title:  "This is my GWD title",
+		Author: author,
+		Tags:   []string{"gwd", "ARMA", "trio"},
 	})
 	r.Nil(err)
 	_, err = lStore.Create(ctx, &Loadout{
-		Title:       "This is my Barrows title",
-		Author:      author,
-		Tags:        []string{"barrows", "brothers", "guthans"},
+		Title:  "This is my Barrows title",
+		Author: author,
+		Tags:   []string{"barrows", "brothers", "guthans"},
 	})
 	r.Nil(err)
 	_, err = lStore.Create(ctx, &Loadout{
-		Title:       "This is my Pking title",
-		Author:      author,
-		Tags:        []string{"pking", "wildy", "skull"},
+		Title:  "This is my Pking title",
+		Author: author,
+		Tags:   []string{"pking", "wildy", "skull"},
 	})
 	r.Nil(err)
 

@@ -1,4 +1,4 @@
-package stores
+package store
 
 import (
 	"context"
@@ -106,7 +106,7 @@ func (m *mongoUserStats) setFavorite(ctx context.Context, uid string, loadoutId 
 	}
 
 	if res.MatchedCount == 0 {
-		if apiErr := m.Create(ctx, uid); apiErr != nil && retried {  // check if retried to prevent infinite recursion loops
+		if apiErr := m.Create(ctx, uid); apiErr != nil && retried { // check if retried to prevent infinite recursion loops
 			return unableErr
 		} else if apiErr != nil {
 			return apiErr

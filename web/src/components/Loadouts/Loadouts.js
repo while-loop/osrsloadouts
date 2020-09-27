@@ -5,13 +5,14 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import UserStore from "../../store/UserStore";
 import {currentUser} from "../../utils/base";
 import LoadoutTable from "../../utils/LoadoutTable";
+import LoadoutStore from "../../store/LoadoutStore";
 
 class Loadouts extends React.Component {
 
     constructor(props) {
         super(props);
         this.fetchFunc = (page, size, sort, filter) => {
-            return UserStore.getLoadoutsByUid(currentUser().uid, page, size, sort, filter)
+            return LoadoutStore.getLoadoutsByUid(currentUser().uid, page, size, sort, filter)
         }
     }
 

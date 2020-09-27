@@ -1,4 +1,4 @@
-package stores
+package store
 
 import (
 	"github.com/while-loop/osrsinvy/pkg/log"

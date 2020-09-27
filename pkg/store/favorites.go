@@ -1,16 +1,15 @@
-package stores
+package store
 
 import (
 	"context"
 	"time"
 )
 
-
 type Favorite struct {
-	Id string
-	UserId string
+	Id        string
+	UserId    string
 	ContentId string
-	Created time.Time
+	Created   time.Time
 }
 
 type FavoriteStore interface {

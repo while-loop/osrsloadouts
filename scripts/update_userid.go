@@ -6,7 +6,7 @@ import (
 	osrsinvy "github.com/while-loop/osrsinvy/pkg"
 	"github.com/while-loop/osrsinvy/pkg/config"
 	"github.com/while-loop/osrsinvy/pkg/log"
-	"github.com/while-loop/osrsinvy/pkg/stores"
+	"github.com/while-loop/osrsinvy/pkg/store"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -19,7 +19,7 @@ func main() {
 
 	ctx := context.Background()
 
-	db, err := stores.NewMongoDB(ctx, conf.MongoAddr, conf.MongoDb)
+	db, err := store.NewMongoDB(ctx, conf.MongoAddr, conf.MongoDb)
 	if err != nil {
 		log.Fatal("failed to get db: ", err)
 	}
@@ -40,5 +40,3 @@ func main() {
 		log.Fatal(err)
 	}
 }
-
-
