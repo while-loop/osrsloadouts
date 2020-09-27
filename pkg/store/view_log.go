@@ -3,9 +3,9 @@ package store
 import (
 	"context"
 	"github.com/while-loop/osrsinvy/pkg/errors"
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/while-loop/osrsinvy/pkg/utils"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"strings"
 	"time"
 )
 
@@ -33,19 +33,20 @@ func NewViewLogStore(db *mongo.Database) ViewLogStore {
 }
 
 func (m *mongoViewLog) CanIncView(ctx context.Context, uid string, loadoutId string) (bool, error) {
-	filter := bson.M{
-		"loadout_id": loadoutId,
-		"user_id":    uid,
-	}
+	doc := utils.ToM(ViewLog{
+		LoadoutId: loadoutId,
+		UserId:    uid,
+		Created:   time.Now().UTC(),
+	})
 
-	res, err := m.coll.UpdateOne(ctx, filter, bson.M{
-		"$set": bson.M{
-			"created": time.Now().UTC(),
-		},
-	}, options.Update().SetUpsert(true))
+	_, err := m.coll.InsertOne(ctx, doc)
 	if err != nil {
-		return false, errors.Wrapf(err, "failed to inc view %s %s", uid, loadoutId)
+		if strings.Contains(err.Error(), "E11000") {
+			return false, nil
+		} else {
+			return false, errors.Wrapf(err, "failed to inc view %s %s", uid, loadoutId)
+		}
 	}
 
-	return res.MatchedCount == 0 && res.UpsertedCount == 1, nil
+	return true, nil
 }

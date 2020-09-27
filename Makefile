@@ -82,10 +82,10 @@ db:
 	docker run -d \
 	--name osrsloadouts-mongo \
 	-v `pwd`/data/db:/data/db \
-	-v `pwd`/scripts/migrations/up:/docker-entrypoint-initdb.d \
+	-v `pwd`/scripts/migrations:/docker-entrypoint-initdb.d \
 	-e MONGO_INITDB_DATABASE=osrsinvy \
 	-p 27017:27017 \
-	mongo:4.0.12-xenial
+	mongo:4.2.9-bionic
 
 backup:
 	sops exec-env secrets/prod.env ./scripts/backup-mongo.sh
@@ -93,6 +93,7 @@ backup:
 db-sync: backup
 	$(eval backup_file=`ls -tr /tmp | grep osrsinvy | sort | tail -n 1`)
 	echo backup ${backup_file}
+	mongo --eval "db=db.getSiblingDB('osrsinvy');db.dropDatabase();" --quiet
 	mongorestore --stopOnError --drop --gzip --archive=/tmp/${backup_file}
 
 release-all:
@@ -101,7 +102,7 @@ release-all:
 	sops exec-env secrets/prod.env 'make deploy && make -C web deploy'
 
 mongo:
-	mongo "mongodb+srv://osrsinvy-u1age.gcp.mongodb.net" --username osrsinvy
+	mongo "`sops -d secrets/prod.env | grep "OSRSLOADOUTS_MONGO_ADDR=" | sed 's/OSRSLOADOUTS_MONGO_ADDR=//g'`"
 
 domains: context
 	gcloud beta run domain-mappings create --service osrs-loadouts-api --platform managed --domain api.osrsloadouts.app
@@ -110,3 +111,7 @@ domains: context
 
 bench:
 	sops exec-env secrets/dev.env 'go test -run=XXX -timeout 20m -bench=. -benchtime=5s ./...'
+
+
+migration:
+	sops exec-env $(SECRET_FILE) 'bash scripts/run_migrations.sh'
