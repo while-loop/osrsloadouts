@@ -61,6 +61,7 @@ push: ## deploy lastest built container to docker hub
 deps: ## get service pkg + test deps
 	@echo "[deps] getting go deps"
 	go mod download
+	go mod vendor
 
 lint: ## apply golint
 	@echo "[lint] applying go fmt & vet"
@@ -105,3 +106,7 @@ mongo:
 domains: context
 	gcloud beta run domain-mappings create --service osrs-loadouts-api --platform managed --domain api.osrsloadouts.app
 	gcloud beta run domain-mappings create --service osrs-loadouts-web --platform managed --domain osrsloadouts.app
+
+
+bench:
+	sops exec-env secrets/dev.env 'go test -run=XXX -timeout 20m -bench=. -benchtime=5s ./...'

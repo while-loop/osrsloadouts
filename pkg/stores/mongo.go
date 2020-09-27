@@ -8,7 +8,7 @@ import (
 )
 
 func NewMongoClient(ctx context.Context, uri string) (*mongo.Client, error) {
-	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(uri))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create mongo client")
 	}

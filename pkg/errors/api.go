@@ -19,6 +19,14 @@ func (e ApiError) GetNice() string {
 	return http.StatusText(e.Code)
 }
 
+func (e *ApiError) GetError() error {
+	if e == nil {
+		return nil
+	}
+
+	return e.Err
+}
+
 func NewApi(code int, err error, msg string) *ApiError {
 	return &ApiError{
 		Code: code,

@@ -41,6 +41,15 @@ func Create(ctx context.Context, coll *mongo.Collection, in interface{}, setId b
 	return id, nil
 }
 
+func CreateAll(ctx context.Context, coll *mongo.Collection, in []interface{}) *errors.ApiError {
+	_, err := coll.InsertMany(ctx, in)
+	if err != nil {
+		return errors.NewApif(http.StatusInternalServerError, err, "failed to create all: %v", coll.Name())
+	}
+
+	return nil
+}
+
 func Get(ctx context.Context, coll *mongo.Collection, id string, out interface{}) *errors.ApiError {
 	res := coll.FindOne(ctx, bson.D{{Key: "_id", Value: id}})
 	if res.Err() != nil {

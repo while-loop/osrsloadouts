@@ -2,6 +2,7 @@ package stores
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"github.com/while-loop/osrsinvy/pkg/errors"
 	"github.com/while-loop/osrsinvy/pkg/log"
 	"github.com/while-loop/osrsinvy/pkg/utils"
@@ -12,7 +13,10 @@ import (
 	"time"
 )
 
-type ItemQuantity map[string]*int32
+type ItemQuantity struct {
+	Quantity int `json:"quantity," bson:"quantity"`
+	Id       int `json:"id," bson:"id"`
+}
 
 type Author struct {
 	Id       string `json:"id," bson:"id"`
@@ -61,9 +65,10 @@ type LoadoutStore interface {
 	// created, update times
 	Create(ctx context.Context, l *Loadout) (*Loadout, *errors.ApiError)
 
+	CreateAll(ctx context.Context, l []*Loadout) *errors.ApiError
+
 	// updated field
 	GetAll(ctx context.Context, p *Pagination) (*LoadoutResponse, *errors.ApiError)
-	Search(ctx context.Context) ([]*Loadout, *errors.ApiError)
 
 	// get all loadouts by a user
 	GetByUser(ctx context.Context, id string, p *Pagination) (*LoadoutResponse, *errors.ApiError)
@@ -98,6 +103,19 @@ func (m *mongoLoadout) Create(ctx context.Context, l *Loadout) (*Loadout, *error
 
 	l.Id = id
 	return l, nil
+}
+
+func (m *mongoLoadout) CreateAll(ctx context.Context, ls []*Loadout) *errors.ApiError {
+	docs := make([]interface{}, len(ls))
+	for i, l := range ls {
+		l.Created = time.Now()
+		l.Updated = l.Created
+		m := utils.ToM(l)
+		m["_id"] = uuid.New().String()
+		docs[i] = m
+	}
+
+	return CreateAll(ctx, m.coll, docs)
 }
 
 func (m *mongoLoadout) Get(ctx context.Context, uid, ip, id string) (*Loadout, *errors.ApiError) {
@@ -183,12 +201,11 @@ func (m *mongoLoadout) getAll(ctx context.Context, filter bson.M, p *Pagination)
 }
 
 func (m *mongoLoadout) GetAll(ctx context.Context, p *Pagination) (*LoadoutResponse, *errors.ApiError) {
-	return m.getAll(ctx, bson.M{}, p)
+	return m.getAll(ctx, p.AddSearch(bson.M{}), p)
 }
 
 func (m *mongoLoadout) GetByUser(ctx context.Context, id string, p *Pagination) (*LoadoutResponse, *errors.ApiError) {
-
-	filter := bson.M{"author.id": id}
+	filter := p.AddSearch(bson.M{"author.id": id})
 	res, err := m.getAll(ctx, filter, p)
 	if err != nil {
 		err.Nice = "unable to get loadouts by user " + id
@@ -199,10 +216,6 @@ func (m *mongoLoadout) GetByUser(ctx context.Context, id string, p *Pagination) 
 }
 
 func (m *mongoLoadout) GetForUser(ctx context.Context, id string, p *Pagination) (*LoadoutResponse, *errors.ApiError) {
-	panic("implement me")
-}
-
-func (m *mongoLoadout) Search(ctx context.Context) ([]*Loadout, *errors.ApiError) {
 	panic("implement me")
 }
 
@@ -217,7 +230,7 @@ func (m *mongoLoadout) MigrateUsername(ctx context.Context, userId string, newUs
 
 	_, err := m.coll.UpdateMany(ctx, find, update)
 	if err != nil {
-		return errors.NewApif(http.StatusInternalServerError, err,"failed to update loadout username: %s", newUsername)
+		return errors.NewApif(http.StatusInternalServerError, err, "failed to update loadout username: %s", newUsername)
 	}
 
 	return nil

@@ -13,7 +13,7 @@ type Pagination struct {
 	Page   uint32
 	Limit  uint32
 	Sort   string
-	Filter string
+	Search string
 }
 
 func FromRequest(r *http.Request) *Pagination {
@@ -22,12 +22,13 @@ func FromRequest(r *http.Request) *Pagination {
 	page := asUInt32("page", vars, 0)
 	limit := asUInt32("limit", vars, 15)
 	sort := vars.Get("sort")
+	search := vars.Get("search")
 
 	return &Pagination{
 		Page:   page,
 		Limit:  limit,
 		Sort:   sort,
-		Filter: "",
+		Search: search,
 	}
 }
 
@@ -42,6 +43,19 @@ func (p Pagination) GetSort() bson.D {
 	}
 
 	return bson.D{{Key: strings.TrimPrefix(p.Sort, "-"), Value: order}}
+}
+
+func (p Pagination) AddSearch(filter bson.M) bson.M {
+	if filter == nil {
+		filter = bson.M{}
+	}
+
+	if p.Search == "" {
+		return filter
+	}
+
+	filter["$text"] = bson.M{"$search": p.Search}
+	return filter
 }
 
 func asUInt32(key string, vars url.Values, def uint32) uint32 {

@@ -28,7 +28,7 @@ func TestPagination_GetSort(t *testing.T) {
 				Page:   tt.fields.Page,
 				Limit:  tt.fields.Limit,
 				Sort:   tt.fields.Sort,
-				Filter: tt.fields.Filter,
+				Search: tt.fields.Filter,
 			}
 			if got := p.GetSort(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSort() = %v, want %v", got, tt.want)

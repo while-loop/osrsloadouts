@@ -20,6 +20,13 @@ type User struct {
 	Updated  time.Time `json:"updated" bson:"updated"`
 }
 
+func (u User) ToAuthor() Author {
+	return Author{
+		Id:       u.Id,
+		Username: u.Username,
+	}
+}
+
 var validUserKeys = []string{"username", "rsn", "updated"}
 
 type UserStore interface {
@@ -114,6 +121,11 @@ func (m *mongoUser) Update(ctx context.Context, id string, props bson.M) (*User,
 }
 
 func (m *mongoUser) setUsername(ctx context.Context, id, username string) {
+	if m.fauth == nil {
+		log.Warnf("skipping setting username for %s %s", id, username)
+		return
+	}
+
 	u, err := m.fauth.GetUser(ctx, id)
 	if err != nil {
 		log.Errorf("Failed to set claims for user %s: %v", id, err)
