@@ -150,12 +150,16 @@ class Loadout extends React.Component {
 
     isOwner() {
         let user = currentUser()
-        let author = this.state.loadout.author.id
-        if (author == null || author === "") {
+        if (this.state.loadout == null) {
             return true
         }
 
-        return user != null && author === user.uid
+        let author = this.state.loadout.author
+        if (author == null || author.id == null || author.id === "") {
+            return true
+        }
+
+        return user != null && author.id === user.uid
     }
 
     copyLoadout = () => {
