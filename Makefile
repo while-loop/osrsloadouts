@@ -1,6 +1,6 @@
 # service specific vars
 SERVICE	 		:= api
-VERSION			:= 0.0.10
+VERSION			:= 0.0.11
 ORG		 		:= osrs-loadouts
 COMMIT      	:= $(shell git rev-parse --short HEAD)
 BUILD_TIME		:= $(shell date -u '+%Y-%m-%d_%H:%M:%S')
@@ -45,7 +45,7 @@ context:
 	gcloud config set project ${ORG}
 	gcloud config set run/region us-east1
 
-deploy: context ## deploy lastest built container to docker hub
+deploy: context ## deploy latest built container to docker hub
 	gcloud beta run deploy ${GCLOUD_SERVICE} \
 	--image ${IMAGE_NAME}:${VERSION} \
 	--platform=managed  \
