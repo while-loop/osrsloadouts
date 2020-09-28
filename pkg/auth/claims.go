@@ -49,9 +49,7 @@ func (c *ClaimsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Info("claims ", osrsInvyClaims)
-	if osrsInvyClaims != nil {
-		c.h.ServeHTTP(w, r.WithContext(WithClaims(r.Context(), osrsInvyClaims)))
-	}
+	c.h.ServeHTTP(w, r.WithContext(WithClaims(r.Context(), osrsInvyClaims)))
 }
 
 func GetClaims(ctx context.Context) *OsrsInvyClaims {

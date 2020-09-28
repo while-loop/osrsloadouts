@@ -142,36 +142,45 @@ func (c *LoadoutController) GetForUser(ctx context.Context, id string, p *store.
 }
 
 func (c *LoadoutController) fetchFavs(ctx context.Context) chan map[string]store.Stats {
-	favsChan := make(chan map[string]store.Stats, 1)
 	claims := auth.GetClaims(ctx)
-	if claims != nil {
-		favs, err := c.usStore.GetFavorites(ctx, claims.UserID)
-		if err == nil {
-			favsChan <- favs
-			return favsChan
-		}
-		log.Error(errors.Wrapf(err, "failed to get user favs %s", claims.UserID))
+	if claims == nil {
+		return nil
 	}
 
-	favsChan <- nil
+	favsChan := make(chan map[string]store.Stats, 1)
+	go func() {
+		favs, err := c.usStore.GetFavorites(ctx, claims.UserID)
+		if err != nil {
+			log.Error(errors.Wrapf(err, "failed to get user favs %s", claims.UserID))
+			favsChan <- nil
+		} else {
+			log.Info("got favs")
+			favsChan <- favs
+		}
+	}()
+
 	return favsChan
 }
 
 func (c *LoadoutController) setFavs(ctx context.Context, favsChan chan map[string]store.Stats, ls []*store.Loadout) {
 	var favs map[string]store.Stats
+	if favsChan == nil {
+		return
+	}
+
+	defer close(favsChan)
 	select {
 	case favs = <-favsChan:
+		if len(favs) > 0 {
+			for _, loadout := range ls {
+				if _, ok := favs[loadout.Id]; ok {
+					loadout.Favorited = true
+				}
+			}
+		}
 	case <-time.After(1000 * time.Millisecond):
 	case <-ctx.Done():
 		log.Error(errors.Wrap(ctx.Err(), "deadline waiting for favs"))
-	}
-
-	if len(favs) > 0 {
-		for _, loadout := range ls {
-			if _, ok := favs[loadout.Id]; ok {
-				loadout.Favorited = true
-			}
-		}
 	}
 }
 

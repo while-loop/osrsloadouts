@@ -209,9 +209,12 @@ class Loadout extends React.Component {
             return <span>{this.state.status}</span>
         }
 
+        let loggedIn = currentUser() != null
+        console.log(currentUser())
         let isOwner = this.isOwner()
         let created = moment(this.state.loadout.created);
         let updated = moment(this.state.loadout.updated);
+        let author = this.state.loadout.author != null ? this.state.loadout.author.username : "";
 
         return (
             <div>
@@ -241,7 +244,7 @@ class Loadout extends React.Component {
 
 
                             <span>Author: <Link
-                                to={"/u/" + this.state.loadout.author.username}>{this.state.loadout.author.username}</Link></span>
+                                to={"/u/" + author}>{author}</Link></span>
                             <span
                                 title={created.format('MMM Do YY, h:mm:ss a')}>Created: {created.format('MMM Do YYYY')}</span>
                             <span title={updated.format('MMM Do YY, h:mm:ss a')}>Updated: {updated.fromNow()}</span>
@@ -251,16 +254,16 @@ class Loadout extends React.Component {
                                 <span
                                     title={"favorites: " + this.state.loadout.favorites}>
                                     <FontAwesomeIcon
-                                        style={{cursor: "pointer"}}
-                                        onClick={this.favLoadout}
+                                        style={{cursor: loggedIn ? "pointer" : "" }}
+                                        onClick={loggedIn ? this.favLoadout : null}
                                         icon={this.state.loadout.favorited ? heartSolid : heartOutline}/>
                                         : {Humanize.compactInteger(this.state.loadout.favorites, 1)}
                                 </span>
                                 <span
                                     title={"copies: " + this.state.loadout.copies}>
                                     <FontAwesomeIcon
-                                        style={{cursor: "pointer"}}
-                                        onClick={this.copyLoadout}
+                                        style={{cursor: loggedIn ? "pointer" : "" }}
+                                        onClick={loggedIn ? this.copyLoadout : null}
                                         icon={faCopy}/>
                                         : {Humanize.compactInteger(this.state.loadout.copies, 1)}
                                 </span>
