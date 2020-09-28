@@ -1,7 +1,7 @@
 FROM golang:1.12.9-alpine as builder
 MAINTAINER cvballa3g0@gmail.com
 
-RUN apk update && apk add git make bzr
+RUN apk update && apk add git make bzr bash
 
 ENV PATH=${PATH}:${GOPATH}/bin:/usr/local/bin
 ENV GOFLAGS="-mod=vendor"

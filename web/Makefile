@@ -22,11 +22,15 @@ clean:
 version:
 	sed -i 's/"version": ".*",/"version": "${VERSION}",/' package.json
 
+deps:
+	npm install --silent
+	npm install react-scripts@3.0.1 -g --silent
+
 build: clean version ## build service binary file
 	@echo "[build] building js files"
 	sops exec-env ../secrets/web.prod.env 'npm run-script build'
 
-cont: version ## build a cached service container
+cont: build ## build a cached service container
 	docker build -t ${IMAGE_NAME} -t ${IMAGE_NAME}:${VERSION} .
 
 cont-nc: ## build a non-cached service container

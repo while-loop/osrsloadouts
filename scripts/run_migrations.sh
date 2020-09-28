@@ -11,7 +11,7 @@ trap print_error ERR
 cd $(dirname $0)/migrations
 echo `pwd`
 
-cur_version=`mongo ${OSRSLOADOUTS_MONGO_ADDR} --quiet --eval "db.db_migrations.findOne({}).db_version"`
+cur_version=`mongo ${OSRSLOADOUTS_MONGO_ADDR} --quiet --eval "db.db_migrations.findOne({}).db_version" | tail -n1`
 
 if [[ "${cur_version}" = "" ]]; then
     echo "error: no version found"
