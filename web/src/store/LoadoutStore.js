@@ -16,8 +16,8 @@ class LoadoutStore {
         return axios.post(url, loadout);
     }
 
-    static async update(id, loadout) {
-        let url = BASE_URL + `/loadouts/${id}`;
+    static async update(loadout) {
+        let url = BASE_URL + `/loadouts/${loadout.id}`;
         return axios.put(url, loadout);
     }
 

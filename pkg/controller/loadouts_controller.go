@@ -94,6 +94,7 @@ func (c *LoadoutController) Copy(ctx context.Context, id string, author store.Au
 
 	l.Author = author
 	l.Parent = id
+	l.Title += " (copy)"
 	l.Reset()
 
 	l, err = c.lStore.Create(ctx, l)

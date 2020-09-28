@@ -43,7 +43,7 @@ class Loadout extends React.Component {
         }
 
         LoadoutStore.get(this.state.id).then(r => {
-            this.setState({loadout: r.data});
+            this.setState({loadout: r.data, id:r.data.id});
             this.forceUpdate();
         }).catch(reason => {
             console.log("failed to get loadout", reason.response);
@@ -130,7 +130,7 @@ class Loadout extends React.Component {
                 close("Failed to create loadout: " + reason.toString(), toast.TYPE.ERROR);
             })
         } else {
-            LoadoutStore.update(this.state.id, this.state.loadout).then(r => {
+            LoadoutStore.update(this.state.loadout).then(r => {
                 close("Saved ✔︎");
                 this.setState({loadout: r.data});
                 this.forceUpdate();
@@ -170,7 +170,8 @@ class Loadout extends React.Component {
         LoadoutStore.copyLoadout(this.state.loadout.id).then(r => {
             close("Copied ✔")
             this.props.history.push(`/l/${r.data.id}`)
-            this.setState({loadout:r.data})
+            this.setState({loadout:r.data, id:r.data.id})
+            this.forceUpdate();
         }).catch(reason => {
             console.log("failed to copy loadout", reason);
             close("Failed to copy loadout: " + reason.toString(), toast.TYPE.ERROR);

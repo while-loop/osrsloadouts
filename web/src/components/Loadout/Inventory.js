@@ -85,6 +85,10 @@ class Inventory extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.isOwner !== prevProps.isOwner) {
+            this.setState({items: this.toSS()});
+        }
+
         if (_.isEqual(this.props.items, prevProps.items)) {
             return;
         }

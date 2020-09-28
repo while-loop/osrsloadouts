@@ -92,12 +92,16 @@ func (a *LoadoutService) updateLoadout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if id != l.Id {
+		utils.WriteErrorStatus(w, http.StatusBadRequest, "loadout IDs do not match")
+		return
+	}
+
 	if apiErr := auth.HasAuthorization(r.Context(), l.Author.Id); apiErr != nil {
 		utils.WriteApiError(w, apiErr)
 		return
 	}
 
-	l.Id = id
 	l, err := a.lCtlr.Update(r.Context(), l)
 	if err != nil {
 		utils.WriteApiError(w, err)
