@@ -111,7 +111,10 @@ class LoadoutTable extends React.Component {
                                 }
 
                                 console.log('It was in this row:', rowInfo.original);
-                                this.props.history.push(`/l/${rowInfo.original.id}`);
+                                this.props.history.push({
+                                    pathname: `/l/${rowInfo.original.id}`,
+                                    loadout: rowInfo.original,
+                                });
                             }
                         }
                     }}

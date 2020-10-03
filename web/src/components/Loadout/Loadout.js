@@ -32,6 +32,11 @@ class Loadout extends React.Component {
             showExportImport: null,
             showGuide: false
         };
+
+
+        if (this.props.location.loadout != null) {
+            this.state.loadout = this.props.location.loadout;
+        }
     }
 
     componentDidMount() {
@@ -210,7 +215,6 @@ class Loadout extends React.Component {
         }
 
         let loggedIn = currentUser() != null
-        console.log(currentUser())
         let isOwner = this.isOwner()
         let created = moment(this.state.loadout.created);
         let updated = moment(this.state.loadout.updated);
