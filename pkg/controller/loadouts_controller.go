@@ -147,7 +147,7 @@ func (c *LoadoutController) fetchFavs(ctx context.Context) chan map[string]store
 		return nil
 	}
 
-	favsChan := make(chan map[string]store.Stats, 1)
+	favsChan := make(chan map[string]store.Stats)
 	go func() {
 		favs, err := c.usStore.GetFavorites(ctx, claims.UserID)
 		if err != nil {
@@ -157,21 +157,20 @@ func (c *LoadoutController) fetchFavs(ctx context.Context) chan map[string]store
 			log.Info("got favs")
 			favsChan <- favs
 		}
+		close(favsChan)
 	}()
 
 	return favsChan
 }
 
 func (c *LoadoutController) setFavs(ctx context.Context, favsChan chan map[string]store.Stats, ls []*store.Loadout) {
-	var favs map[string]store.Stats
 	if favsChan == nil {
 		return
 	}
 
-	defer close(favsChan)
 	select {
-	case favs = <-favsChan:
-		if len(favs) > 0 {
+	case favs, ok := <-favsChan:
+		if ok && len(favs) > 0 {
 			for _, loadout := range ls {
 				if _, ok := favs[loadout.Id]; ok {
 					loadout.Favorited = true
