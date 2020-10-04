@@ -11,7 +11,7 @@ class RSButton extends React.Component {
                 style={{
                     width: this.props.width || 68,
                     height: this.props.height || 32,
-                    fontSize: this.props.fontSize,
+                    fontSize: this.props.fontSize || 16,
                 }}>
                 {this.props.children}
             </button>

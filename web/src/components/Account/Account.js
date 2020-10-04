@@ -5,6 +5,7 @@ import app, {currentUser, refreshToken} from "../../utils/base";
 import {toast} from "react-toastify";
 import {TOAST_DELAY} from "../../config/constants";
 import queryString from 'query-string'
+import RSButton from "../../utils/widgets/RSButton/RSButton";
 
 class Account extends React.Component {
     toastId = null;
@@ -86,7 +87,7 @@ class Account extends React.Component {
         return (
             <div>
                 <h4>My Account</h4>
-                <button onClick={this.logOut}>Log out</button>
+                <RSButton onClick={this.logOut}>Log out</RSButton>
                 <br/>
 
                 <div style={{
@@ -102,7 +103,7 @@ class Account extends React.Component {
                         Rsn: <input value={this.state.user.rsn} onChange={this.setData("rsn")}/>
                     </label>
                 </div>
-                <button onClick={this.updateUser}>Update</button>
+                <RSButton onClick={this.updateUser}>Update</RSButton>
             </div>
         );
     }
