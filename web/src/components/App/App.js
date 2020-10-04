@@ -20,7 +20,6 @@ class App extends React.Component {
 
                 <Footer/>
                 <ToastContainer autoClose={TOAST_DELAY} style={{
-                    fontSize: ".5em",
                 }}/>
             </div>
         );
@@ -57,7 +56,7 @@ class Header extends React.Component {
 class Footer extends React.Component {
     render() {
         return (
-            <div style={{fontSize: '.40em', color: "white"}}>
+            <div style={{fontSize: '12px', color: "white", paddingBottom: 24}}>
                 <a href="https://github.com/while-loop" target="_blank" rel="noopener noreferrer"><FontAwesomeIcon
                     icon={faGithub}/></a> &nbsp; | &nbsp; v{process.env.REACT_APP_VERSION}
                     <br/>

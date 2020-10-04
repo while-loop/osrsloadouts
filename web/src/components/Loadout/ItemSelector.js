@@ -91,7 +91,6 @@ const customStyles = {
     }),
     container: (provided, state) => ({
         ...provided,
-        fontSize: '.5em',
         zIndex: 999999,
         width: Inventory.invyWidth,
     }),

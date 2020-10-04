@@ -4,7 +4,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: calc(10px + 2vmin);
+    font-size: 17px;
     color: black;
     background: url("bg.jpg") repeat-y center top;
     margin: 0 auto;
@@ -18,7 +18,7 @@
     background: black;
     border: 2px solid #382418;
     display: block;
-    font-size: 0.55em;
+    font-size: 16px;
     margin: 10px auto;
     overflow: hidden;
     padding: 4px 16px;

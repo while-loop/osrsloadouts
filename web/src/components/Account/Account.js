@@ -86,7 +86,7 @@ class Account extends React.Component {
     render() {
         return (
             <div>
-                <h4>My Account</h4>
+                <h1>My Account</h1>
                 <RSButton onClick={this.logOut}>Log out</RSButton>
                 <br/>
 

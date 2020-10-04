@@ -7,7 +7,7 @@ function Home() {
             flexDirection: "column",
             justifyContent: "space-between",
         }}>
-            <h4>Home</h4>
+            <h1>Home</h1>
             <span>A q p</span>
             <span>asdfasdf</span>
             <span>&nbsp;&nbsp;&nbsp;&nbsp;W</span>

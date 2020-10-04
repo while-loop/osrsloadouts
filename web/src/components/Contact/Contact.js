@@ -14,8 +14,7 @@ function Contact() {
             flexDirection: "column",
             justifyContent: "space-between",
         }}>
-            <h4>Contact Me</h4>
-
+            <h1>Contact Me</h1>
             <div>
                 <a href={DISCORD_URL} target='_blank'><img style={{verticalAlign: 'middle'}} src={discord} alt={"discord logo"} width={50}/></a>
                 &nbsp;

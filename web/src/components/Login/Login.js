@@ -19,7 +19,7 @@ class Login extends React.Component {
     render() {
         return (
             <div>
-                <h4>OSRS Loadouts</h4>
+                <h1>OSRS Loadouts</h1>
                 <p>Please sign-in:</p>
                 <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()}/>
             </div>

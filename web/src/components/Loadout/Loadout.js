@@ -223,7 +223,7 @@ class Loadout extends React.Component {
 
         return (
             <div>
-                <h4>
+                <h1>
                     <div contentEditable={this.isOwner()} onBlur={(e) => {
                         let loadout = _.cloneDeep(this.state.loadout);
                         loadout.title = e.target.textContent;
@@ -231,11 +231,12 @@ class Loadout extends React.Component {
                     }}>
                         {this.state.loadout.title}
                     </div>
-                </h4>
+                </h1>
                 <div className="Loadout-header">
                     <div className="Loadout-top">
                         <textarea focusa readOnly={!this.isOwner()} rows={6} className="Loadout-description"
                                   value={this.state.loadout.description}
+                                  style={{fontSize: 16}}
                                   onChange={(e) => {
                                       let loadout = _.cloneDeep(this.state.loadout);
                                       loadout.description = e.target.value;
@@ -243,7 +244,7 @@ class Loadout extends React.Component {
                                   }}/>
                         <div className="Loadout-info">
                             <div className="Loadout-info-stats">
-                                {this.isOwner() && <RSButton width={45} height={20} fontSize={16} onClick={this.saveLoadout}>Save</RSButton>}
+                                {this.isOwner() && <RSButton width={45} height={20} onClick={this.saveLoadout}>Save</RSButton>}
                                 <PopupMenu style={{float: "right"}} options={this.getLoadoutOptions()}/>
                             </div>
 
@@ -299,7 +300,7 @@ class Loadout extends React.Component {
                                    }}
                         />
                     }
-                    <div style={{fontSize: '.6em'}}>
+                    <div style={{}}>
                         <br/>
                         <br/>
                         <span
@@ -333,7 +334,7 @@ class Loadout extends React.Component {
                                 </li>
                                 <li>Drag and Drop items to swap slots</li>
                                 <li>Right click stackable items to set quantity</li>
-                                <li>Export/Import loadouts to the <code style={{fontSize: '.7em'}}><u>Inventory
+                                <li>Export/Import loadouts to the <code style={{fontSize: '12px'}}><u>Inventory
                                     Setups</u></code> plugin on <a href="https://runelite.net/plugin-hub">Runelite
                                     Plugin Hub</a></li>
                             </ul>

@@ -51,7 +51,7 @@ class Loadouts extends React.Component {
         return (
             <div>
                 <Link style={{float: "right"}} to="/loadouts/new">
-                    <RSButton width={"auto"} height={40} fontSize={16}>
+                    <RSButton width={"auto"} height={40}>
                         New Loadout
                     </RSButton>
                 </Link>

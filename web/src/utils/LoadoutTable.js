@@ -106,7 +106,7 @@ class LoadoutTable extends React.Component {
         const cols = this.props.cols || LoadoutTable.DEFAULT_COLS
 
         return (
-            <div style={{fontSize: ".5em", color: "black"}}>
+            <div style={{ color: "black"}}>
                 <h1>{this.props.title}</h1>
 
                 {/*<div style={{*/}

@@ -10,7 +10,6 @@
 .Loadout-header {
     color: black;
     display: flex;
-    font-size: 1em;
     flex-direction: column;
     justify-content: space-evenly;
 }
@@ -18,23 +17,21 @@
 .Loadout-top {
     color: black;
     display: flex;
-    font-size: 0.5em;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
     flex-wrap: wrap;
+    font-size: 16px;
 }
 .Loadout-tags {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    font-size: .5em;
 }
 .Loadout-tags-select {
     flex: 1;
-    font-size: 1em;
 }
 
 .Loadout-info > * > a {
@@ -49,7 +46,6 @@
     align-items: center;
     background: transparent;
     font-family: "Runescape Chat Font Regular", serif;
-    font-size: 1em;
 }
 
 .Loadout-info {
@@ -124,7 +120,7 @@
 
 .Stats li ul {
     list-style: none;
-    font-size: 14px;
+    font-size: 16px;
     text-shadow: 1px 1px black;
     text-align: left;
     margin-top: 0;
@@ -133,7 +129,7 @@
 
 .Stats li {
     list-style: none;
-    font-size: 14px;
+    font-size: 16px;
     text-shadow: 1px 1px black;
     text-align: left;
 }
@@ -141,7 +137,7 @@
 
 .Menu {
     background: #5d5447;
-    font-size: 12px;
+    font-size: 16px;
     padding: 0.5px 0.5px 0;
     font-weight: bold;
     text-align: left;
@@ -193,7 +189,7 @@
 .Item-quantity {
     color: #ffff03;
     text-shadow: 1px 1px black;
-    font-size: 10px;
+    font-size: 12px;
     position: absolute;
     z-index: 10;
     left: 2px;

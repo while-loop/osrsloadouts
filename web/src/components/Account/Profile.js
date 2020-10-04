@@ -38,13 +38,12 @@ class Profile extends React.Component {
         const hasUser = (this.state.user.id != null && this.state.user.id !== '')
         return (
             <div>
-                <h3>{this.state.user.username}</h3>
+                <h1>{this.state.user.username}</h1>
                 <div style={{
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
                     alignItems: "start",
-                    fontSize: ".8em",
                 }}>
                     <label>
                         Rsn: <span>{this.state.user.rsn}</span>
