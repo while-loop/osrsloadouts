@@ -39,17 +39,36 @@
     text-shadow: 1px 1px black;
 }
 
-.Loadout-description {
+.Loadout-description-container {
     flex: 1; /* shorthand for: flex-grow: 1, flex-shrink: 1, flex-basis: 0 */
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    font-family: "Runescape Chat Font Regular", serif;
+    border: none;
+    outline: none;
+    background: transparent url("img/chatbox.png") no-repeat;
+    background-size: 500px 137px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    height: 137px;
+    width: 500px;
+}
+
+.Loadout-description {
     background: transparent;
     font-family: "Runescape Chat Font Regular", serif;
+    border: none;
+    outline: none;
+    height: 115px;
+    width: 490px;
+    margin: 22px 6px 20px 12px;
+    resize: none;
 }
 
 .Loadout-info {
     display: flex;
+    flex: 1;
     justify-content: flex-end;
     flex-direction: column;
     padding-left: 16px;

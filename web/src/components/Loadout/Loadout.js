@@ -234,14 +234,17 @@ class Loadout extends React.Component {
                 </h1>
                 <div className="Loadout-header">
                     <div className="Loadout-top">
-                        <textarea focusa readOnly={!this.isOwner()} rows={6} className="Loadout-description"
-                                  value={this.state.loadout.description}
-                                  style={{fontSize: 16}}
-                                  onChange={(e) => {
-                                      let loadout = _.cloneDeep(this.state.loadout);
-                                      loadout.description = e.target.value;
-                                      this.setState({loadout})
-                                  }}/>
+                        <div className="Loadout-description-container Shadowed">
+                            <textarea focus readOnly={!this.isOwner()} rows={6} className="Loadout-description"
+                                      value={this.state.loadout.description}
+                                      placeholder={"enter description..."}
+                                      style={{fontSize: 14}}
+                                      onChange={(e) => {
+                                          let loadout = _.cloneDeep(this.state.loadout);
+                                          loadout.description = e.target.value;
+                                          this.setState({loadout})
+                                      }}/>
+                        </div>
                         <div className="Loadout-info">
                             <div className="Loadout-info-stats">
                                 {this.isOwner() && <RSButton width={45} height={20} onClick={this.saveLoadout}>Save</RSButton>}
