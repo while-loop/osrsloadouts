@@ -109,30 +109,30 @@ class LoadoutTable extends React.Component {
             <div style={{ color: "black"}}>
                 <h1>{this.props.title}</h1>
 
-                <div style={{
-                    display: "flex",
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                }}>
+                {/*<div style={{*/}
+                {/*    display: "flex",*/}
+                {/*    justifyContent: 'space-between',*/}
+                {/*    alignItems: 'center',*/}
+                {/*}}>*/}
 
-                    <div>
-                        <input type={"text"} placeholder={"search"} value={this.state.searchValue}
-                               onChange={this.onSearchValue}/>
-                    </div>
+                {/*    <div>*/}
+                {/*        <input type={"text"} placeholder={"search"} value={this.state.searchValue}*/}
+                {/*               onChange={this.onSearchValue}/>*/}
+                {/*    </div>*/}
 
-                    <div>
-                        <RSButton onClick={this.toggleMenu}>Add Filter</RSButton>
-                        {this.state.showMenu &&
-                        <Menu options={[
-                            {action: 'Filter', name: "Favorite", onClick: null},
-                            {action: 'Filter', name: "User", onClick: null},
-                        ]}
-                              onClose={this.onItemMenuClose}
-                              name={""}/>
-                        }
-                    </div>
-                </div>
-                <br/>
+                {/*    <div>*/}
+                {/*        <RSButton onClick={this.toggleMenu}>Add Filter</RSButton>*/}
+                {/*        {this.state.showMenu &&*/}
+                {/*        <Menu options={[*/}
+                {/*            {action: 'Filter', name: "Favorite", onClick: null},*/}
+                {/*            {action: 'Filter', name: "User", onClick: null},*/}
+                {/*        ]}*/}
+                {/*              onClose={this.onItemMenuClose}*/}
+                {/*              name={""}/>*/}
+                {/*        }*/}
+                {/*    </div>*/}
+                {/*</div>*/}
+                {/*<br/>*/}
                 <ReactTable
                     ref={this.tableRef}
                     columns={cols}
