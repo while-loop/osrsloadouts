@@ -1,13 +1,11 @@
 import React from 'react';
 import {Link} from "react-router-dom";
-import {faPlus} from '@fortawesome/free-solid-svg-icons'
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {currentUser} from "../../utils/base";
 import LoadoutTable from "../../utils/LoadoutTable";
 import LoadoutStore from "../../store/LoadoutStore";
 import moment from "moment";
-import {normalizeNumber} from "../../utils/js";
 import Humanize from "humanize-plus";
+import RSButton from "../../utils/widgets/RSButton/RSButton";
 
 class Loadouts extends React.Component {
     static COLS = [
@@ -53,12 +51,13 @@ class Loadouts extends React.Component {
         return (
             <div>
                 <Link style={{float: "right"}} to="/loadouts/new">
-                    <button type="button">
-                        New Loadout <FontAwesomeIcon icon={faPlus}/>
-                    </button>
+                    <RSButton width={"auto"} height={40} fontSize={16}>
+                        New Loadout
+                    </RSButton>
                 </Link>
-                <br/>
-                <LoadoutTable title={"My Loadouts"} fetchFunc={this.fetchFunc} history={this.props.history} cols={Loadouts.COLS}/>
+                <div style={{paddingBottom: 30}}/>
+                <LoadoutTable title={"My Loadouts"} fetchFunc={this.fetchFunc} history={this.props.history}
+                              cols={Loadouts.COLS}/>
             </div>
         );
     }

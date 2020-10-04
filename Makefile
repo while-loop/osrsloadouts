@@ -96,7 +96,7 @@ db-sync: backup
 	mongo --eval "db=db.getSiblingDB('osrsinvy');db.dropDatabase();" --quiet
 	mongorestore --stopOnError --drop --gzip --archive=/tmp/${backup_file}
 
-release-all:
+release-all: context
 	make cont && make -C web cont
 	make push && make -C web push
 	sops exec-env secrets/prod.env 'make deploy && make -C web deploy'

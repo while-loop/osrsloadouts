@@ -18,6 +18,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faEyeSlash, faHeart as heartSolid, faCopy} from "@fortawesome/free-solid-svg-icons";
 import {faHeart as heartOutline} from "@fortawesome/free-regular-svg-icons";
 import Humanize from "humanize-plus";
+import RSButton from "../../utils/widgets/RSButton/RSButton";
 
 class Loadout extends React.Component {
     toastId = null;
@@ -242,7 +243,7 @@ class Loadout extends React.Component {
                                   }}/>
                         <div className="Loadout-info">
                             <div className="Loadout-info-stats">
-                                {this.isOwner() && <button onClick={this.saveLoadout}>Save</button>}
+                                {this.isOwner() && <RSButton width={45} height={20} fontSize={16} onClick={this.saveLoadout}>Save</RSButton>}
                                 <PopupMenu style={{float: "right"}} options={this.getLoadoutOptions()}/>
                             </div>
 

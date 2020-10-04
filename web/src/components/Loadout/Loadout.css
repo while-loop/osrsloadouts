@@ -67,6 +67,7 @@
 .Loadout-info-stats {
     display: flex;
     flex-direction: row;
+    align-items: center;
 }
 
 .Loadout-info-stats > * {

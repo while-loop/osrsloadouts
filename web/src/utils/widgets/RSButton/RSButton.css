@@ -1,0 +1,16 @@
+
+.RSButton {
+    font-family: "Runescape Chat Font Regular", serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #ff9301;
+    border: none;
+    background: transparent url("button.png") no-repeat;
+    background-size: contain;
+    text-shadow: 1px 1px black;
+    outline:none;
+}
+
+.RSButton:hover {
+    color: white
+}

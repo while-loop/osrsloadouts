@@ -2,9 +2,11 @@ import React from "react";
 import ReactTable from "react-table";
 import moment from "moment";
 import PropTypes from "prop-types";
-import {getSort, normalizeNumber} from "./js";
+import {getSort} from "./js";
 import {toast} from "react-toastify";
 import Humanize from "humanize-plus";
+import Menu from "../components/Loadout/Menu";
+import RSButton from "./widgets/RSButton/RSButton";
 
 class LoadoutTable extends React.Component {
 
@@ -43,15 +45,22 @@ class LoadoutTable extends React.Component {
         }
     ]
 
-    state = {
-        data: [],
-        pages: null,
-        loading: false
-
-    };
+    static FAVORITE_OPTIONS = [
+        {key: "Favorite", value: null},
+        {key: "Yes", value: true},
+        {key: "No", value: false},
+    ]
 
     constructor(props) {
         super(props);
+        this.state = {
+            data: [],
+            pages: null,
+            loading: false,
+            searchValue: "",
+            favoriteValue: null,
+            showMenu: false,
+        };
     }
 
     fetchData = (state, instance) => {
@@ -75,6 +84,23 @@ class LoadoutTable extends React.Component {
         )
     };
 
+    onSearchValue = (event) => {
+        this.setState({searchValue: event.target.value})
+    }
+
+    onFavoriteChange = (event) => {
+        this.setState({favoriteValue: event.target.value})
+    }
+
+    onItemMenuClose = () => {
+        this.setState({showMenu: false})
+    }
+
+    toggleMenu = (e) => {
+        console.log(this.state.showMenu)
+        this.setState({showMenu: !this.state.showMenu})
+    }
+
     render() {
         const {data, pages, loading} = this.state;
         const cols = this.props.cols || LoadoutTable.DEFAULT_COLS
@@ -82,6 +108,30 @@ class LoadoutTable extends React.Component {
         return (
             <div style={{fontSize: ".5em", color: "black"}}>
                 <h1>{this.props.title}</h1>
+
+                {/*<div style={{*/}
+                {/*    display: "flex",*/}
+                {/*    justifyContent: 'space-between',*/}
+                {/*    alignItems: 'center',*/}
+                {/*}}>*/}
+
+                {/*    <div>*/}
+                {/*        <input type={"text"} placeholder={"search"} value={this.state.searchValue}*/}
+                {/*               onChange={this.onSearchValue}/>*/}
+                {/*    </div>*/}
+
+                {/*    <div>*/}
+                {/*        <RSButton height={26} width={"auto"} onClick={this.toggleMenu}>Add Filter</RSButton>*/}
+                {/*        {this.state.showMenu &&*/}
+                {/*        <Menu options={[*/}
+                {/*            {action: 'Filter', name: "Favorite", onClick: null},*/}
+                {/*        ]}*/}
+                {/*              onClose={this.onItemMenuClose}*/}
+                {/*              name={""}/>*/}
+                {/*        }*/}
+                {/*    </div>*/}
+                {/*</div>*/}
+                <br/>
                 <ReactTable
                     ref={this.tableRef}
                     columns={cols}
