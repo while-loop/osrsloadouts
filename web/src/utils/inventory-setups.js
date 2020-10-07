@@ -32,7 +32,6 @@ export function loadout2setup(loadout) {
         let e = empty;
         if (slot != null && loadout.equipment != null && slot in loadout.equipment) {
             const e_s = loadout.equipment[slot]
-            console.log(e_s)
             if (e_s.id != null) {
                 e = {
                     id: e_s.id,
@@ -43,8 +42,6 @@ export function loadout2setup(loadout) {
         }
         eq.push(e)
     })
-
-    console.log(eq)
 
     return {
         inventory: invy,

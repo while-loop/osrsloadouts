@@ -20,10 +20,19 @@ class RSButton extends React.Component {
 }
 
 RSButton.propTypes = {
-    width: PropTypes.string,
-    height: PropTypes.string,
+    width: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]),
+    height: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]),
     onClick: PropTypes.func,
-    fontSize: PropTypes.string,
+    fontSize: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]),
 };
 
 export default RSButton;

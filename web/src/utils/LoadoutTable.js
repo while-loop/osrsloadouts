@@ -5,8 +5,7 @@ import PropTypes from "prop-types";
 import {getSort} from "./js";
 import {toast} from "react-toastify";
 import Humanize from "humanize-plus";
-import Menu from "../components/Loadout/Menu";
-import RSButton from "./widgets/RSButton/RSButton";
+import _ from "lodash";
 
 class LoadoutTable extends React.Component {
 
@@ -60,28 +59,38 @@ class LoadoutTable extends React.Component {
             searchValue: "",
             favoriteValue: null,
             showMenu: false,
+            defaultSorted: [{id: "updated", desc: true}]
         };
+
+        if (this.props.history.location.state != null) {
+            this.state = this.props.history.location.state
+        }
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        if (_.isEqual(this.state, this.props.history.location.state)) {
+            return false
+        }
+
+        return true
     }
 
     fetchData = (state, instance) => {
-        this.setState({loading: false});
         if (this.props.fetchFunc == null) {
             return
         }
 
-        console.log(state.pageSize, state.page, state.sorted, state.filtered, this.state.fetchFunc);
         this.props.fetchFunc(state.page, state.pageSize, getSort(state.sorted), state.filtered).then(r => {
             this.setState({
                 data: r.data.loadouts || [],
                 pages: Math.ceil(r.data.total / r.data.limit),
+                defaultSorted: state.sorted,
             })
         }).catch(reason => {
             console.log("failed to get loadouts", reason, reason.response);
             toast.error("Failed to get loadouts: " + reason.toString());
         }).finally(() => {
-                this.setState({loading: false});
-            }
-        )
+        })
     };
 
     onSearchValue = (event) => {
@@ -102,11 +111,11 @@ class LoadoutTable extends React.Component {
     }
 
     render() {
-        const {data, pages, loading} = this.state;
+        const {data, pages, loading, defaultSorted} = this.state;
         const cols = this.props.cols || LoadoutTable.DEFAULT_COLS
 
         return (
-            <div style={{ color: "black"}}>
+            <div style={{color: "black"}}>
                 <h1>{this.props.title}</h1>
 
                 {/*<div style={{*/}
@@ -140,6 +149,7 @@ class LoadoutTable extends React.Component {
                     manual // Forces table not to paginate or sort automatically, so we can handle it server-side
                     filterAll={false}
                     data={data}
+                    defaultSorted={defaultSorted}
                     showPageJump={false}
                     pages={pages} // Display the total number of pages
                     loading={loading} // Display the loading overlay when we need it
@@ -161,7 +171,8 @@ class LoadoutTable extends React.Component {
                                     return
                                 }
 
-                                console.log('It was in this row:', rowInfo.original);
+                                this.props.history.location.state = this.state;
+                                this.props.history.replace(this.props.history.location)
                                 this.props.history.push({
                                     pathname: `/l/${rowInfo.original.id}`,
                                     loadout: rowInfo.original,

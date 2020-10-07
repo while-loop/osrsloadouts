@@ -235,7 +235,7 @@ class Loadout extends React.Component {
                 <div className="Loadout-header">
                     <div className="Loadout-top">
                         <div className="Loadout-description-container Shadowed">
-                            <textarea focus readOnly={!this.isOwner()} rows={6} className="Loadout-description"
+                            <textarea readOnly={!this.isOwner()} rows={6} className="Loadout-description"
                                       value={this.state.loadout.description}
                                       placeholder={"enter description..."}
                                       style={{fontSize: 14}}
