@@ -4,7 +4,25 @@
     flex-direction: row;
     justify-content: space-evenly;
     align-items: center;
-    flex-wrap: wrap;
+}
+
+.Equipment-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Equipment-container-left {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.Equipment-stats-container {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 .Loadout-header {
@@ -15,14 +33,14 @@
 }
 
 .Loadout-top {
-    color: black;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    flex-wrap: wrap;
     align-items: center;
     margin-bottom: 8px;
-    flex-wrap: wrap;
     font-size: 16px;
+    color: black;
 }
 .Loadout-tags {
     display: flex;
@@ -261,5 +279,21 @@
     -khtml-user-select: none;
     -moz-user-select: none;
     -o-user-select: none;
+    user-select: none;
+}
+
+
+
+.RunePouch {
+    display: block;
+    height: 64px;
+    width: 156px;
+    position: relative;
+
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
     user-select: none;
 }

@@ -19,9 +19,13 @@ import {faEye, faEyeSlash, faHeart as heartSolid, faCopy} from "@fortawesome/fre
 import {faHeart as heartOutline} from "@fortawesome/free-regular-svg-icons";
 import Humanize from "humanize-plus";
 import RSButton from "../../utils/widgets/RSButton/RSButton";
+import UserGuide from "./UserGuide";
+import RunePouch from "./RunePouch";
 
 class Loadout extends React.Component {
     toastId = null;
+
+    static RUNE_POUCH_IDS = [12791, 23650]
 
     constructor(props) {
         super(props);
@@ -85,18 +89,19 @@ class Loadout extends React.Component {
                 [this.z(null, 1), this.z(null, 1), this.z(null, 1), this.z(null, 1)],
             ],
             equipment: {
-                head: {id: null, quantity: 1},
-                cape: {id: null, quantity: 1},
-                neck: {id: null, quantity: 1},
-                ammo: {id: null, quantity: 1},
-                weapon: {id: null, quantity: 1},
-                body: {id: null, quantity: 1},
-                shield: {id: null, quantity: 1},
-                legs: {id: null, quantity: 1},
-                hands: {id: null, quantity: 1},
-                feet: {id: null, quantity: 1},
-                ring: {id: null, quantity: 1},
+                head: this.z(null, 1),
+                cape: this.z(null, 1),
+                neck: this.z(null, 1),
+                ammo: this.z(null, 1),
+                weapon: this.z(null, 1),
+                body: this.z(null, 1),
+                shield: this.z(null, 1),
+                legs: this.z(null, 1),
+                hands: this.z(null, 1),
+                feet: this.z(null, 1),
+                ring: this.z(null, 1),
             },
+            rune_pouch: [this.z(null, 1), this.z(null, 1), this.z(null, 1)]
         }
     }
 
@@ -107,6 +112,18 @@ class Loadout extends React.Component {
     onEquipChange = (ss) => {
         const loadout = _.cloneDeep(this.state.loadout);
         loadout.equipment[ss.slotType] = this.z(ss.id, ss.quantity);
+        this.setState({loadout});
+    };
+
+    onRunePouchChange = (sss) => {
+        if (!Array.isArray(sss)) {
+            sss = [sss];
+        }
+
+        const loadout = _.cloneDeep(this.state.loadout);
+        sss.forEach(ss => {
+            loadout.rune_pouch[ss.col] = this.z(ss.id, ss.quantity);
+        });
         this.setState({loadout});
     };
 
@@ -122,11 +139,11 @@ class Loadout extends React.Component {
     };
 
     saveLoadout = () => {
-        console.log(this.state.loadout);
         this.toastId = toast("Saving loadout...", {autoClose: false});
         let close = (msg, type = toast.TYPE.INFO) => {
             toast.update(this.toastId, {render: msg, type: type, autoClose: TOAST_DELAY});
         };
+
         if (this.state.id == null) {
             LoadoutStore.create(this.state.loadout).then(r => {
                 close("Created ✔");
@@ -172,6 +189,7 @@ class Loadout extends React.Component {
         if (this.state.loadout.id == null) {
             return
         }
+
         this.toastId = toast("Copying loadout...", {autoClose: false});
         let close = (msg, type = toast.TYPE.INFO) => {
             toast.update(this.toastId, {render: msg, type: type, autoClose: TOAST_DELAY});
@@ -187,6 +205,7 @@ class Loadout extends React.Component {
             close("Failed to copy loadout: " + reason.toString(), toast.TYPE.ERROR);
         })
     }
+
     favLoadout = () => {
         if (this.state.loadout.id == null) {
             return
@@ -208,6 +227,18 @@ class Loadout extends React.Component {
             state.loadout.favorites += newVal ? 1 : -1;
             return state
         })
+    }
+
+    hasRunePouch() {
+        for (let i = 0; i < this.state.loadout.inventory.length; i++) {
+            for (let j = 0; j < this.state.loadout.inventory[i].length; j++) {
+                if (Loadout.RUNE_POUCH_IDS.includes(this.state.loadout.inventory[i][j].id)) {
+                    return true
+                }
+            }
+        }
+
+        return false
     }
 
     render() {
@@ -232,6 +263,7 @@ class Loadout extends React.Component {
                         {this.state.loadout.title}
                     </div>
                 </h1>
+
                 <div className="Loadout-header">
                     <div className="Loadout-top">
                         <div className="Loadout-description-container Shadowed">
@@ -288,11 +320,24 @@ class Loadout extends React.Component {
                         </div>
                     </div>
                 </div>
+
                 <div className="Loadout-content">
-                    <Inventory onInvyChange={this.onInvyChange} items={this.state.loadout.inventory} isOwner={isOwner}/>
-                    <Equipment onEquipChange={this.onEquipChange} items={this.state.loadout.equipment}
-                               isOwner={isOwner}/>
-                    <Stats items={this.state.loadout.equipment}/>
+                    <div className="Equipment-container">
+                        <div className="Equipment-container-left">
+                            <Inventory onInvyChange={this.onInvyChange} items={this.state.loadout.inventory} isOwner={isOwner}/>
+                            <Equipment onEquipChange={this.onEquipChange} items={this.state.loadout.equipment} isOwner={isOwner}/>
+                        </div>
+                        {
+                            this.hasRunePouch() && <RunePouch onRunePouchChange={this.onRunePouchChange} items={this.state.loadout.rune_pouch} isOwner={isOwner}/>
+                        }
+                    </div>
+
+                    <div className="Equipment-stats-container">
+                        <Stats items={this.state.loadout.equipment}/>
+                    </div>
+                </div>
+
+                <div>
                     { /****** QUANTITY POPUP ******/
                         this.state.showExportImport != null &&
                         <TextPopup text={this.getExportImportText()}
@@ -303,46 +348,7 @@ class Loadout extends React.Component {
                                    }}
                         />
                     }
-                    <div style={{}}>
-                        <br/>
-                        <br/>
-                        <span
-                            style={{cursor: 'pointer'}}
-                            onClick={() => this.setState({showGuide: !this.state.showGuide})}
-                        >
-                            User Guide:&nbsp;&nbsp;&nbsp;&nbsp;
-                            {
-                                this.state.showGuide && <span>Hide</span>
-                            }
-                            {
-                                !this.state.showGuide && <span>Show</span>
-                            }
-                            <FontAwesomeIcon
-                                title="toggle guide"
-                                className="Hoverable"
-                                color="rgba(0, 0, 0, 0.75)"
-                                icon={this.state.showGuide ? faEye : faEyeSlash}
-
-                            />
-
-                        </span>
-                        {
-                            this.state.showGuide &&
-                            <ul style={{textAlign: 'left'}}>
-                                <li>Click an empty inventory/equipment slot to search items</li>
-                                <li>Right click items for menu</li>
-                                <li>Shift+Click to drop item</li>
-                                <li>Ctrl+Click (Cmd+Click on macOS) an empty slot to fill with previously selected
-                                    item
-                                </li>
-                                <li>Drag and Drop items to swap slots</li>
-                                <li>Right click stackable items to set quantity</li>
-                                <li>Export/Import loadouts to the <code style={{fontSize: '12px'}}><u>Inventory
-                                    Setups</u></code> plugin on <a href="https://runelite.net/plugin-hub">Runelite
-                                    Plugin Hub</a></li>
-                            </ul>
-                        }
-                    </div>
+                    <UserGuide/>
                 </div>
             </div>
         );

@@ -179,6 +179,10 @@ class InventorySlot extends React.Component {
             top: this.props.top + 'px',
         };
 
+        if (this.props.ss.id == null) {
+            style.background = "rgba(0, 0, 0, .03)"
+        }
+
         if (this.state.dragging) {
             style.opacity = .25;
         }
@@ -227,7 +231,7 @@ class InventorySlot extends React.Component {
                 }
 
                 <div
-                    idx={this.props.id} draggable={this.props.ss.id != null && this.props.isOwner} onDrop={this.drop}
+                    idx={this.props.id} draggable={this.props.ss.id != null && this.props.isOwner && this.props.draggable} onDrop={this.drop}
                     onDragStart={this.dragStart} onDragOver={(event) => event.preventDefault()}
                     onDragEnd={this.dragEnd} style={style}
                     className="No-add Inventory-slot">
@@ -261,6 +265,7 @@ InventorySlot.propTypes = {
     insert: PropTypes.func.isRequired,
     ss: PropTypes.instanceOf(SlotSchema),
     lastAdded: PropTypes.instanceOf(SlotSchema),
+    draggable: PropTypes.bool,
 };
 
 export default InventorySlot;

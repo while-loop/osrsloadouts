@@ -74,6 +74,7 @@ class Inventory extends React.Component {
                 slots.push(
                     <InventorySlot swap={this.swap} quantity={this.quantity} insert={this.insert} remove={this.remove}
                                    ss={item} key={item.key()}
+                                   draggable={true}
                                    id={item.key()} left={left} top={top}
                                    isOwner={this.props.isOwner}
                                    lastAdded={this.state.lastAdded}/>

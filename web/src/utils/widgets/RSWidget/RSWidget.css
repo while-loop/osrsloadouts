@@ -1,0 +1,35 @@
+
+.RSWidget {
+    font-family: "Runescape Chat Font Regular", serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #ff9301;
+    border: none;
+    text-shadow: 1px 1px black;
+    outline:none;
+}
+
+.RSWidget-header {
+    font-weight: bold;
+}
+
+.RSWidget-content {
+}
+
+.RSWidget-close {
+    margin-top: -26px; /* cancel the .RSWidget padding-top */
+    margin-right: 8px;
+
+    position:relative;
+    margin-left: auto;
+
+    display: block;
+    color: black;
+    width: 25px;
+    height: 25px;
+    background: transparent url("close_button.png") no-repeat;
+}
+
+.RSWidget-close:hover {
+    background: transparent url("close_button_hover.png") no-repeat;
+}

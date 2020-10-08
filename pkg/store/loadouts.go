@@ -46,6 +46,7 @@ type Loadout struct {
 	Parent      string                   `json:"parent" bson:"parent"`
 	Inventory   [7][4]ItemQuantity      `json:"inventory" bson:"inventory"`
 	Equipment   map[string]ItemQuantity `json:"equipment" bson:"equipment"`
+	RunePouch   [3]ItemQuantity `json:"rune_pouch" bson:"rune_pouch"`
 }
 
 func (l *Loadout) Reset() {
@@ -55,7 +56,7 @@ func (l *Loadout) Reset() {
 	l.Favorited = false
 }
 
-var validLoadoutKeys = []string{"title", "description", "updated", "tags", "inventory", "equipment"}
+var validLoadoutKeys = []string{"title", "description", "updated", "tags", "inventory", "equipment", "rune_pouch"}
 
 type LoadoutResponse struct {
 	Page     uint32     `json:"page"`
