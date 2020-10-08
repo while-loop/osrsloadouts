@@ -5,12 +5,12 @@
     -moz-osx-font-smoothing: grayscale;
     color: #ff9301;
     border: none;
-    text-shadow: 1px 1px black;
     outline:none;
 }
 
 .RSWidget-header {
     font-weight: bold;
+    text-shadow: 1px 1px black;
 }
 
 .RSWidget-content {

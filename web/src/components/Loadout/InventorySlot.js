@@ -68,9 +68,8 @@ class InventorySlot extends React.Component {
         let sourcess = SlotSchema.fromJSON(JSON.parse(event.dataTransfer.getData("text")));
         let destss = this.props.ss;
 
-        if (sourcess && destss) {
+        if (sourcess && destss && this.props.swap != null) {
             this.props.swap(sourcess, destss);
-            event.dataTransfer.clearData()
         }
     };
 
@@ -231,8 +230,11 @@ class InventorySlot extends React.Component {
                 }
 
                 <div
-                    idx={this.props.id} draggable={this.props.ss.id != null && this.props.isOwner && this.props.draggable} onDrop={this.drop}
-                    onDragStart={this.dragStart} onDragOver={(event) => event.preventDefault()}
+                    idx={this.props.id}
+                    draggable={this.props.ss.id != null && this.props.isOwner && this.props.draggable}
+                    onDrop={this.drop}
+                    onDragStart={this.dragStart}
+                    onDragOver={(event) => event.preventDefault()}
                     onDragEnd={this.dragEnd} style={style}
                     className="No-add Inventory-slot">
 

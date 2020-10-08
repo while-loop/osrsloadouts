@@ -3,6 +3,7 @@ import SlotSchema from "./SlotSchema";
 import InventorySlot from "./InventorySlot";
 import PropTypes from "prop-types";
 import RSWidget from "../../utils/widgets/RSWidget/RSWidget";
+import _ from "lodash";
 
 class RunePouch extends React.Component {
 
@@ -23,6 +24,28 @@ class RunePouch extends React.Component {
         this.props.onRunePouchChange(ss);
     };
 
+    swap = (ss1, ss2) => {
+        if (ss1.slotType !== ss2.slotType) {
+            return
+        }
+        let item1 = _.cloneDeep(ss1);
+        let item2 = _.cloneDeep(ss2);
+
+        let i1 = item1.id;
+        let q1 = item1.quantity;
+        let i2 = item2.id;
+        let q2 = item2.quantity;
+
+        item1.reset();
+        item2.reset();
+
+        item1.id = i2;
+        item1.quantity = q2;
+        item2.id = i1;
+        item2.quantity = q1;
+        this.props.onRunePouchChange([item1, item2]);
+    };
+
     getSlots() {
         let slots = [];
 
@@ -37,10 +60,11 @@ class RunePouch extends React.Component {
 
             let left = (i * 45) + 17;
             ss.col = i;
+            ss.slotType = "rune_pouch";
 
             slots.push(
-                <InventorySlot swap={null}
-                               draggable={false}
+                <InventorySlot swap={this.swap}
+                               draggable={true}
                                quantity={this.changed}
                                insert={this.changed}
                                remove={this.changed}
@@ -73,7 +97,7 @@ class RunePouch extends React.Component {
     }
 }
 
-RSWidget.propTypes = {
+RunePouch.propTypes = {
     onRunePouchChange: PropTypes.func,
     items: PropTypes.array.isRequired,
     isOwner: PropTypes.bool.isRequired,
