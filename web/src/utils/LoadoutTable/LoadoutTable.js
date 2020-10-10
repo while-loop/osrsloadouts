@@ -60,6 +60,7 @@ class LoadoutTable extends React.Component {
             filters: {
                 favorited: undefined,
                 viewed: undefined,
+                copied: undefined,
             },
             searchValue: "",
             showFilters: false,

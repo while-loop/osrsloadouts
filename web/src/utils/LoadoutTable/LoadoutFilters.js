@@ -36,6 +36,10 @@ class LoadoutFilters extends React.Component {
         this.setState({viewed: this.getBoolVal(e.target.value)})
     }
 
+    setCopied = (e) => {
+        this.setState({copied: this.getBoolVal(e.target.value)})
+    }
+
     render() {
         return (
             <RSPopup
@@ -67,6 +71,18 @@ class LoadoutFilters extends React.Component {
                             <option value={false}>No</option>
                         </select>
                     </div>
+
+                    <div className="Filters-filter">
+                        <span>
+                            Copied
+                        </span>
+                        <select value={this.state.copied} onChange={this.setCopied}>
+                            <option value={undefined}>Any</option>
+                            <option value={true}>Yes</option>
+                            <option value={false}>No</option>
+                        </select>
+                    </div>
+
                 </div>
             </RSPopup>
         );

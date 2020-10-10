@@ -258,4 +258,24 @@ func (c *LoadoutController) setFilters(p *store.Pagination, ustats *store.UserSt
 
 	boolFilter("favorited", getIds(ustats.Favorites))
 	boolFilter("viewed", getIds(ustats.Views))
+
+	boolStr := strings.ToLower(p.Params.Get("copied"))
+	if boolStr != "" {
+		if _, ok := p.Filters["$and"]; !ok {
+			p.Filters["$and"] = []bson.M{}
+		}
+
+		if boolStr == "true" {
+			p.Filters["$and"] = append(p.Filters["$and"].([]bson.M), bson.M{
+				"parent": bson.M{
+					"$exists": true,
+					"$ne":     "",
+				},
+			})
+		} else {
+			p.Filters["$and"] = append(p.Filters["$and"].([]bson.M), bson.M{
+				"parent": "",
+			})
+		}
+	}
 }
