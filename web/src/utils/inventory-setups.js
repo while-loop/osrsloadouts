@@ -2,7 +2,7 @@ const slots = [
     "head", "cape", "neck", "weapon", "body", "shield", null, "legs", null, "hands", "feet", null, "ring", "ammo"
 ]
 
-export function loadout2setup(loadout) {
+export function loadout2setup(loadout, description) {
     const invy = []
     const eq = []
     for (let i = 0; i < loadout.inventory.length; i++) {
@@ -43,22 +43,26 @@ export function loadout2setup(loadout) {
         eq.push(e)
     })
 
+    const rp = new Array(3);
+    for (let i = 0; i < loadout.rune_pouch.length; i++) {
+        let e = empty;
+        const item = loadout.rune_pouch[i]
+        if (item.id != null) {
+            e = {
+                id: item.id,
+                name: "",
+                quantity: item.quantity,
+            }
+        }
+
+        rp[i] = e
+    }
+
     return {
         inventory: invy,
         equipment: eq,
-        rune_pouch: [{
-            id: -1,
-            name: null,
-            quantity: 0,
-        }, {
-            id: -1,
-            name: null,
-            quantity: 0,
-        }, {
-            id: -1,
-            name: null,
-            quantity: 0,
-        }]
+        rune_pouch: rp,
+        notes: description,
     }
 }
 
@@ -109,10 +113,23 @@ export function setup2loadout(setup) {
         }
     }
 
+    const runePouch = new Array(3);
+
+    for (let i = 0; i < setup.rune_pouch.length; i++) {
+        let item = setup.rune_pouch[i]
+        if (item == null || item.id === -1) {
+            runePouch[i] = {id: null, quantity: 0}
+        } else {
+            runePouch[i] = {id: item.id, quantity: item.quantity}
+        }
+    }
+
     return {
         equipment: equipment,
         inventory: inventory,
+        rune_pouch: runePouch,
         title: setup.name,
+        description: setup.notes,
     }
 
 }

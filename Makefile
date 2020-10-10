@@ -46,6 +46,7 @@ context:
 	gcloud config set run/region us-east1
 
 deploy: context ## deploy latest built container to docker hub
+	make migration SECRET_FILE=secrets/prod.env
 	gcloud beta run deploy ${GCLOUD_SERVICE} \
 	--image ${IMAGE_NAME}:${VERSION} \
 	--platform=managed  \

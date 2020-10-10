@@ -1,5 +1,11 @@
 @import "./font/stylesheet.css";
 
+* {
+    font-family: "Runescape Chat Font Regular", serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
 body {
     margin: 0;
     font-family: "Runescape Chat Font Regular", serif;

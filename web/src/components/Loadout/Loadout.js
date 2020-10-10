@@ -518,7 +518,7 @@ class Loadout extends React.Component {
                 unorderedHighlight: true,
                 name: this.state.loadout.title,
             }
-            let setup = loadout2setup(this.state.loadout)
+            let setup = loadout2setup(this.state.loadout.tabs[this.state.activeTab], this.state.loadout.description)
             return JSON.stringify({...setup, ...config});
         }
 
@@ -542,8 +542,10 @@ class Loadout extends React.Component {
         const setup = JSON.parse(text);
         const setUploadout = setup2loadout(setup)
         const loadout = _.cloneDeep(this.state.loadout);
-        loadout.inventory = setUploadout.inventory;
-        loadout.equipment = setUploadout.equipment;
+        loadout.tabs[this.state.activeTab].rune_pouch = setUploadout.rune_pouch;
+        loadout.tabs[this.state.activeTab].inventory = setUploadout.inventory;
+        loadout.tabs[this.state.activeTab].equipment = setUploadout.equipment;
+        loadout.description = setUploadout.description;
         loadout.title = setUploadout.title;
         this.setState({loadout, showExportImport: null});
     }
