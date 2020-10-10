@@ -1,6 +1,7 @@
 import _ from "lodash";
-import CreatableSelect from "react-select/creatable/dist/react-select.esm";
 import React from 'react';
+import PropTypes from "prop-types";
+import Select from "react-select";
 
 
 class CreatableInputOnly extends React.Component {
@@ -15,6 +16,7 @@ class CreatableInputOnly extends React.Component {
     createOption = (label) => ({
         label,
         value: label,
+        clearableValue: this.props.isOwner,
     });
 
     handleChange = (value, actionMeta) => {
@@ -73,16 +75,19 @@ class CreatableInputOnly extends React.Component {
     render() {
         const {inputValue, value} = this.state;
         return (
-            <CreatableSelect
+            <Select
                 styles={customStyles}
                 components={{DropdownIndicator: null}}
+                isSearchable={this.props.isOwner}
+                isClearable={this.props.isOwner}
+                isDisabled={!this.props.isOwner}
                 inputValue={inputValue}
                 isMulti
                 menuIsOpen={false}
                 onChange={this.handleChange}
                 onInputChange={this.handleInputChange}
                 onKeyDown={this.handleKeyDown}
-                placeholder="enter tags..."
+                placeholder={this.props.isOwner ? "enter tags..." : ""}
                 value={value}
             />
         );
@@ -90,6 +95,9 @@ class CreatableInputOnly extends React.Component {
 }
 
 const customStyles = {
+    multiValueRemove: (base, state) => ({
+        ...base, display: state.selectProps.isClearable ? base.display : 'none'
+    }),
     placeholder: (provided, state) => ({
         ...provided,
         color: 'white',
@@ -104,6 +112,12 @@ const customStyles = {
         color: 'white',
         border: 'none',
     }),
+};
+
+CreatableInputOnly.propTypes = {
+    isOwner: PropTypes.bool.isRequired,
+    onChange: PropTypes.func.isRequired,
+    tags: PropTypes.arrayOf(String),
 };
 
 export default CreatableInputOnly;

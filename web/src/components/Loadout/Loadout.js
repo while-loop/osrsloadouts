@@ -311,13 +311,13 @@ class Loadout extends React.Component {
                     <div className="Tab-container">
                         <span
                             className="Tab-title"
-                            contentEditable={this.isOwner()}
+                            contentEditable={isOwner}
                             suppressContentEditableWarning
                             onBlur={this.updateTabTitle(idx)}>
                             {tab.title}
                         </span>
                         {
-                            this.state.activeTab === idx && this.isOwner() &&
+                            this.state.activeTab === idx && isOwner &&
                             <div onClick={this.deleteTab(idx)} className="Tab-delete">
                                 <FontAwesomeIcon size={"xs"} icon={faTimes}/>
                             </div>
@@ -353,7 +353,7 @@ class Loadout extends React.Component {
             )
         })
 
-        if (this.isOwner()) {
+        if (isOwner) {
             tabHeaders.push(
                 <span className="react-tabs__tab Tab-add" onClick={this.addTab}>
                 <FontAwesomeIcon size={"xs"} icon={faPlus}/>
@@ -364,7 +364,7 @@ class Loadout extends React.Component {
         return (
             <div>
                 <h1>
-                    <div contentEditable={this.isOwner()} suppressContentEditableWarning onBlur={(e) => {
+                    <div contentEditable={isOwner} suppressContentEditableWarning onBlur={(e) => {
                         let loadout = _.cloneDeep(this.state.loadout);
                         loadout.title = e.target.textContent;
                         this.setState({loadout})
@@ -376,9 +376,9 @@ class Loadout extends React.Component {
                 <div className="Loadout-header">
                     <div className="Loadout-top">
                         <div className="Loadout-description-container Shadowed">
-                            <textarea readOnly={!this.isOwner()} rows={6} className="Loadout-description"
+                            <textarea readOnly={!isOwner} rows={6} className="Loadout-description"
                                       value={this.state.loadout.description}
-                                      placeholder={"enter description..."}
+                                      placeholder={isOwner ? "enter description..." : ""}
                                       style={{fontSize: 14}}
                                       onChange={(e) => {
                                           let loadout = _.cloneDeep(this.state.loadout);
@@ -388,7 +388,7 @@ class Loadout extends React.Component {
                         </div>
                         <div className="Loadout-info">
                             <div className="Loadout-info-stats">
-                                {this.isOwner() &&
+                                {isOwner &&
                                 <RSButton width={45} height={20} onClick={this.saveLoadout}>Save</RSButton>}
                                 <PopupMenu style={{float: "right"}} options={this.getLoadoutOptions()}/>
                             </div>
@@ -423,6 +423,7 @@ class Loadout extends React.Component {
                     <div className="Loadout-tags">
                         <div className="Loadout-tags-select">
                             <CreatableInputOnly tags={this.state.loadout.tags}
+                                                isOwner={isOwner}
                                                 onChange={(tags) => this.setState(state => {
                                                     state.loadout.tags = tags;
                                                 })}/>
