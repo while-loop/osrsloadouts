@@ -112,6 +112,7 @@ const customStyles = {
         background: 'rgba(93,84,71,0.25)',
         color: 'white',
         border: 'none',
+        boxShadow: 'none',
     }),
 };
 
