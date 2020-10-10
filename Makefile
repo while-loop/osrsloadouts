@@ -1,6 +1,6 @@
 # service specific vars
 SERVICE	 		:= api
-VERSION			:= 0.0.18
+VERSION			:= 0.0.19
 ORG		 		:= osrs-loadouts
 COMMIT      	:= $(shell git rev-parse --short HEAD)
 BUILD_TIME		:= $(shell date -u '+%Y-%m-%d_%H:%M:%S')
