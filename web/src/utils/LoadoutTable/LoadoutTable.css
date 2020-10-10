@@ -36,7 +36,7 @@
 
     background: transparent url("search.png") no-repeat;
     background-size: 360px 28px;
-    width: 340px;
+    width: 360px;
     height: 28px;
     padding: 7px 4px 4px 14px;
 }
@@ -44,6 +44,6 @@
 .Loadout-search {
     outline: none;
     border: none;
-    width: 100%;
+    width: 80%;
     background: transparent;
 }
