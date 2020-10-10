@@ -18,7 +18,7 @@ class RSWidget extends React.Component {
 
         }
         style.backgroundSize = style.width + "px " + style.height + "px"
-        const heightScale = style.height / RSWidget.DEFAULT_HEIGHT;
+        // const heightScale = style.height / RSWidget.DEFAULT_HEIGHT;
 
         return (
             <div
@@ -47,7 +47,10 @@ RSWidget.propTypes = {
         PropTypes.string,
         PropTypes.number,
     ]),
-    title: PropTypes.string,
+    title: PropTypes.oneOfType([
+        PropTypes.element,
+        PropTypes.string,
+    ]),
     fontSize: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,

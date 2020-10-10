@@ -16,15 +16,15 @@ function Contact() {
         }}>
             <h1>Contact Me</h1>
             <div>
-                <a href={DISCORD_URL} target='_blank'><img style={{verticalAlign: 'middle'}} src={discord} alt={"discord logo"} width={50}/></a>
+                <a href={DISCORD_URL} target='_blank' rel="noopener noreferrer"><img style={{verticalAlign: 'middle'}} src={discord} alt={"discord logo"} width={50}/></a>
                 &nbsp;
-                <a href={DISCORD_URL} target='_blank'>{DISCORD_USERNAME}</a>
+                <a href={DISCORD_URL} target='_blank' rel="noopener noreferrer">{DISCORD_USERNAME}</a>
             </div>
             <br/>
             <div>
-                <a href={GITHUB_URL} target='_blank'><img style={{verticalAlign: 'middle'}} src={github} alt={"github logo"} width={50}/></a>
+                <a href={GITHUB_URL} target='_blank' rel="noopener noreferrer"><img style={{verticalAlign: 'middle'}} src={github} alt={"github logo"} width={50}/></a>
                 &nbsp;
-                <a href={GITHUB_URL} target='_blank'>{GITHUB_USERNAME}</a>
+                <a href={GITHUB_URL} target='_blank' rel="noopener noreferrer">{GITHUB_USERNAME}</a>
             </div>
 
 

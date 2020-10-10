@@ -14,7 +14,7 @@ import TextPopup from "./TextPopup";
 import {loadout2setup, setup2loadout} from "../../utils/inventory-setups";
 import {currentUser} from "../../utils/base";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCopy, faCross, faEye, faHeart as heartSolid, faPlus, faTimes} from "@fortawesome/free-solid-svg-icons";
+import {faCopy, faEye, faHeart as heartSolid, faPlus, faTimes} from "@fortawesome/free-solid-svg-icons";
 import {faHeart as heartOutline} from "@fortawesome/free-regular-svg-icons";
 import Humanize from "humanize-plus";
 import RSButton from "../../utils/widgets/RSButton/RSButton";
@@ -305,9 +305,9 @@ class Loadout extends React.Component {
         const tabHeaders = []
         const tabPanels = []
 
-        this.state.loadout.tabs.map((tab, idx) => {
+        this.state.loadout.tabs.forEach((tab, idx) => {
             tabHeaders.push(
-                <Tab>
+                <Tab key={idx}>
                     <div className="Tab-container">
                         <span
                             className="Tab-title"
@@ -328,7 +328,7 @@ class Loadout extends React.Component {
             )
 
             tabPanels.push(
-                <TabPanel>
+                <TabPanel key={idx}>
                     <div className="Loadout-content">
                         <div className="Equipment-container">
                             <div className="Equipment-container-left">
@@ -355,9 +355,9 @@ class Loadout extends React.Component {
 
         if (isOwner) {
             tabHeaders.push(
-                <span className="react-tabs__tab Tab-add" onClick={this.addTab}>
-                <FontAwesomeIcon size={"xs"} icon={faPlus}/>
-            </span>
+                <span key={tabHeaders.length} className="react-tabs__tab Tab-add" onClick={this.addTab}>
+                    <FontAwesomeIcon size={"xs"} icon={faPlus}/>
+                </span>
             )
         }
 

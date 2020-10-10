@@ -96,7 +96,8 @@ class CreatableInputOnly extends React.Component {
 
 const customStyles = {
     multiValueRemove: (base, state) => ({
-        ...base, display: state.selectProps.isClearable ? base.display : 'none'
+        ...base,
+        display: state.selectProps.isClearable ? base.display : 'none',
     }),
     placeholder: (provided, state) => ({
         ...provided,

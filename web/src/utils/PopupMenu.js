@@ -3,7 +3,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBars} from "@fortawesome/free-solid-svg-icons";
 import Menu from "../components/Loadout/Menu";
 
-const ICON_SIZE = 24
 
 class PopupMenu extends React.Component {
     constructor(props) {
