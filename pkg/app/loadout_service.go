@@ -138,7 +138,9 @@ func (a *LoadoutService) deleteLoadout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *LoadoutService) getLoadouts(w http.ResponseWriter, r *http.Request) {
-	ls, err := a.lCtlr.GetAll(r.Context(), store.FromRequest(r))
+	page := store.FromRequest(r)
+
+	ls, err := a.lCtlr.GetAll(r.Context(), page)
 	if err != nil {
 		utils.WriteApiError(w, err)
 		return

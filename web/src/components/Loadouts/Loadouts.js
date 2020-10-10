@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from "react-router-dom";
 import {currentUser} from "../../utils/base";
-import LoadoutTable from "../../utils/LoadoutTable";
+import LoadoutTable from "../../utils/LoadoutTable/LoadoutTable";
 import LoadoutStore from "../../store/LoadoutStore";
 import moment from "moment";
 import Humanize from "humanize-plus";
@@ -34,7 +34,7 @@ class Loadouts extends React.Component {
         },
         {
             Header: "Favs",
-            id: "favs",
+            id: "favorites",
             accessor: d => Humanize.compactInteger(d.favorites, 1),
             width: 50.
         }

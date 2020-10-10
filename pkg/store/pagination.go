@@ -10,10 +10,12 @@ import (
 )
 
 type Pagination struct {
-	Page   uint32
-	Limit  uint32
-	Sort   string
-	Search string
+	Page    uint32
+	Limit   uint32
+	Sort    string
+	Search  string
+	Params  url.Values
+	Filters bson.M
 }
 
 func FromRequest(r *http.Request) *Pagination {
@@ -29,6 +31,8 @@ func FromRequest(r *http.Request) *Pagination {
 		Limit:  limit,
 		Sort:   sort,
 		Search: search,
+		Params: vars,
+		Filters: bson.M{},
 	}
 }
 

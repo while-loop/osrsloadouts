@@ -174,6 +174,11 @@ func (m *mongoLoadout) getAll(ctx context.Context, filter bson.M, p *Pagination)
 
 	opts := options.Find().SetSkip(int64(p.Page * p.Limit)).SetLimit(int64(p.Limit)).SetSort(p.GetSort())
 
+	filter = p.AddSearch(filter)
+	for k, v := range p.Filters {
+		filter[k] = v
+	}
+
 	cur, err := m.coll.Find(ctx, filter, opts)
 	if err != nil {
 		return nil, errors.NewApif(http.StatusInternalServerError, err, "unable to get all loadouts")
@@ -194,11 +199,11 @@ func (m *mongoLoadout) getAll(ctx context.Context, filter bson.M, p *Pagination)
 }
 
 func (m *mongoLoadout) GetAll(ctx context.Context, p *Pagination) (*LoadoutResponse, *errors.ApiError) {
-	return m.getAll(ctx, p.AddSearch(bson.M{}), p)
+	return m.getAll(ctx, bson.M{}, p)
 }
 
 func (m *mongoLoadout) GetByUser(ctx context.Context, id string, p *Pagination) (*LoadoutResponse, *errors.ApiError) {
-	filter := p.AddSearch(bson.M{"author.id": id})
+	filter := bson.M{"author.id": id}
 	res, err := m.getAll(ctx, filter, p)
 	if err != nil {
 		err.Nice = "unable to get loadouts by user " + id

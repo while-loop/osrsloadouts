@@ -27,16 +27,20 @@ class LoadoutStore {
         return axios.delete(url);
     }
 
-    static async browseLoadouts(page, limit, sort, filter) {
-        let url = BASE_URL + `/loadouts`;
+    static async getLoadouts(url, page, limit, sort, filter) {
         return axios.get(url, {
             params: {
+                ...filter,
                 page: page,
                 limit: limit,
                 sort: sort,
-                filter: filter,
             }
         });
+    }
+
+    static async browseLoadouts(page, limit, sort, filter) {
+        return LoadoutStore.getLoadouts( BASE_URL + `/loadouts`, page, limit, sort, filter)
+
     }
 
     static async getLoadoutsByUid(uid, page, limit, sort, filter) {
@@ -44,15 +48,7 @@ class LoadoutStore {
             return null;
         }
 
-        let url = BASE_URL + `/loadouts/user/${uid}`;
-        return axios.get(url, {
-            params: {
-                page: page,
-                limit: limit,
-                sort: sort,
-                filter: filter,
-            }
-        });
+        return this.getLoadouts(BASE_URL + `/loadouts/user/${uid}`, page, limit, sort, filter)
     }
 
     static async favoriteLoadout(uid, fav) {

@@ -2,10 +2,15 @@ import React from "react";
 import ReactTable from "react-table";
 import moment from "moment";
 import PropTypes from "prop-types";
-import {getSort} from "./js";
+import {getSort} from "../js";
 import {toast} from "react-toastify";
 import Humanize from "humanize-plus";
 import _ from "lodash";
+import RSButton from "../widgets/RSButton/RSButton";
+import Menu from "../../components/Loadout/Menu";
+import QuantityPopup from "../../components/Loadout/QuantityPopup";
+import RSPopup from "../widgets/RSPopup/RSPopup";
+import LoadoutFilters from "./LoadoutFilters";
 
 class LoadoutTable extends React.Component {
 
@@ -38,27 +43,26 @@ class LoadoutTable extends React.Component {
         },
         {
             Header: "Favs",
-            id: "favs",
+            id: "favorites",
             accessor: d => Humanize.compactInteger(d.favorites, 1),
             width: 50,
         }
     ]
 
-    static FAVORITE_OPTIONS = [
-        {key: "Favorite", value: null},
-        {key: "Yes", value: true},
-        {key: "No", value: false},
-    ]
-
     constructor(props) {
         super(props);
+        this.searchTimeout = null;
+        this.tableRef = React.createRef();
         this.state = {
             data: [],
             pages: null,
             loading: false,
+            filters: {
+                favorited: undefined,
+                viewed: undefined,
+            },
             searchValue: "",
-            favoriteValue: null,
-            showMenu: false,
+            showFilters: false,
             defaultSorted: [{id: "updated", desc: true}]
         };
 
@@ -80,7 +84,12 @@ class LoadoutTable extends React.Component {
             return
         }
 
-        this.props.fetchFunc(state.page, state.pageSize, getSort(state.sorted), state.filtered).then(r => {
+        const filters = {
+            ...this.state.filters,
+            search: this.state.searchValue
+        }
+
+        this.props.fetchFunc(state.page, state.pageSize, getSort(state.sorted), filters).then(r => {
             this.setState({
                 data: r.data.loadouts || [],
                 pages: Math.ceil(r.data.total / r.data.limit),
@@ -93,21 +102,29 @@ class LoadoutTable extends React.Component {
         })
     };
 
+    forceFetch = () => {
+        this.fetchData(this.tableRef.current.state, this.tableRef.current)
+        this.searchTimeout = null
+    }
+
     onSearchValue = (event) => {
-        this.setState({searchValue: event.target.value})
+        if (this.searchTimeout != null) {
+            clearTimeout(this.searchTimeout)
+        }
+        const val = event.target.value
+        this.setState({searchValue: val})
+
+        if (this.tableRef.current != null) {
+            this.searchTimeout = setTimeout(this.forceFetch, 500)
+        }
     }
 
-    onFavoriteChange = (event) => {
-        this.setState({favoriteValue: event.target.value})
+    onFiltersChanged = (filters) => {
+        this.setState({showFilters: false, filters: filters}, this.forceFetch)
     }
 
-    onItemMenuClose = () => {
-        this.setState({showMenu: false})
-    }
-
-    toggleMenu = (e) => {
-        console.log(this.state.showMenu)
-        this.setState({showMenu: !this.state.showMenu})
+    showFilters = (e) => {
+        this.setState({showFilters: true})
     }
 
     render() {
@@ -118,30 +135,27 @@ class LoadoutTable extends React.Component {
             <div style={{color: "black"}}>
                 <h1>{this.props.title}</h1>
 
-                {/*<div style={{*/}
-                {/*    display: "flex",*/}
-                {/*    justifyContent: 'space-between',*/}
-                {/*    alignItems: 'center',*/}
-                {/*}}>*/}
+                <div style={{
+                    display: "flex",
+                    justifyContent: 'space-between',
+                    alignItems: 'baseline',
+                }}>
 
-                {/*    <div>*/}
-                {/*        <input type={"text"} placeholder={"search"} value={this.state.searchValue}*/}
-                {/*               onChange={this.onSearchValue}/>*/}
-                {/*    </div>*/}
+                    <div className="Loadout-search-container">
+                        <span>search:&nbsp;</span>
+                        <input className="Loadout-search" type={"text"} placeholder={"*"} value={this.state.searchValue}
+                               onChange={this.onSearchValue}/>
+                    </div>
 
-                {/*    <div>*/}
-                {/*        <RSButton onClick={this.toggleMenu}>Add Filter</RSButton>*/}
-                {/*        {this.state.showMenu &&*/}
-                {/*        <Menu options={[*/}
-                {/*            {action: 'Filter', name: "Favorite", onClick: null},*/}
-                {/*            {action: 'Filter', name: "User", onClick: null},*/}
-                {/*        ]}*/}
-                {/*              onClose={this.onItemMenuClose}*/}
-                {/*              name={""}/>*/}
-                {/*        }*/}
-                {/*    </div>*/}
-                {/*</div>*/}
-                {/*<br/>*/}
+                    <div>
+                        <RSButton width={72} onClick={this.showFilters}>Add Filter</RSButton>
+                        {
+                            this.state.showFilters &&
+                            <LoadoutFilters onChange={this.onFiltersChanged} filters={this.state.filters}/>
+                        }
+                    </div>
+                </div>
+                <br/>
                 <ReactTable
                     ref={this.tableRef}
                     columns={cols}

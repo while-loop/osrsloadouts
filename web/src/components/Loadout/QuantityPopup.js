@@ -2,6 +2,8 @@ import Popup from "reactjs-popup";
 
 import React from 'react';
 import './Loadout.css'
+import PropTypes from "prop-types";
+import ItemSelector from "./ItemSelector";
 
 
 class QuantityPopup extends React.Component {
@@ -35,5 +37,10 @@ class QuantityPopup extends React.Component {
         )
     }
 }
+
+QuantityPopup.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    quantity: PropTypes.number,
+};
 
 export default QuantityPopup;

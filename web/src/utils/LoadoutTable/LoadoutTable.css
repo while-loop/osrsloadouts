@@ -1,0 +1,49 @@
+
+.Filters-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 16px;
+    justify-content: space-around;
+    align-content: flex-start;
+}
+
+.Filters-container > * {
+    padding-bottom: 16px;
+    width: 33%;
+}
+
+.Filters-filter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Filters-filter > span {
+    font-weight: bold;
+}
+.Filters-filter > select {
+    outline: none;
+    width: 50px;
+}
+
+.Loadout-search-container {
+    outline: none;
+    border: none;
+    display: flex;
+    font-size: 16px;
+    align-items: flex-start;
+
+    background: transparent url("search.png") no-repeat;
+    background-size: 360px 28px;
+    width: 340px;
+    height: 28px;
+    padding: 7px 4px 4px 14px;
+}
+
+.Loadout-search {
+    outline: none;
+    border: none;
+    width: 100%;
+    background: transparent;
+}

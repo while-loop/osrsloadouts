@@ -17,7 +17,7 @@
 }
 
 .RSWidget-close {
-    margin-top: -26px; /* cancel the .RSWidget padding-top */
+    margin-top: -22px; /* cancel the .RSWidget padding-top */
     margin-right: 8px;
 
     position:relative;

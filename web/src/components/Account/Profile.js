@@ -2,7 +2,7 @@ import React from 'react';
 import UserStore from "../../store/UserStore";
 import {toast} from "react-toastify";
 import {dateString} from "../../utils/js";
-import LoadoutTable from "../../utils/LoadoutTable";
+import LoadoutTable from "../../utils/LoadoutTable/LoadoutTable";
 import LoadoutStore from "../../store/LoadoutStore";
 import Loadouts from "../Loadouts/Loadouts";
 

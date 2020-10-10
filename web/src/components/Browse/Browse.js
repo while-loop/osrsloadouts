@@ -1,6 +1,6 @@
 import React from 'react';
 import "react-table/react-table.css";
-import LoadoutTable from "../../utils/LoadoutTable";
+import LoadoutTable from "../../utils/LoadoutTable/LoadoutTable";
 import LoadoutStore from "../../store/LoadoutStore";
 
 class Browse extends React.Component {

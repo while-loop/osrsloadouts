@@ -6,9 +6,13 @@ import (
 	"github.com/while-loop/osrsinvy/pkg/errors"
 	"github.com/while-loop/osrsinvy/pkg/log"
 	"github.com/while-loop/osrsinvy/pkg/store"
+	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
+	"strings"
 	"time"
 )
+
+type userStatsProvider func(ustats *store.UserStats) (*store.LoadoutResponse, *errors.ApiError)
 
 type LoadoutController struct {
 	lStore  store.LoadoutStore
@@ -33,7 +37,7 @@ func (c *LoadoutController) CreateAll(ctx context.Context, ls []*store.Loadout) 
 }
 
 func (c *LoadoutController) Get(ctx context.Context, id, uid, ip string) (*store.Loadout, *errors.ApiError) {
-	lr, err := c.wrapFavs(ctx, func() (*store.LoadoutResponse, *errors.ApiError) {
+	lr, err := c.wrapStats(ctx, func(stats *store.UserStats) (*store.LoadoutResponse, *errors.ApiError) {
 		l, err := c.lStore.Get(ctx, id)
 		if err != nil {
 			return nil, err
@@ -57,7 +61,7 @@ func (c *LoadoutController) Get(ctx context.Context, id, uid, ip string) (*store
 }
 
 func (c *LoadoutController) Update(ctx context.Context, l *store.Loadout) (*store.Loadout, *errors.ApiError) {
-	lr, err := c.wrapFavs(ctx, func() (*store.LoadoutResponse, *errors.ApiError) {
+	lr, err := c.wrapStats(ctx, func(ustats *store.UserStats) (*store.LoadoutResponse, *errors.ApiError) {
 		l, err := c.lStore.Update(ctx, l)
 		if err != nil {
 			return nil, err
@@ -112,28 +116,35 @@ func (c *LoadoutController) Copy(ctx context.Context, id string, author store.Au
 }
 
 func (c *LoadoutController) GetAll(ctx context.Context, p *store.Pagination) (*store.LoadoutResponse, *errors.ApiError) {
-	return c.wrapFavs(ctx, func() (*store.LoadoutResponse, *errors.ApiError) {
+	return c.wrapStats(ctx, func(ustats *store.UserStats) (*store.LoadoutResponse, *errors.ApiError) {
+		c.setFilters(p, ustats)
 		return c.lStore.GetAll(ctx, p)
 	})
 }
 
 func (c *LoadoutController) GetByUser(ctx context.Context, id string, p *store.Pagination) (*store.LoadoutResponse, *errors.ApiError) {
-	return c.wrapFavs(ctx, func() (*store.LoadoutResponse, *errors.ApiError) {
+	return c.wrapStats(ctx, func(ustats *store.UserStats) (*store.LoadoutResponse, *errors.ApiError) {
+		c.setFilters(p, ustats)
 		return c.lStore.GetByUser(ctx, id, p)
 	})
 }
 
-func (c *LoadoutController) wrapFavs(ctx context.Context, fn func() (*store.LoadoutResponse, *errors.ApiError)) (*store.LoadoutResponse, *errors.ApiError) {
-	favsChan := c.fetchFavs(ctx)
+func (c *LoadoutController) wrapStats(ctx context.Context, fn userStatsProvider) (*store.LoadoutResponse, *errors.ApiError) {
+	ustats := c.fetchStats(ctx)
 
-	ls, err := fn()
+	ls, err := fn(ustats)
 	if err != nil {
 		return nil, err
 	}
 
-	if favsChan != nil {
-		c.setFavs(ctx, favsChan, ls.Loadouts)
+	if ustats != nil {
+		for _, loadout := range ls.Loadouts {
+			if _, ok := ustats.Favorites[loadout.Id]; ok {
+				loadout.Favorited = true
+			}
+		}
 	}
+
 	return ls, nil
 }
 
@@ -141,46 +152,20 @@ func (c *LoadoutController) GetForUser(ctx context.Context, id string, p *store.
 	panic("implement me")
 }
 
-func (c *LoadoutController) fetchFavs(ctx context.Context) chan map[string]store.Stats {
+func (c *LoadoutController) fetchStats(ctx context.Context) *store.UserStats {
 	claims := auth.GetClaims(ctx)
 	if claims == nil {
 		return nil
 	}
 
-	favsChan := make(chan map[string]store.Stats)
-	go func() {
-		favs, err := c.usStore.GetFavorites(ctx, claims.UserID)
-		if err != nil {
-			log.Error(errors.Wrapf(err, "failed to get user favs %s", claims.UserID))
-			favsChan <- nil
-		} else {
-			log.Info("got favs")
-			favsChan <- favs
-		}
-		close(favsChan)
-	}()
-
-	return favsChan
-}
-
-func (c *LoadoutController) setFavs(ctx context.Context, favsChan chan map[string]store.Stats, ls []*store.Loadout) {
-	if favsChan == nil {
-		return
+	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
+	defer cancel()
+	ustats, err := c.usStore.Get(ctx, claims.UserID)
+	if err != nil {
+		return nil
 	}
 
-	select {
-	case favs, ok := <-favsChan:
-		if ok && len(favs) > 0 {
-			for _, loadout := range ls {
-				if _, ok := favs[loadout.Id]; ok {
-					loadout.Favorited = true
-				}
-			}
-		}
-	case <-time.After(1000 * time.Millisecond):
-	case <-ctx.Done():
-		log.Error(errors.Wrap(ctx.Err(), "deadline waiting for favs"))
-	}
+	return ustats
 }
 
 func (c *LoadoutController) updateViewCount(ctx context.Context, l *store.Loadout, uid string, ip string) {
@@ -231,4 +216,46 @@ func (c *LoadoutController) SetFavorite(ctx context.Context, loadoutId, uid stri
 	}
 
 	return nil
+}
+
+func (c *LoadoutController) setFilters(p *store.Pagination, ustats *store.UserStats) {
+	if ustats == nil {
+		return
+	}
+
+	boolFilter := func(key string, ids []string) {
+		boolStr := strings.ToLower(p.Params.Get(key))
+		if boolStr == "" {
+			return
+		}
+
+		op := "$in"
+		if boolStr == "false" {
+			op = "$nin"
+		}
+
+		if _, ok := p.Filters["$and"]; !ok {
+			p.Filters["$and"] = []bson.M{}
+		}
+
+		p.Filters["$and"] = append(p.Filters["$and"].([]bson.M), bson.M{
+			"_id": bson.M{
+				op: ids,
+			},
+		})
+	}
+
+	getIds := func(stats map[string]store.Stats) []string {
+		ids := make([]string, len(stats))
+		i := 0
+		for k := range stats {
+			ids[i] = k
+			i++
+		}
+
+		return ids
+	}
+
+	boolFilter("favorited", getIds(ustats.Favorites))
+	boolFilter("viewed", getIds(ustats.Views))
 }

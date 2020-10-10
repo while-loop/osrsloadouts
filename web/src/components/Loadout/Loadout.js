@@ -480,7 +480,7 @@ class Loadout extends React.Component {
                         let close = (msg, type = toast.TYPE.INFO) => {
                             toast.update(this.toastId, {render: msg, type: type, autoClose: TOAST_DELAY});
                         };
-                        console.log("delete", this.state.loadout.id)
+
                         LoadoutStore.delete(this.state.id).then(r => {
                             close("Loaded deleted ✔︎");
                             this.props.history.push(`/loadouts`);

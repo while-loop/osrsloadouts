@@ -1,25 +1,31 @@
 import React from 'react'
 import PropTypes from "prop-types";
-import "./RSButton.css"
+import "./RSPopup.css"
+import Popup from "reactjs-popup";
+import RSWidget from "../RSWidget/RSWidget";
 
 class RSPopup extends React.Component {
     render() {
         return (
-            <div
-                className={"RSPopup"}
-                style={{
-                    width: this.props.width || 68,
-                    height: this.props.height || 32,
-                    fontSize: this.props.fontSize || 16,
-                }}>
-                <div className={"RSWidget-close"}/>
-                {this.props.children}
-            </div>
+            <Popup
+                open={true}
+                closeOnDocumentClick
+                contentStyle={{width: 'auto', padding: 0, border: 'none'}}
+                position={['top center']}
+                onClose={this.props.onClose}>
+                <RSWidget {...this.props}>
+                    {this.props.children}
+                </RSWidget>
+            </Popup>
         );
     }
 }
 
 RSPopup.propTypes = {
+    title: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.element,
+    ]),
     width: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
@@ -28,11 +34,12 @@ RSPopup.propTypes = {
         PropTypes.string,
         PropTypes.number,
     ]),
-    onClick: PropTypes.func,
+    onClose: PropTypes.func,
     fontSize: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
     ]),
+    closeable: PropTypes.bool
 };
 
 export default RSPopup;
