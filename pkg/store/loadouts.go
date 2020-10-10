@@ -22,7 +22,7 @@ const (
 )
 
 type ItemQuantity struct {
-	Quantity int `json:"quantity," bson:"quantity"`
+	Quantity int  `json:"quantity," bson:"quantity"`
 	Id       *int `json:"id," bson:"id"`
 }
 
@@ -31,22 +31,27 @@ type Author struct {
 	Username string `json:"username," bson:"username"`
 }
 
+type LoadoutTab struct {
+	Title     string                  `json:"title" bson:"title"`
+	Inventory [7][4]ItemQuantity      `json:"inventory" bson:"inventory"`
+	Equipment map[string]ItemQuantity `json:"equipment" bson:"equipment"`
+	RunePouch [3]ItemQuantity         `json:"rune_pouch" bson:"rune_pouch"`
+}
+
 type Loadout struct {
-	Id          string                   `json:"id," bson:"_id"`
-	Title       string                   `json:"title" bson:"title"`
-	Author      Author                   `json:"author" bson:"author"`
-	Description string                   `json:"description" bson:"description"`
-	Created     time.Time                `json:"created" bson:"created"`
-	Updated     time.Time                `json:"updated" bson:"updated"`
-	Copies      uint32                   `json:"copies" bson:"copies"`
-	Favorites   uint32                   `json:"favorites" bson:"favorites"`
-	Favorited   bool                     `json:"favorited" bson:"favorited"`
-	Views       uint32                   `json:"views" bson:"views"`
-	Tags        []string                 `json:"tags" bson:"tags"`
-	Parent      string                   `json:"parent" bson:"parent"`
-	Inventory   [7][4]ItemQuantity      `json:"inventory" bson:"inventory"`
-	Equipment   map[string]ItemQuantity `json:"equipment" bson:"equipment"`
-	RunePouch   [3]ItemQuantity `json:"rune_pouch" bson:"rune_pouch"`
+	Id          string       `json:"id," bson:"_id"`
+	Title       string       `json:"title" bson:"title"`
+	Author      Author       `json:"author" bson:"author"`
+	Description string       `json:"description" bson:"description"`
+	Created     time.Time    `json:"created" bson:"created"`
+	Updated     time.Time    `json:"updated" bson:"updated"`
+	Copies      uint32       `json:"copies" bson:"copies"`
+	Favorites   uint32       `json:"favorites" bson:"favorites"`
+	Favorited   bool         `json:"favorited" bson:"favorited"`
+	Views       uint32       `json:"views" bson:"views"`
+	Tags        []string     `json:"tags" bson:"tags"`
+	Parent      string       `json:"parent" bson:"parent"`
+	Tabs        []LoadoutTab `json:"tabs" bson:"tabs"`
 }
 
 func (l *Loadout) Reset() {
@@ -56,7 +61,7 @@ func (l *Loadout) Reset() {
 	l.Favorited = false
 }
 
-var validLoadoutKeys = []string{"title", "description", "updated", "tags", "inventory", "equipment", "rune_pouch"}
+var validLoadoutKeys = []string{"title", "description", "updated", "tags", "inventory", "equipment", "rune_pouch", "tabs"}
 
 type LoadoutResponse struct {
 	Page     uint32     `json:"page"`

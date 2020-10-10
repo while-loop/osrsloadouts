@@ -11,7 +11,7 @@ func TestMongoUserStats_SetFavorite(t *testing.T) {
 	r := require.New(t)
 
 	l := &Loadout{
-		Title: "tjos ttikle",
+		Title:  "tjos ttikle",
 		Author: randomAuthor(t),
 	}
 	ls := getLoadoutsStore(t)

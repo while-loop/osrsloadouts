@@ -232,4 +232,3 @@ func (c *LoadoutController) SetFavorite(ctx context.Context, loadoutId, uid stri
 
 	return nil
 }
-

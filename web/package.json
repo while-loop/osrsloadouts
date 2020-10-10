@@ -6,8 +6,8 @@
     "@fortawesome/fontawesome-free": "^5.10.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
     "@fortawesome/free-brands-svg-icons": "^5.14.0",
-    "@fortawesome/free-solid-svg-icons": "^5.14.0",
     "@fortawesome/free-regular-svg-icons": "^5.14.0",
+    "@fortawesome/free-solid-svg-icons": "^5.14.0",
     "@fortawesome/react-fontawesome": "^0.1.11",
     "axios": "^0.19.0",
     "firebase": "^6.4.0",
@@ -24,6 +24,7 @@
     "react-scripts": "3.0.1",
     "react-select": "^3.0.4",
     "react-table": "^6.10.0",
+    "react-tabs": "^3.1.1",
     "react-tippy": "^1.2.3",
     "react-toastify": "^5.3.2",
     "reactjs-popup": "^1.4.2"

@@ -5,7 +5,6 @@ import Stats from "./Stats";
 import moment from "moment";
 import {Link} from "react-router-dom";
 import "./Loadout.css";
-import CreatableSelect from 'react-select/creatable';
 import _ from 'lodash';
 import LoadoutStore from "../../store/LoadoutStore";
 import {toast} from "react-toastify";
@@ -15,12 +14,15 @@ import TextPopup from "./TextPopup";
 import {loadout2setup, setup2loadout} from "../../utils/inventory-setups";
 import {currentUser} from "../../utils/base";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEye, faEyeSlash, faHeart as heartSolid, faCopy} from "@fortawesome/free-solid-svg-icons";
+import {faCopy, faCross, faEye, faHeart as heartSolid, faPlus, faTimes} from "@fortawesome/free-solid-svg-icons";
 import {faHeart as heartOutline} from "@fortawesome/free-regular-svg-icons";
 import Humanize from "humanize-plus";
 import RSButton from "../../utils/widgets/RSButton/RSButton";
 import UserGuide from "./UserGuide";
 import RunePouch from "./RunePouch";
+import CreatableInputOnly from "./Tags";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import "./react-tabs.css"
 
 class Loadout extends React.Component {
     toastId = null;
@@ -35,7 +37,8 @@ class Loadout extends React.Component {
             loadout: this.empty(),
             status: "Loading...",
             showExportImport: null,
-            showGuide: false
+            showGuide: false,
+            activeTab: 0,
         };
 
 
@@ -53,7 +56,7 @@ class Loadout extends React.Component {
         }
 
         LoadoutStore.get(this.state.id).then(r => {
-            this.setState({loadout: r.data, id:r.data.id});
+            this.setState({loadout: r.data, id: r.data.id});
             this.forceUpdate();
         }).catch(reason => {
             console.log("failed to get loadout", reason.response);
@@ -79,6 +82,13 @@ class Loadout extends React.Component {
             views: 0,
             tags: [],
             parent: '',
+            tabs: [this.emptyTab()],
+        }
+    }
+
+    emptyTab(title = "default") {
+        return {
+            title: title,
             inventory: [
                 [this.z(null, 1), this.z(null, 1), this.z(null, 1), this.z(null, 1)],
                 [this.z(null, 1), this.z(null, 1), this.z(null, 1), this.z(null, 1)],
@@ -102,7 +112,7 @@ class Loadout extends React.Component {
                 ring: this.z(null, 1),
             },
             rune_pouch: [this.z(null, 1), this.z(null, 1), this.z(null, 1)]
-        }
+        };
     }
 
     z(id, q) {
@@ -111,7 +121,7 @@ class Loadout extends React.Component {
 
     onEquipChange = (ss) => {
         const loadout = _.cloneDeep(this.state.loadout);
-        loadout.equipment[ss.slotType] = this.z(ss.id, ss.quantity);
+        loadout.tabs[this.state.activeTab].equipment[ss.slotType] = this.z(ss.id, ss.quantity);
         this.setState({loadout});
     };
 
@@ -122,7 +132,7 @@ class Loadout extends React.Component {
 
         const loadout = _.cloneDeep(this.state.loadout);
         sss.forEach(ss => {
-            loadout.rune_pouch[ss.col] = this.z(ss.id, ss.quantity);
+            loadout.tabs[this.state.activeTab].rune_pouch[ss.col] = this.z(ss.id, ss.quantity);
         });
         this.setState({loadout});
     };
@@ -133,10 +143,14 @@ class Loadout extends React.Component {
         }
         const loadout = _.cloneDeep(this.state.loadout);
         sss.forEach(ss => {
-            loadout.inventory[ss.row][ss.col] = this.z(ss.id, ss.quantity);
+            loadout.tabs[this.state.activeTab].inventory[ss.row][ss.col] = this.z(ss.id, ss.quantity);
         });
         this.setState({loadout});
     };
+
+    onTabSelected = (index) => {
+        this.setState({activeTab: index})
+    }
 
     saveLoadout = () => {
         this.toastId = toast("Saving loadout...", {autoClose: false});
@@ -198,12 +212,48 @@ class Loadout extends React.Component {
         LoadoutStore.copyLoadout(this.state.loadout.id).then(r => {
             close("Copied ✔")
             this.props.history.push(`/l/${r.data.id}`)
-            this.setState({loadout:r.data, id:r.data.id})
+            this.setState({loadout: r.data, id: r.data.id})
             this.forceUpdate();
         }).catch(reason => {
             console.log("failed to copy loadout", reason);
             close("Failed to copy loadout: " + reason.toString(), toast.TYPE.ERROR);
         })
+    }
+
+    addTab = () => {
+        let loadout = _.cloneDeep(this.state.loadout);
+        loadout.tabs.push(this.emptyTab("new tab"))
+        this.setState({loadout: loadout, activeTab: loadout.tabs.length - 1})
+    }
+
+    deleteTab = (idx) => {
+        return (e) => {
+            e.stopPropagation()
+            // check if active tab is the one getting deleted
+            let loadout = _.cloneDeep(this.state.loadout);
+            let newIdx = this.state.activeTab;
+            if (loadout.tabs.length <= 1) {
+                newIdx = 0
+                loadout.tabs[0] = this.emptyTab()
+            } else {
+                loadout.tabs.splice(idx, 1)
+                // if we're deleting the current tab, switch to the previous tab
+                if (idx === newIdx) {
+                    newIdx = Math.max(0, newIdx - 1)
+                }
+            }
+
+            this.setState({loadout: loadout, activeTab: newIdx})
+        }
+    }
+
+    updateTabTitle = (idx) => {
+        return (e) => {
+            e.stopPropagation()
+            let loadout = _.cloneDeep(this.state.loadout);
+            loadout.tabs[idx].title = e.target.textContent;
+            this.setState({loadout})
+        }
     }
 
     favLoadout = () => {
@@ -229,10 +279,10 @@ class Loadout extends React.Component {
         })
     }
 
-    hasRunePouch() {
-        for (let i = 0; i < this.state.loadout.inventory.length; i++) {
-            for (let j = 0; j < this.state.loadout.inventory[i].length; j++) {
-                if (Loadout.RUNE_POUCH_IDS.includes(this.state.loadout.inventory[i][j].id)) {
+    hasRunePouch = (loadoutTab) => {
+        for (let i = 0; i < loadoutTab.inventory.length; i++) {
+            for (let j = 0; j < loadoutTab.inventory[i].length; j++) {
+                if (Loadout.RUNE_POUCH_IDS.includes(loadoutTab.inventory[i][j].id)) {
                     return true
                 }
             }
@@ -252,10 +302,69 @@ class Loadout extends React.Component {
         let updated = moment(this.state.loadout.updated);
         let author = this.state.loadout.author != null ? this.state.loadout.author.username : "";
 
+        const tabHeaders = []
+        const tabPanels = []
+
+        this.state.loadout.tabs.map((tab, idx) => {
+            tabHeaders.push(
+                <Tab>
+                    <div className="Tab-container">
+                        <span
+                            className="Tab-title"
+                            contentEditable={this.isOwner()}
+                            suppressContentEditableWarning
+                            onBlur={this.updateTabTitle(idx)}>
+                            {tab.title}
+                        </span>
+                        {
+                            this.state.activeTab === idx && this.isOwner() &&
+                            <div onClick={this.deleteTab(idx)} className="Tab-delete">
+                                <FontAwesomeIcon size={"xs"} icon={faTimes}/>
+                            </div>
+                        }
+
+                    </div>
+                </Tab>
+            )
+
+            tabPanels.push(
+                <TabPanel>
+                    <div className="Loadout-content">
+                        <div className="Equipment-container">
+                            <div className="Equipment-container-left">
+                                <Inventory onInvyChange={this.onInvyChange} items={tab.inventory}
+                                           isOwner={isOwner}/>
+                                <Equipment onEquipChange={this.onEquipChange} items={tab.equipment}
+                                           isOwner={isOwner}/>
+                            </div>
+                            {
+                                this.hasRunePouch(tab) &&
+                                <RunePouch onRunePouchChange={this.onRunePouchChange}
+                                           items={tab.rune_pouch}
+                                           isOwner={isOwner}/>
+                            }
+                        </div>
+
+                        <div className="Equipment-stats-container">
+                            <Stats items={tab.equipment}/>
+                        </div>
+                    </div>
+                </TabPanel>
+            )
+        })
+
+        if (this.isOwner()) {
+            tabHeaders.push(
+                <span className="react-tabs__tab Tab-add" onClick={this.addTab}>
+                <FontAwesomeIcon size={"xs"} icon={faPlus}/>
+            </span>
+            )
+        }
+
         return (
             <div>
                 <h1>
-                    <div contentEditable={this.isOwner()} onBlur={(e) => {
+                    <div contentEditable={this.isOwner()} suppressContentEditableWarning onBlur={(e) => {
                         let loadout = _.cloneDeep(this.state.loadout);
                         loadout.title = e.target.textContent;
                         this.setState({loadout})
@@ -279,10 +388,10 @@ class Loadout extends React.Component {
                         </div>
                         <div className="Loadout-info">
                             <div className="Loadout-info-stats">
-                                {this.isOwner() && <RSButton width={45} height={20} onClick={this.saveLoadout}>Save</RSButton>}
+                                {this.isOwner() &&
+                                <RSButton width={45} height={20} onClick={this.saveLoadout}>Save</RSButton>}
                                 <PopupMenu style={{float: "right"}} options={this.getLoadoutOptions()}/>
                             </div>
-
 
                             <span>Author: <Link
                                 to={"/u/" + author}>{author}</Link></span>
@@ -295,7 +404,7 @@ class Loadout extends React.Component {
                                 <span
                                     title={"favorites: " + this.state.loadout.favorites}>
                                     <FontAwesomeIcon
-                                        style={{cursor: loggedIn ? "pointer" : "" }}
+                                        style={{cursor: loggedIn ? "pointer" : ""}}
                                         onClick={loggedIn ? this.favLoadout : null}
                                         icon={this.state.loadout.favorited ? heartSolid : heartOutline}/>
                                         : {Humanize.compactInteger(this.state.loadout.favorites, 1)}
@@ -303,7 +412,7 @@ class Loadout extends React.Component {
                                 <span
                                     title={"copies: " + this.state.loadout.copies}>
                                     <FontAwesomeIcon
-                                        style={{cursor: loggedIn ? "pointer" : "" }}
+                                        style={{cursor: loggedIn ? "pointer" : ""}}
                                         onClick={loggedIn ? this.copyLoadout : null}
                                         icon={faCopy}/>
                                         : {Humanize.compactInteger(this.state.loadout.copies, 1)}
@@ -321,21 +430,12 @@ class Loadout extends React.Component {
                     </div>
                 </div>
 
-                <div className="Loadout-content">
-                    <div className="Equipment-container">
-                        <div className="Equipment-container-left">
-                            <Inventory onInvyChange={this.onInvyChange} items={this.state.loadout.inventory} isOwner={isOwner}/>
-                            <Equipment onEquipChange={this.onEquipChange} items={this.state.loadout.equipment} isOwner={isOwner}/>
-                        </div>
-                        {
-                            this.hasRunePouch() && <RunePouch onRunePouchChange={this.onRunePouchChange} items={this.state.loadout.rune_pouch} isOwner={isOwner}/>
-                        }
-                    </div>
-
-                    <div className="Equipment-stats-container">
-                        <Stats items={this.state.loadout.equipment}/>
-                    </div>
-                </div>
+                <Tabs style={{paddingTop: 16}} selectedIndex={this.state.activeTab} onSelect={this.onTabSelected}>
+                    <TabList>
+                        {tabHeaders}
+                    </TabList>
+                    {tabPanels}
+                </Tabs>
 
                 <div>
                     { /****** QUANTITY POPUP ******/
@@ -447,109 +547,6 @@ class Loadout extends React.Component {
         this.setState({loadout, showExportImport: null});
     }
 }
-
-class CreatableInputOnly extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            inputValue: '',
-            value: this.props.tags.map(t => this.createOption(t)),
-        };
-    }
-
-    createOption = (label) => ({
-        label,
-        value: label,
-    });
-
-    handleChange = (value, actionMeta) => {
-        if (value == null) value = [];
-
-        this.setState({value});
-        this.update(value);
-    };
-
-    handleInputChange = (inputValue) => {
-        this.setState({inputValue});
-    };
-
-    handleKeyDown = (event) => {
-        const {inputValue, value} = this.state;
-        if (!inputValue) return;
-        if (event.key === 'Enter' || event.key === 'Tab') {
-            let vals = [...value];
-            inputValue.split(" ").forEach(v => {
-                v = v.trim().toLowerCase();
-                if (v === "") {
-                    return;
-                }
-
-                vals.push(this.createOption(v));
-            });
-            vals = [...new Map(vals.map(item => [item.value, item])).values()];
-            this.setState({
-                inputValue: '',
-                value: vals,
-            });
-            this.update(vals);
-            event.preventDefault();
-        }
-    };
-
-    update = (values) => {
-        if (values == null) {
-            values = [];
-        }
-        this.props.onChange(values.map(v => v.value));
-    };
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (_.isEqual(this.props.tags, prevProps.tags)) {
-            return;
-        }
-
-        if (this.props.tags == null) {
-            return;
-        }
-
-        this.setState({value: this.props.tags.map(t => this.createOption(t))});
-    }
-
-    render() {
-        const {inputValue, value} = this.state;
-        return (
-            <CreatableSelect
-                styles={customStyles}
-                components={{DropdownIndicator: null}}
-                inputValue={inputValue}
-                isMulti
-                menuIsOpen={false}
-                onChange={this.handleChange}
-                onInputChange={this.handleInputChange}
-                onKeyDown={this.handleKeyDown}
-                placeholder="enter tags..."
-                value={value}
-            />
-        );
-    }
-}
-
-const customStyles = {
-    placeholder: (provided, state) => ({
-        ...provided,
-        color: 'white',
-    }),
-    input: (provided, state) => ({
-        ...provided,
-        color: 'white',
-    }),
-    control: (provided, state) => ({
-        ...provided,
-        background: 'rgba(93,84,71,0.25)',
-        color: 'white',
-        border: 'none',
-    }),
-};
 
 export default Loadout;
 
