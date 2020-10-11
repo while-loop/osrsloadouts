@@ -1,5 +1,5 @@
-OSRS Invy
-===========
+OSRS Loadouts
+=============
 
 
 
@@ -28,7 +28,7 @@ Running
 #### Docker
 
 ```bash
-$ docker run --rm while-loop/osrsloadouts
+$ docker run --rm gcr.io/osrs-loadouts/osrsloadouts
 ```
 
 #### Command line
