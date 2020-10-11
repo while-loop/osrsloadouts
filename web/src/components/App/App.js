@@ -5,7 +5,7 @@ import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {TOAST_DELAY} from "../../config/constants";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faGithub} from '@fortawesome/free-brands-svg-icons'
+import {faGithub, faDiscord} from '@fortawesome/free-brands-svg-icons'
 
 
 class App extends React.Component {
@@ -57,8 +57,9 @@ class Footer extends React.Component {
     render() {
         return (
             <div style={{fontSize: '12px', color: "white", paddingBottom: 24}}>
-                <a href="https://github.com/while-loop" target="_blank" rel="noopener noreferrer"><FontAwesomeIcon
-                    icon={faGithub}/></a> &nbsp; | &nbsp; v{process.env.REACT_APP_VERSION}
+                <a href="https://github.com/while-loop/osrsloadouts" target="_blank" rel="noopener noreferrer"><FontAwesomeIcon
+                    icon={faGithub}/></a>&nbsp;&nbsp;<a href="https://discord.gg/t5VhtF" target="_blank" rel="noopener noreferrer"><FontAwesomeIcon
+                icon={faDiscord}/></a> &nbsp;|&nbsp; v{process.env.REACT_APP_VERSION}
                     <br/>
                     <a href="https://www.runescape.com/">RuneScape</a>® and <a href="https://www.jagex.com/">Jagex</a>® are trademarks of Jagex Ltd © 2000 - 2020
             </div>

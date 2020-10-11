@@ -3,6 +3,7 @@ import discord from './discord.png';
 import github from './github.png';
 
 const DISCORD_URL = 'https://discord.com/channels/@me/107680246739767296'
+const DISCORD_SERVER_URL = 'https://discord.gg/t5VhtF'
 const DISCORD_USERNAME = 'while-loop#6157'
 const GITHUB_URL = 'https://github.com/while-loop/osrsloadouts/issues'
 const GITHUB_USERNAME = 'while-loop'
@@ -15,6 +16,12 @@ function Contact() {
             justifyContent: "space-between",
         }}>
             <h1>Contact Me</h1>
+            <div>
+                <a href={DISCORD_SERVER_URL} target='_blank' rel="noopener noreferrer"><img style={{verticalAlign: 'middle'}} src={discord} alt={"discord logo"} width={50}/></a>
+                &nbsp;
+                <a href={DISCORD_SERVER_URL} target='_blank' rel="noopener noreferrer">OSRS Loadouts</a>
+            </div>
+            <br/>
             <div>
                 <a href={DISCORD_URL} target='_blank' rel="noopener noreferrer"><img style={{verticalAlign: 'middle'}} src={discord} alt={"discord logo"} width={50}/></a>
                 &nbsp;
