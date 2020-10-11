@@ -2,7 +2,7 @@ package store
 
 import (
 	"context"
-	"github.com/while-loop/osrsinvy/pkg/log"
+	"github.com/while-loop/osrsloadouts/pkg/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"math"
 	"math/rand"

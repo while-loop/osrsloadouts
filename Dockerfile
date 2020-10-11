@@ -16,7 +16,7 @@ COPY . .
 WORKDIR /src
 
 RUN make build
-RUN cp ${GOPATH}/bin/osrsinvy /usr/local/bin
+RUN cp ${GOPATH}/bin/osrsloadouts /usr/local/bin
 
 
 #####################################################################
@@ -24,5 +24,5 @@ RUN cp ${GOPATH}/bin/osrsinvy /usr/local/bin
 FROM alpine:latest
 
 RUN apk add --update --no-cache ca-certificates
-COPY --from=builder /usr/local/bin/osrsinvy /usr/local/bin/
-CMD osrsinvy
+COPY --from=builder /usr/local/bin/osrsloadouts /usr/local/bin/
+CMD osrsloadouts

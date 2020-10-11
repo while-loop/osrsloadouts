@@ -7,29 +7,29 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/while-loop/osrsinvy/pkg"
-	"github.com/while-loop/osrsinvy/pkg/app"
-	"github.com/while-loop/osrsinvy/pkg/auth"
-	"github.com/while-loop/osrsinvy/pkg/config"
-	"github.com/while-loop/osrsinvy/pkg/log"
-	"github.com/while-loop/osrsinvy/pkg/store"
+	"github.com/while-loop/osrsloadouts/pkg"
+	"github.com/while-loop/osrsloadouts/pkg/app"
+	"github.com/while-loop/osrsloadouts/pkg/auth"
+	"github.com/while-loop/osrsloadouts/pkg/config"
+	"github.com/while-loop/osrsloadouts/pkg/log"
+	"github.com/while-loop/osrsloadouts/pkg/store"
 	"net/http"
 	"os"
 )
 
 var (
-	v = flag.Bool("v", false, osrsinvy.Name+" version")
+	v = flag.Bool("v", false, osrsloadouts.Name+" version")
 )
 
 func main() {
-	log.Infof("%s %s %s %s", osrsinvy.Name, osrsinvy.Version, osrsinvy.BuildTime, osrsinvy.Commit)
+	log.Infof("%s %s %s %s", osrsloadouts.Name, osrsloadouts.Version, osrsloadouts.BuildTime, osrsloadouts.Commit)
 	flag.Parse()
 	if *v {
 		return
 	}
 
 	conf := new(config.Config)
-	err := envconfig.Process(osrsinvy.Name, conf)
+	err := envconfig.Process(osrsloadouts.Name, conf)
 	if err != nil {
 		log.Fatal("failed to parse env: ", err.Error())
 	}

@@ -28,12 +28,12 @@ build: clean ## build service binary file
 		-X ${PACKAGE}/pkg.Commit=${COMMIT} \
 		-X ${PACKAGE}/pkg.BuildTime=${BUILD_TIME} \
 		-X ${PACKAGE}/pkg.Name=osrsloadouts" \
-		-o ${GOPATH}/bin/osrsinvy ./cmd/osrsinvy
-	${GOPATH}/bin/osrsinvy -v
+		-o ${GOPATH}/bin/osrsloadouts ./cmd/osrsloadouts
+	${GOPATH}/bin/osrsloadouts -v
 
 clean: ## remove service bin from $GOPATH/bin
 	@echo "[clean] removing ${SERVICE} files"
-	rm -f ${GOPATH}/bin/osrsinvy
+	rm -f ${GOPATH}/bin/osrsloadouts
 
 cont: ## build a cached service container
 	docker build -t ${IMAGE_NAME} -t ${IMAGE_NAME}:${VERSION} .
@@ -54,7 +54,7 @@ deploy: context ## deploy latest built container to docker hub
 	--set-env-vars OSRSLOADOUTS_MONGO_ADDR="${OSRSLOADOUTS_MONGO_ADDR}",OSRSLOADOUTS_MONGO_DB=${OSRSLOADOUTS_MONGO_DB}
 
 dev:
-	sops exec-env secrets/dev.env go run cmd/osrsinvy/main.go
+	sops exec-env secrets/dev.env go run cmd/osrsloadouts/main.go
 
 push: ## deploy lastest built container to docker hub
 	docker push ${IMAGE_NAME}:${VERSION}

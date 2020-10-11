@@ -2,8 +2,8 @@ package auth
 
 import (
 	"context"
-	"github.com/while-loop/osrsinvy/pkg/errors"
-	"github.com/while-loop/osrsinvy/pkg/utils"
+	"github.com/while-loop/osrsloadouts/pkg/errors"
+	"github.com/while-loop/osrsloadouts/pkg/utils"
 	"net/http"
 )
 

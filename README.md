@@ -13,7 +13,7 @@ Installation
 #### Go
 
 ```bash
-$ go get github.com/while-loop/osrsinvy/cmd/...
+$ go get github.com/while-loop/osrsloadouts/cmd/...
 ```
 
 #### From Source
@@ -28,13 +28,13 @@ Running
 #### Docker
 
 ```bash
-$ docker run --rm while-loop/osrsinvy
+$ docker run --rm while-loop/osrsloadouts
 ```
 
 #### Command line
 
 ```bash
-$ bin/osrsinvy
+$ bin/osrsloadouts
 ```
 
 Testing
@@ -46,7 +46,7 @@ $ make test
 
 License
 -------
-osrsinvy is licensed under the AGPLv3 License. See LICENSE for details.
+osrsloadouts is licensed under the AGPLv3 License. See LICENSE for details.
 
 Author
 ------

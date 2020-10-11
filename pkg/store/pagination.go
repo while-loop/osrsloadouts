@@ -1,7 +1,7 @@
 package store
 
 import (
-	"github.com/while-loop/osrsinvy/pkg/log"
+	"github.com/while-loop/osrsloadouts/pkg/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
 	"net/url"

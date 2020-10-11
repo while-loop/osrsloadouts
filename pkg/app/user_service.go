@@ -3,10 +3,10 @@ package app
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"github.com/while-loop/osrsinvy/pkg/auth"
-	"github.com/while-loop/osrsinvy/pkg/controller"
-	"github.com/while-loop/osrsinvy/pkg/store"
-	"github.com/while-loop/osrsinvy/pkg/utils"
+	"github.com/while-loop/osrsloadouts/pkg/auth"
+	"github.com/while-loop/osrsloadouts/pkg/controller"
+	"github.com/while-loop/osrsloadouts/pkg/store"
+	"github.com/while-loop/osrsloadouts/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
 )

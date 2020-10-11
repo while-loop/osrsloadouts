@@ -2,8 +2,8 @@ package utils
 
 import (
 	"encoding/json"
-	"github.com/while-loop/osrsinvy/pkg/errors"
-	"github.com/while-loop/osrsinvy/pkg/log"
+	"github.com/while-loop/osrsloadouts/pkg/errors"
+	"github.com/while-loop/osrsloadouts/pkg/log"
 	"net/http"
 )
 

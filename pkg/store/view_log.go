@@ -2,8 +2,8 @@ package store
 
 import (
 	"context"
-	"github.com/while-loop/osrsinvy/pkg/errors"
-	"github.com/while-loop/osrsinvy/pkg/utils"
+	"github.com/while-loop/osrsloadouts/pkg/errors"
+	"github.com/while-loop/osrsloadouts/pkg/utils"
 	"go.mongodb.org/mongo-driver/mongo"
 	"strings"
 	"time"

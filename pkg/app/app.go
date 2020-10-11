@@ -4,10 +4,10 @@ import (
 	"context"
 	auth2 "firebase.google.com/go/auth"
 	"github.com/gorilla/mux"
-	"github.com/while-loop/osrsinvy/pkg/auth"
-	"github.com/while-loop/osrsinvy/pkg/config"
-	"github.com/while-loop/osrsinvy/pkg/controller"
-	"github.com/while-loop/osrsinvy/pkg/store"
+	"github.com/while-loop/osrsloadouts/pkg/auth"
+	"github.com/while-loop/osrsloadouts/pkg/config"
+	"github.com/while-loop/osrsloadouts/pkg/controller"
+	"github.com/while-loop/osrsloadouts/pkg/store"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

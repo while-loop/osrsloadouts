@@ -1,4 +1,4 @@
-package osrsinvy // import "github.com/while-loop/osrsinvy/pkg"
+package osrsloadouts // import "github.com/while-loop/osrsloadouts/pkg"
 
 var (
 	Version   = "dev"

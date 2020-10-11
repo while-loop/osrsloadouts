@@ -3,8 +3,8 @@ package store
 import (
 	"context"
 	"fmt"
-	"github.com/while-loop/osrsinvy/pkg/errors"
-	"github.com/while-loop/osrsinvy/pkg/log"
+	"github.com/while-loop/osrsloadouts/pkg/errors"
+	"github.com/while-loop/osrsloadouts/pkg/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"

@@ -4,20 +4,20 @@ import (
 	"context"
 	"firebase.google.com/go/auth"
 	"fmt"
-	"github.com/while-loop/osrsinvy/pkg/errors"
-	"github.com/while-loop/osrsinvy/pkg/log"
-	"github.com/while-loop/osrsinvy/pkg/store"
-	"github.com/while-loop/osrsinvy/pkg/utils"
+	"github.com/while-loop/osrsloadouts/pkg/errors"
+	"github.com/while-loop/osrsloadouts/pkg/log"
+	"github.com/while-loop/osrsloadouts/pkg/store"
+	"github.com/while-loop/osrsloadouts/pkg/utils"
 	"net/http"
 )
 
-type OsrsInvyClaims struct {
+type OsrsLoadoutsClaims struct {
 	Roles    []string
 	UserID   string
 	Username string
 }
 
-func (c OsrsInvyClaims) ToAuthor() store.Author {
+func (c OsrsLoadoutsClaims) ToAuthor() store.Author {
 	return store.Author{
 		Id:       c.UserID,
 		Username: c.Username,
@@ -42,25 +42,25 @@ func NewClaims(h http.HandlerFunc, client Verifier) http.HandlerFunc {
 }
 
 func (c *ClaimsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	osrsInvyClaims, err := ClaimsFromRequest(r, c.client)
+	osrsLoadoutsClaims, err := ClaimsFromRequest(r, c.client)
 	if err != nil && !c.optional {
 		utils.WriteApiError(w, err)
 		return
 	}
 
-	log.Info("claims ", osrsInvyClaims)
-	c.h.ServeHTTP(w, r.WithContext(WithClaims(r.Context(), osrsInvyClaims)))
+	log.Info("claims ", osrsLoadoutsClaims)
+	c.h.ServeHTTP(w, r.WithContext(WithClaims(r.Context(), osrsLoadoutsClaims)))
 }
 
-func GetClaims(ctx context.Context) *OsrsInvyClaims {
+func GetClaims(ctx context.Context) *OsrsLoadoutsClaims {
 	claimsInf := ctx.Value(keyval)
 	if claimsInf == nil {
 		return nil
 	}
-	return claimsInf.(*OsrsInvyClaims)
+	return claimsInf.(*OsrsLoadoutsClaims)
 }
 
-func WithClaims(ctx context.Context, claims *OsrsInvyClaims) context.Context {
+func WithClaims(ctx context.Context, claims *OsrsLoadoutsClaims) context.Context {
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -68,7 +68,7 @@ func WithClaims(ctx context.Context, claims *OsrsInvyClaims) context.Context {
 	return context.WithValue(ctx, keyval, claims)
 }
 
-func ClaimsFromRequest(r *http.Request, verifier Verifier) (*OsrsInvyClaims, *errors.ApiError) {
+func ClaimsFromRequest(r *http.Request, verifier Verifier) (*OsrsLoadoutsClaims, *errors.ApiError) {
 	headers := r.Header
 	idToken := headers.Get("Authorization")
 	if idToken == "" {
@@ -81,15 +81,15 @@ func ClaimsFromRequest(r *http.Request, verifier Verifier) (*OsrsInvyClaims, *er
 		return nil, errors.NewApi(http.StatusForbidden, err, "error verifying ID token")
 	}
 
-	osrsInvyClaims, err := ClaimsFromToken(token)
+	osrsLoadoutsClaims, err := ClaimsFromToken(token)
 	if err != nil {
 		return nil, errors.NewApi(http.StatusInternalServerError, err, "error parsing claims")
 	}
 
-	return osrsInvyClaims, nil
+	return osrsLoadoutsClaims, nil
 }
 
-func ClaimsFromToken(token *auth.Token) (*OsrsInvyClaims, error) {
+func ClaimsFromToken(token *auth.Token) (*OsrsLoadoutsClaims, error) {
 	if token.UID == "" {
 		return nil, fmt.Errorf("no token uid")
 	}
@@ -99,7 +99,7 @@ func ClaimsFromToken(token *auth.Token) (*OsrsInvyClaims, error) {
 		username = u.(string)
 	}
 
-	carmateClaims := &OsrsInvyClaims{
+	carmateClaims := &OsrsLoadoutsClaims{
 		UserID:   token.UID,
 		Username: username,
 	}

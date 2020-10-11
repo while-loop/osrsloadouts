@@ -3,9 +3,9 @@ package store
 import (
 	"context"
 	"github.com/google/uuid"
-	"github.com/while-loop/osrsinvy/pkg/errors"
-	"github.com/while-loop/osrsinvy/pkg/log"
-	"github.com/while-loop/osrsinvy/pkg/utils"
+	"github.com/while-loop/osrsloadouts/pkg/errors"
+	"github.com/while-loop/osrsloadouts/pkg/log"
+	"github.com/while-loop/osrsloadouts/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

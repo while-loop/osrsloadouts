@@ -1,4 +1,4 @@
-module github.com/while-loop/osrsinvy
+module github.com/while-loop/osrsloadouts
 
 go 1.12
 

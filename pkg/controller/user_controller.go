@@ -3,9 +3,9 @@ package controller
 import (
 	"context"
 	"firebase.google.com/go/auth"
-	"github.com/while-loop/osrsinvy/pkg/errors"
-	"github.com/while-loop/osrsinvy/pkg/log"
-	"github.com/while-loop/osrsinvy/pkg/store"
+	"github.com/while-loop/osrsloadouts/pkg/errors"
+	"github.com/while-loop/osrsloadouts/pkg/log"
+	"github.com/while-loop/osrsloadouts/pkg/store"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

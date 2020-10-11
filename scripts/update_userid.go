@@ -3,16 +3,16 @@ package main
 import (
 	"context"
 	"github.com/kelseyhightower/envconfig"
-	osrsinvy "github.com/while-loop/osrsinvy/pkg"
-	"github.com/while-loop/osrsinvy/pkg/config"
-	"github.com/while-loop/osrsinvy/pkg/log"
-	"github.com/while-loop/osrsinvy/pkg/store"
+	osrsloadouts "github.com/while-loop/osrsloadouts/pkg"
+	"github.com/while-loop/osrsloadouts/pkg/config"
+	"github.com/while-loop/osrsloadouts/pkg/log"
+	"github.com/while-loop/osrsloadouts/pkg/store"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 func main() {
 	conf := new(config.Config)
-	err := envconfig.Process(osrsinvy.Name, conf)
+	err := envconfig.Process(osrsloadouts.Name, conf)
 	if err != nil {
 		log.Fatal("failed to parse env: ", err.Error())
 	}

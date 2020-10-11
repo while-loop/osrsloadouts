@@ -2,10 +2,10 @@ package controller
 
 import (
 	"context"
-	"github.com/while-loop/osrsinvy/pkg/auth"
-	"github.com/while-loop/osrsinvy/pkg/errors"
-	"github.com/while-loop/osrsinvy/pkg/log"
-	"github.com/while-loop/osrsinvy/pkg/store"
+	"github.com/while-loop/osrsloadouts/pkg/auth"
+	"github.com/while-loop/osrsloadouts/pkg/errors"
+	"github.com/while-loop/osrsloadouts/pkg/log"
+	"github.com/while-loop/osrsloadouts/pkg/store"
 	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
 	"strings"

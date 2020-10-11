@@ -4,7 +4,7 @@ import github from './github.png';
 
 const DISCORD_URL = 'https://discord.com/channels/@me/107680246739767296'
 const DISCORD_USERNAME = 'while-loop#6157'
-const GITHUB_URL = 'https://github.com/while-loop/osrsinvy/issues'
+const GITHUB_URL = 'https://github.com/while-loop/osrsloadouts/issues'
 const GITHUB_USERNAME = 'while-loop'
 
 function Contact() {
