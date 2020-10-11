@@ -6,7 +6,6 @@ tmp
 *.iml
 bin
 *.log
-osrsinvy-*.json
 osrsloadouts-*.json
 osrs-loadouts-*.json
 cert.pem

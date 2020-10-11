@@ -13,10 +13,10 @@ func getDb(b testing.TB) *mongo.Database {
 	mongoAddr := os.Getenv("OSRSLOADOUTS_MONGO_ADDR")
 	mongoDb := os.Getenv("OSRSLOADOUTS_MONGO_DB")
 	if mongoAddr == "" {
-		mongoAddr = "mongodb://localhost:27017/osrsinvy"
+		mongoAddr = "mongodb://localhost:27017/osrsloadouts"
 	}
 	if mongoDb == "" {
-		mongoDb = "osrsinvy"
+		mongoDb = "osrsloadouts"
 	}
 
 	ctx := context.Background()

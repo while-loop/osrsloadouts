@@ -84,7 +84,7 @@ db:
 	--name osrsloadouts-mongo \
 	-v `pwd`/data/db:/data/db \
 	-v `pwd`/scripts/migrations:/docker-entrypoint-initdb.d \
-	-e MONGO_INITDB_DATABASE=osrsinvy \
+	-e MONGO_INITDB_DATABASE=osrsloadouts \
 	-p 27017:27017 \
 	mongo:4.2.9-bionic
 
@@ -92,9 +92,9 @@ backup:
 	sops exec-env secrets/prod.env ./scripts/backup-mongo.sh
 
 db-sync: backup
-	$(eval backup_file=`ls -tr /tmp | grep osrsinvy | sort | tail -n 1`)
+	$(eval backup_file=`ls -tr /tmp | grep osrsloadouts | sort | tail -n 1`)
 	echo backup ${backup_file}
-	mongo --eval "db=db.getSiblingDB('osrsinvy');db.dropDatabase();" --quiet
+	mongo --eval "db=db.getSiblingDB('osrsloadouts');db.dropDatabase();" --quiet
 	mongorestore --stopOnError --drop --gzip --archive=/tmp/${backup_file}
 
 release-all: context
