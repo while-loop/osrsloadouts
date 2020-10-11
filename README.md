@@ -28,7 +28,7 @@ Running
 #### Docker
 
 ```bash
-$ docker run --rm gcr.io/osrs-loadouts/osrsloadouts
+$ docker run --rm gcr.io/osrs-loadouts/api
 ```
 
 #### Command line
