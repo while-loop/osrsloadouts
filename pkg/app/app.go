@@ -51,7 +51,7 @@ func New(handler *mux.Router, db *mongo.Database, authCli *auth2.Client, config 
 		DB:           config.RedisDB,
 		MaxRetries:   1,
 		MinIdleConns: 1,
-		PoolSize:     3,
+		PoolSize:     config.RedisPoolSize,
 		MaxConnAge:   1 * time.Minute,
 	}, config.RedisTTL)
 	proxge.New(rCache, geRouter, ge.NewOsrsGe())

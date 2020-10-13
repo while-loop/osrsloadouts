@@ -8,8 +8,9 @@ type Config struct {
 	Creds     string `split_words:"true"`
 	Port      int    `envconfig:"PORT"`
 
-	RedisAddr string        `split_words:"true"`
-	RedisPass string        `split_words:"true"`
-	RedisDB   int           `split_words:"true" default:"0"`
-	RedisTTL  time.Duration `default:"30m"`
+	RedisAddr     string        `split_words:"true"`
+	RedisPass     string        `split_words:"true"`
+	RedisDB       int           `split_words:"true" default:"0"`
+	RedisPoolSize int           `split_words:"true" default:"10"`
+	RedisTTL      time.Duration `default:"30m"`
 }
