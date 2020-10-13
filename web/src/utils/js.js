@@ -28,7 +28,7 @@ export function getSort(sorts) {
 export function colorNumber (number)  {
     const norm = normalizeNumber(number);
     return <span style={{color: norm.color}}>{norm.number}</span>;
-};
+}
 
 
 function numberWithCommas(x) {
@@ -57,7 +57,7 @@ export function normalizeNumber(number) {
 export function normalizeNumberStrict(number) {
     let num = '';
     let color = '#ffff03';
-    if (number >= 10000000) {
+    if (number >= 1000000000) {
         color = '#07f97e';
         num = (number / 1000000000).toFixed(1) + 'b';
     } else  if (number >= 1000000) {
