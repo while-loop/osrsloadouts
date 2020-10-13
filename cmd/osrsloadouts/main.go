@@ -60,10 +60,13 @@ func wrapAppHandler(h http.Handler) http.Handler {
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Accept", "Accept-Language", "Content-Language", "Origin", "Authorization"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS", "DELETE"})
+	ageOk := handlers.MaxAge(600)
 	h = handlers.CORS(
 		headersOk,
 		originsOk,
-		methodsOk)(h)
+		methodsOk,
+		ageOk,
+	)(h)
 
 	h = handlers.LoggingHandler(os.Stdout, h)
 	//h = &as{h:h}

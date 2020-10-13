@@ -23,6 +23,8 @@ import RunePouch from "./RunePouch";
 import CreatableInputOnly from "./Tags";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import "./react-tabs.css"
+import PriceTable from "./PriceTable";
+import {colorNumber, normalizeNumber} from "../../utils/js";
 
 class Loadout extends React.Component {
     toastId = null;
@@ -39,8 +41,9 @@ class Loadout extends React.Component {
             showExportImport: null,
             showGuide: false,
             activeTab: 0,
+            totalGp: null,
+            showPrices: false,
         };
-
 
         if (this.props.location.loadout != null) {
             this.state.loadout = this.props.location.loadout;
@@ -125,6 +128,14 @@ class Loadout extends React.Component {
         this.setState({loadout});
     };
 
+    onPriceChange = (newTotalGp) => {
+        this.setState({totalGp: newTotalGp});
+    };
+
+    togglePrices = (e) => {
+        this.setState({showPrices: e.target.checked});
+    };
+
     onRunePouchChange = (sss) => {
         if (!Array.isArray(sss)) {
             sss = [sss];
@@ -149,7 +160,7 @@ class Loadout extends React.Component {
     };
 
     onTabSelected = (index) => {
-        this.setState({activeTab: index})
+        this.setState({activeTab: index, showPrices: this.state.showPrices})
     }
 
     saveLoadout = () => {
@@ -346,9 +357,31 @@ class Loadout extends React.Component {
                         </div>
 
                         <div className="Equipment-stats-container">
+                            {
+                                this.state.totalGp != null &&
+                                <div>
+                                    <span>GE Prices&nbsp;</span>
+                                    <label className="switch">
+                                        <input type="checkbox" checked={this.state.showPrices}
+                                               onChange={this.togglePrices}/>
+                                        <span className="slider round"/>
+                                    </label>
+                                    <span
+                                        style={{textShadow: '1px 1px black'}}>&nbsp;{colorNumber(this.state.totalGp)}</span>
+                                </div>
+
+                            }
                             <Stats items={tab.equipment}/>
                         </div>
                     </div>
+                    <PriceTable
+                        style={{width: 420, margin: 'auto', padding: 16}}
+                        show={this.state.showPrices}
+                        invy={tab.inventory}
+                        eq={tab.equipment}
+                        rp={tab.rune_pouch}
+                        onPriceChange={this.onPriceChange}/>
+
                 </TabPanel>
             )
         })

@@ -88,6 +88,15 @@ db:
 	-p 27017:27017 \
 	mongo:4.2.9-bionic
 
+	docker run -d \
+	--name osrsloadouts-redis \
+	-p 9736:6379 \
+	redis:5.0.9-alpine
+
+db-start:
+	docker start osrsloadouts-mongo
+	docker start osrsloadouts-redis
+
 backup:
 	sops exec-env secrets/prod.env ./scripts/backup-mongo.sh
 
