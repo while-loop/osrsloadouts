@@ -13,6 +13,7 @@ import (
 	"github.com/while-loop/proxge/pkg/cache"
 	"github.com/while-loop/proxge/pkg/ge"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 type App struct {
@@ -45,11 +46,13 @@ func New(handler *mux.Router, db *mongo.Database, authCli *auth2.Client, config 
 
 	geRouter := a.rootRouter.PathPrefix("/ge").Subrouter()
 	rCache := cache.NewRedisCache(&redis.Options{
-		Addr:               config.RedisAddr,
-		Password:           config.RedisPass,
-		DB:                 config.RedisDB,
-		MaxRetries:         1,
-		MinIdleConns:       5,
+		Addr:         config.RedisAddr,
+		Password:     config.RedisPass,
+		DB:           config.RedisDB,
+		MaxRetries:   1,
+		MinIdleConns: 1,
+		PoolSize:     3,
+		MaxConnAge:   1 * time.Minute,
 	}, config.RedisTTL)
 	proxge.New(rCache, geRouter, ge.NewOsrsGe())
 	return a, nil
