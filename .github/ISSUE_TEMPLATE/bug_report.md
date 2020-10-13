@@ -10,6 +10,9 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is.
 
+**Loadout URL**
+https://osrsloadouts.app/l/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx
+
 **To Reproduce**
 Steps to reproduce the behavior:
 1. Go to '...'
