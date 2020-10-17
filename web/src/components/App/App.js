@@ -46,6 +46,14 @@ class Header extends React.Component {
                     <Link to="/contact">Contact</Link>
                 </div>
                 <div style={{float: 'right'}}>
+                    <span >
+                        <a href="https://github.com/while-loop/osrsloadouts" target="_blank" rel="noopener noreferrer"><FontAwesomeIcon
+                            style={{verticalAlign: '-4px'}}
+                            icon={faGithub}/></a>
+
+                        <a style={{paddingRight: '20px', paddingLeft: '12px'}} href="https://discord.gg/t5VhtF" target="_blank" rel="noopener noreferrer"><FontAwesomeIcon
+                        style={{verticalAlign: '-4px'}}
+                            icon={faDiscord}/></a></span>
                     {account}
                 </div>
             </div>
@@ -57,9 +65,7 @@ class Footer extends React.Component {
     render() {
         return (
             <div style={{fontSize: '12px', color: "white", paddingBottom: 24}}>
-                <a href="https://github.com/while-loop/osrsloadouts" target="_blank" rel="noopener noreferrer"><FontAwesomeIcon
-                    icon={faGithub}/></a>&nbsp;&nbsp;<a href="https://discord.gg/t5VhtF" target="_blank" rel="noopener noreferrer"><FontAwesomeIcon
-                icon={faDiscord}/></a> &nbsp;|&nbsp; v{process.env.REACT_APP_VERSION}
+                v{process.env.REACT_APP_VERSION}
                     <br/>
                     <a href="https://www.runescape.com/">RuneScape</a>® and <a href="https://www.jagex.com/">Jagex</a>® are trademarks of Jagex Ltd © 2000 - 2020
             </div>
