@@ -58,6 +58,7 @@ class ItemStore {
                 this.items = Object.values(res.data).filter(i => {
                     if (i.placeholder || i.noted) return false;
                     if (i.duplicate) return false;
+                    if (i.tradeable) return true; // catch CoX items
                     if (i.linked_id_noted == null && i.linked_id_placeholder == null) return false;
                     return true;
                 });
