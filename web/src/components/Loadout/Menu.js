@@ -1,5 +1,8 @@
 import React from 'react';
 import './Loadout.css';
+import PropTypes from "prop-types";
+import SlotSchema from "./SlotSchema";
+import InventorySlot from "./InventorySlot";
 
 class Menu extends React.Component {
     static CANCEL = '_cancel';
@@ -54,5 +57,13 @@ class Menu extends React.Component {
         );
     }
 }
+
+Menu.propTypes = {
+    options: PropTypes.array.isRequired,
+    onClose: PropTypes.func,
+    name: PropTypes.string,
+    left: PropTypes.number,
+    top: PropTypes.number,
+};
 
 export default Menu;

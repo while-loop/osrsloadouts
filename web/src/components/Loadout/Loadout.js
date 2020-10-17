@@ -25,6 +25,7 @@ import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import "./react-tabs.css"
 import PriceTable from "./PriceTable";
 import {colorNumber, normalizeNumber} from "../../utils/js";
+import Menu from "./Menu";
 
 class Loadout extends React.Component {
     toastId = null;
@@ -39,10 +40,14 @@ class Loadout extends React.Component {
             loadout: this.empty(),
             status: "Loading...",
             showExportImport: null,
+            exportImportTab: null,
             showGuide: false,
             activeTab: 0,
             totalGp: null,
             showPrices: false,
+            showTabMenu: null,
+            tabMenuTop: 0,
+            tabMenuLeft: 0,
         };
 
         if (this.props.location.loadout != null) {
@@ -231,30 +236,43 @@ class Loadout extends React.Component {
         })
     }
 
-    addTab = () => {
+    addTab = (tab=null) => {
         let loadout = _.cloneDeep(this.state.loadout);
-        loadout.tabs.push(this.emptyTab("new tab"))
+        if (tab == null) {
+            tab = this.emptyTab("new tab")
+        }
+        loadout.tabs.push(tab)
         this.setState({loadout: loadout, activeTab: loadout.tabs.length - 1})
     }
 
-    deleteTab = (idx) => {
-        return (e) => {
-            e.stopPropagation()
-            // check if active tab is the one getting deleted
-            let loadout = _.cloneDeep(this.state.loadout);
-            let newIdx = this.state.activeTab;
-            if (loadout.tabs.length <= 1) {
-                newIdx = 0
-                loadout.tabs[0] = this.emptyTab()
-            } else {
-                loadout.tabs.splice(idx, 1)
-                // if we're deleting the current tab, switch to the previous tab
-                if (idx === newIdx) {
-                    newIdx = Math.max(0, newIdx - 1)
-                }
-            }
+    onAddTab = (e) => {
+        this.addTab();
+    }
 
-            this.setState({loadout: loadout, activeTab: newIdx})
+    deleteTab = (idx) => {
+        let loadout = _.cloneDeep(this.state.loadout);
+
+        // check if active tab is the one getting deleted
+        let newIdx = this.state.activeTab;
+        if (loadout.tabs.length <= 1) {
+            newIdx = 0
+            loadout.tabs[0] = this.emptyTab()
+        } else {
+            loadout.tabs.splice(idx, 1)
+            // if we're deleting the current tab, switch to the previous tab.
+            // or if it's less than the current tab, shift over by 1
+            if (idx === newIdx || idx < newIdx) {
+                newIdx = Math.max(0, newIdx - 1)
+            }
+        }
+
+        this.setState({loadout: loadout, activeTab: newIdx})
+    }
+
+    onDeleteTab = (idx) => {
+        return (action, e) => {
+            e.stopPropagation()
+            this.deleteTab(idx)
         }
     }
 
@@ -318,8 +336,8 @@ class Loadout extends React.Component {
 
         this.state.loadout.tabs.forEach((tab, idx) => {
             tabHeaders.push(
-                <Tab key={idx}>
-                    <div className="Tab-container">
+                <Tab key={idx} onContextMenu={this.onTabContextMenu(tab, idx)}>
+                    <div className="Tab-container" >
                         <span
                             className="Tab-title"
                             contentEditable={isOwner}
@@ -327,13 +345,6 @@ class Loadout extends React.Component {
                             onBlur={this.updateTabTitle(idx)}>
                             {tab.title}
                         </span>
-                        {
-                            this.state.activeTab === idx && isOwner &&
-                            <div onClick={this.deleteTab(idx)} className="Tab-delete">
-                                <FontAwesomeIcon size={"xs"} icon={faTimes}/>
-                            </div>
-                        }
-
                     </div>
                 </Tab>
             )
@@ -388,7 +399,7 @@ class Loadout extends React.Component {
 
         if (isOwner) {
             tabHeaders.push(
-                <span key={tabHeaders.length} className="react-tabs__tab Tab-add" onClick={this.addTab}>
+                <span key={tabHeaders.length} className="react-tabs__tab Tab-add" onClick={this.onAddTab}>
                     <FontAwesomeIcon size={"xs"} icon={faPlus}/>
                 </span>
             )
@@ -472,15 +483,23 @@ class Loadout extends React.Component {
                 </Tabs>
 
                 <div>
-                    { /****** QUANTITY POPUP ******/
+                    { /****** IMPORT/EXPORT MENU POPUP ******/
                         this.state.showExportImport != null &&
                         <TextPopup text={this.getExportImportText()}
                                    showSave={this.state.showExportImport === 'import'}
                                    onSave={this.saveImport}
                                    onClose={() => {
-                                       this.setState({showExportImport: null})
+                                       this.setState({showExportImport: null, exportImportTab: null})
                                    }}
                         />
+                    }
+                    { /****** TAB MENU POPUP ******/
+                        this.state.showTabMenu != null &&
+                        <Menu options={this.getTabOptions()}
+                              onClose={this.onTabMenuClose}
+                              name={""}
+                              left={this.state.tabMenuLeft}
+                              top={this.state.tabMenuTop}/>
                     }
                     <UserGuide/>
                 </div>
@@ -489,21 +508,10 @@ class Loadout extends React.Component {
     }
 
     getLoadoutOptions() {
-        const opts = [{
-            action: 'Export',
-            onClick: () => this.setState({showExportImport: 'export'}),
-            includeName: false,
-            name: "Loadout"
-        }];
+        const opts = [];
 
         if (this.isOwner()) {
             opts.push({
-                    action: 'Import',
-                    onClick: () => this.setState({showExportImport: 'import'}),
-                    includeName: false,
-                    name: "Loadout"
-                },
-                {
                     action: 'Delete',
                     onClick: () => {
                         if (this.state.loadout.id === "") {
@@ -526,7 +534,7 @@ class Loadout extends React.Component {
                                 return
                             }
 
-                            close("Failed to save loadout: " + reason.toString(), toast.TYPE.ERROR);
+                            close("Failed to delete loadout: " + reason.toString(), toast.TYPE.ERROR);
                         })
                     },
                     includeName: false,
@@ -537,30 +545,83 @@ class Loadout extends React.Component {
         return opts
     }
 
-    getExportImportText() {
-        if (this.state.showExportImport === 'export') {
-            const config = {
-                highlightColor: {
-                    "value": -65536,
-                    "falpha": 0
+    onTabMenuClose = (e) => {
+        this.setState({
+            showTabMenu: null,
+        })
+    }
+
+    getTabOptions = () => {
+        const opts = [{
+            action: 'Copy',
+            onClick: () => this.addTab(this.state.loadout.tabs[this.state.showTabMenu]),
+            includeName: false,
+            name: "Tab"
+        },{
+            action: 'Export',
+            onClick: () => this.setState({showExportImport: 'export', exportImportTab: this.state.showTabMenu}),
+            includeName: false,
+            name: "Tab"
+        }];
+
+        if (this.isOwner()) {
+            opts.push({
+                    action: 'Import',
+                    onClick: () => this.setState({showExportImport: 'import', exportImportTab: this.state.showTabMenu}),
+                    includeName: false,
+                    name: "Tab"
                 },
-                stackDifference: false,
-                variationDifference: false,
-                highlightDifference: true,
-                filterBank: true,
-                unorderedHighlight: true,
-                name: this.state.loadout.title,
-            }
-            let setup = loadout2setup(this.state.loadout.tabs[this.state.activeTab], this.state.loadout.description)
-            return JSON.stringify({...setup, ...config});
+                {
+                    action: 'Delete',
+                    onClick: this.onDeleteTab(this.state.showTabMenu),
+                    includeName: false,
+                    name: "Tab"
+                })
         }
 
-        return "";
+        return opts
+    }
+
+    onTabContextMenu = (tab, idx) => {
+        return (e) => {
+            e.preventDefault();
+            this.setState({
+                showTabMenu: idx,
+                tabMenuTop: e.clientY - 8,
+                tabMenuLeft: e.clientX - 32,
+            });
+        }
+    };
+
+    getExportImportText() {
+        if (this.state.showExportImport === 'import') {
+            return ""
+        }
+
+        if (this.state.showExportImport == null) {
+            return ""
+        }
+
+        const config = {
+            highlightColor: {
+                "value": -65536,
+                "falpha": 0
+            },
+            stackDifference: false,
+            variationDifference: false,
+            highlightDifference: true,
+            filterBank: true,
+            unorderedHighlight: true,
+            name: this.state.loadout.tabs[this.state.exportImportTab].title,
+        }
+
+        let setup = loadout2setup(this.state.loadout.tabs[this.state.exportImportTab], this.state.loadout.description)
+        return JSON.stringify({...setup, ...config});
     }
 
     saveImport = (text) => {
         let cleanup = () => {
-            this.setState({showExportImport: null})
+            this.setState({showExportImport: null, exportImportTab: null})
         }
         if (text == null) {
             cleanup()
@@ -575,12 +636,11 @@ class Loadout extends React.Component {
         const setup = JSON.parse(text);
         const setUploadout = setup2loadout(setup)
         const loadout = _.cloneDeep(this.state.loadout);
-        loadout.tabs[this.state.activeTab].rune_pouch = setUploadout.rune_pouch;
-        loadout.tabs[this.state.activeTab].inventory = setUploadout.inventory;
-        loadout.tabs[this.state.activeTab].equipment = setUploadout.equipment;
-        loadout.description = setUploadout.description;
-        loadout.title = setUploadout.title;
-        this.setState({loadout, showExportImport: null});
+        loadout.tabs[this.state.exportImportTab].rune_pouch = setUploadout.rune_pouch;
+        loadout.tabs[this.state.exportImportTab].inventory = setUploadout.inventory;
+        loadout.tabs[this.state.exportImportTab].equipment = setUploadout.equipment;
+        loadout.tabs[this.state.exportImportTab].title = setUploadout.title;
+        this.setState({loadout, showExportImport: null, exportImportTab: null, activeTab: this.state.exportImportTab});
     }
 }
 

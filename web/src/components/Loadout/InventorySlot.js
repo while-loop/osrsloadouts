@@ -97,8 +97,8 @@ class InventorySlot extends React.Component {
         e.preventDefault();
         this.setState({
             showMenu: true,
-            menuTop: e.pageY,
-            menuLeft: e.pageX - InventorySlot.slotSize,
+            menuTop: e.clientY - 8,
+            menuLeft: e.clientX - 8 - InventorySlot.slotSize,
         });
     };
 

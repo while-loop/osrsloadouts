@@ -9,11 +9,13 @@ class PopupMenu extends React.Component {
         super(props);
         this.state = {
             open: false,
+            top: null,
+            left: null,
         }
     }
 
-    toggleMenu = () => {
-        this.setState({open: !this.state.open})
+    toggleMenu = (e) => {
+        this.setState({open: !this.state.open, top: e.clientY - 8, left: e.clientX - 32})
     }
 
     onItemMenuClose = () => {
@@ -33,7 +35,10 @@ class PopupMenu extends React.Component {
                     this.state.open &&
                     <Menu options={this.props.options}
                           onClose={this.onItemMenuClose}
-                          name={""}/>
+                          name={""}
+                          top={this.state.top}
+                          left={this.state.left}
+                    />
                 }
             </div>
         )
