@@ -26,6 +26,7 @@ import "./react-tabs.css"
 import PriceTable from "./PriceTable";
 import {colorNumber, normalizeNumber} from "../../utils/js";
 import Menu from "./Menu";
+import EquipmentSlot from "./EquipmentSlot";
 
 class Loadout extends React.Component {
     toastId = null;
@@ -236,7 +237,7 @@ class Loadout extends React.Component {
         })
     }
 
-    addTab = (tab=null) => {
+    addTab = (tab = null) => {
         let loadout = _.cloneDeep(this.state.loadout);
         if (tab == null) {
             tab = this.emptyTab("new tab")
@@ -337,7 +338,7 @@ class Loadout extends React.Component {
         this.state.loadout.tabs.forEach((tab, idx) => {
             tabHeaders.push(
                 <Tab key={idx} onContextMenu={this.onTabContextMenu(tab, idx)}>
-                    <div className="Tab-container" >
+                    <div className="Tab-container">
                         <span
                             className="Tab-title"
                             contentEditable={isOwner}
@@ -512,34 +513,34 @@ class Loadout extends React.Component {
 
         if (this.isOwner()) {
             opts.push({
-                    action: 'Delete',
-                    onClick: () => {
-                        if (this.state.loadout.id === "") {
-                            return;
+                action: 'Delete',
+                onClick: () => {
+                    if (this.state.loadout.id === "") {
+                        return;
+                    }
+                    this.toastId = toast("Deleting loadout...", {autoClose: false});
+                    let close = (msg, type = toast.TYPE.INFO) => {
+                        toast.update(this.toastId, {render: msg, type: type, autoClose: TOAST_DELAY});
+                    };
+
+                    LoadoutStore.delete(this.state.id).then(r => {
+                        close("Loaded deleted ✔︎");
+                        this.props.history.push(`/loadouts`);
+                    }).catch(reason => {
+                        let resp = reason.response;
+                        console.log("failed to save loadout", reason);
+
+                        if (resp != null && resp.status === 403) {
+                            close("Permission denied", toast.TYPE.ERROR);
+                            return
                         }
-                        this.toastId = toast("Deleting loadout...", {autoClose: false});
-                        let close = (msg, type = toast.TYPE.INFO) => {
-                            toast.update(this.toastId, {render: msg, type: type, autoClose: TOAST_DELAY});
-                        };
 
-                        LoadoutStore.delete(this.state.id).then(r => {
-                            close("Loaded deleted ✔︎");
-                            this.props.history.push(`/loadouts`);
-                        }).catch(reason => {
-                            let resp = reason.response;
-                            console.log("failed to save loadout", reason);
-
-                            if (resp != null && resp.status === 403) {
-                                close("Permission denied", toast.TYPE.ERROR);
-                                return
-                            }
-
-                            close("Failed to delete loadout: " + reason.toString(), toast.TYPE.ERROR);
-                        })
-                    },
-                    includeName: false,
-                    name: "Loadout"
-                })
+                        close("Failed to delete loadout: " + reason.toString(), toast.TYPE.ERROR);
+                    })
+                },
+                includeName: false,
+                name: "Loadout"
+            })
         }
 
         return opts
@@ -557,11 +558,16 @@ class Loadout extends React.Component {
             onClick: () => this.addTab(this.state.loadout.tabs[this.state.showTabMenu]),
             includeName: false,
             name: "Tab"
-        },{
+        }, {
             action: 'Export',
             onClick: () => this.setState({showExportImport: 'export', exportImportTab: this.state.showTabMenu}),
             includeName: false,
             name: "Tab"
+        }, {
+            action: 'Export-to',
+            onClick: () => this.setState({showExportImport: 'bank', exportImportTab: this.state.showTabMenu}),
+            includeName: false,
+            name: "Bank Tab"
         }];
 
         if (this.isOwner()) {
@@ -600,6 +606,36 @@ class Loadout extends React.Component {
 
         if (this.state.showExportImport == null) {
             return ""
+        }
+
+        if (this.state.showExportImport === 'bank') {
+            const tab = this.state.loadout.tabs[this.state.exportImportTab]
+            const ids = new Set()
+
+            ids.add(tab.title) // tag name
+            ids.add(952) // spade icon
+            for (let i = 0; i < tab.inventory.length; i++) {
+                for (let j = 0; j < tab.inventory[i].length; j++) {
+                    const item = tab.inventory[i][j]
+                    if (item != null && item.id != null) {
+                        ids.add(item.id)
+                    }
+                }
+            }
+            Object.entries(tab.equipment).forEach(([slotType, item]) => {
+                if (item != null && item.id != null) {
+                    ids.add(item.id)
+                }
+            });
+
+            for (let i = 0; i < tab.rune_pouch.length; i++) {
+                const item = tab.rune_pouch[i]
+                if (item != null && item.id != null) {
+                    ids.add(item.id)
+                }
+            }
+
+            return Array.from(ids).join(",")
         }
 
         const config = {

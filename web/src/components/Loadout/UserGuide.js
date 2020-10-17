@@ -40,9 +40,10 @@ class UserGuide extends React.Component {
                         </li>
                         <li>Drag and Drop items to swap slots</li>
                         <li>Right click stackable items to set quantity</li>
-                        <li>Export/Import loadouts to the <code style={{fontSize: '12px'}}><u>Inventory
-                            Setups</u></code> plugin on <a href="https://runelite.net/plugin-hub">Runelite
+                        <li>Export/Import tabs to the <a href="https://github.com/dillydill123/inventory-setups">Inventory
+                            Setups</a> plugin on <a href="https://runelite.net/plugin-hub">RuneLite's
                             Plugin Hub</a></li>
+                        <li>Export tabs to the RuneLite's <a href="https://github.com/runelite/runelite/wiki/Bank-Tags">Bank Tags</a> plugin</li>
                     </ul>
                 }
             </div>
