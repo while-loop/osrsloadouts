@@ -76,6 +76,8 @@ class InventorySlot extends React.Component {
     handleItemClick = (e) => {
         if (e != null && e.shiftKey) {
             // shift click drop
+            if (!this.props.isOwner) return;
+
             this.removeItem();
             return;
         }
