@@ -3,7 +3,7 @@ import {faDiscord, faGithub} from "@fortawesome/free-brands-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const DISCORD_URL = 'https://discord.com/channels/@me/107680246739767296'
-const DISCORD_SERVER_URL = 'https://discord.gg/t5VhtF'
+const DISCORD_SERVER_URL = 'https://discord.gg/MgPHkj8'
 const DISCORD_USERNAME = 'while-loop#6157'
 const GITHUB_URL = 'https://github.com/while-loop/osrsloadouts/issues'
 const GITHUB_USERNAME = 'while-loop'

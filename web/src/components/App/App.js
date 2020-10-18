@@ -51,7 +51,7 @@ class Header extends React.Component {
                             style={{verticalAlign: '-4px'}}
                             icon={faGithub}/></a>
 
-                        <a style={{paddingRight: '20px', paddingLeft: '12px'}} href="https://discord.gg/t5VhtF" target="_blank" rel="noopener noreferrer"><FontAwesomeIcon
+                        <a style={{paddingRight: '20px', paddingLeft: '12px'}} href="https://discord.gg/MgPHkj8" target="_blank" rel="noopener noreferrer"><FontAwesomeIcon
                         style={{verticalAlign: '-4px'}}
                             icon={faDiscord}/></a></span>
                     {account}

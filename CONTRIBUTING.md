@@ -6,7 +6,7 @@ We have a very lightweight process and aim to keep it that way.
 Read the sections for the piece you're interested in and go from
 there.
 
-If you need quick communication we're usually on [Discord](https://discord.gg/t5VhtF).
+If you need quick communication we're usually on [Discord](https://discord.gg/MgPHkj8).
 
 # New Code / Features
 
