@@ -1,6 +1,6 @@
 {
   "name": "osrs-loadouts",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.10.1",
