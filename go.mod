@@ -1,6 +1,6 @@
 module github.com/while-loop/osrsloadouts
 
-go 1.12
+go 1.14
 
 require (
 	firebase.google.com/go v3.9.0+incompatible

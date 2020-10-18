@@ -20,7 +20,7 @@ func TestPagination_GetSort(t *testing.T) {
 	}{
 		{"desc", fields{Sort: "-created"}, bson.D{{Key: "created", Value: -1}}},
 		{"asc", fields{Sort: "created"}, bson.D{{Key: "created", Value: 1}}},
-		{"nil", fields{Sort: ""}, nil},
+		{"nil", fields{Sort: ""}, bson.D{{Key: "updated", Value: -1}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

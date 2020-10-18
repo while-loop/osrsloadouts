@@ -27,18 +27,18 @@ func FromRequest(r *http.Request) *Pagination {
 	search := vars.Get("search")
 
 	return &Pagination{
-		Page:   page,
-		Limit:  limit,
-		Sort:   sort,
-		Search: search,
-		Params: vars,
+		Page:    page,
+		Limit:   limit,
+		Sort:    sort,
+		Search:  search,
+		Params:  vars,
 		Filters: bson.M{},
 	}
 }
 
 func (p Pagination) GetSort() bson.D {
 	if p.Sort == "" {
-		p.Sort = "-created"
+		p.Sort = "-updated"
 	}
 
 	order := 1
