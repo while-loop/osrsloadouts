@@ -13,12 +13,17 @@ jobs:
         env:
           MONGO_INITDB_DATABASE: osrsloadouts
         ports:
-          - 27017
+          - 27017:27017
+        options: -v ${{ github.workspace }}/scripts/migrations:/docker-entrypoint-initdb.d
+
       redis:
         image: redis:5.0.9-alpine
         ports:
-          - 6379
+          - 6379:6379
     steps:
+      - name: Fix mounted volume owner
+        run: |
+          sudo chown -R $USER:root ${{ github.workspace }}
       - uses: actions/checkout@v2
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v3
@@ -32,7 +37,13 @@ jobs:
       - name: Set up Go 1.14
         uses: actions/setup-go@v2
         with:
-          go-version: ^1.14
+          go-version: 1.14
+      - name: Migrate DB
+        env:
+          SECRET_FILE: secrets/dev.env
+        run: |
+          sops exec-env ${SECRET_FILE} 'mongo ${OSRSLOADOUTS_MONGO_ADDR} --eval "db.db_migrations.insertOne({db_version: 0})"'
+          make migration
       - name: Test
         run: |
           make deps

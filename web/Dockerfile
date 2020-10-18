@@ -10,7 +10,8 @@ RUN npm install react-scripts@3.0.1 -g --silent
 
 RUN apk update && apk add make git
 
-COPY build /app/build
+COPY . .
+RUN npm run-script build && rm -rf .env*
 
 # production environment
 FROM nginx:1.16.0-alpine

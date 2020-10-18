@@ -30,7 +30,8 @@ build: clean version ## build service binary file
 	@echo "[build] building js files"
 	sops exec-env ../secrets/web.prod.env 'npm run-script build'
 
-cont: build ## build a cached service container
+cont: ## build a cached service container
+	sops -d ../secrets/web.prod.env > .env.production
 	docker build -t ${IMAGE_NAME} -t ${IMAGE_NAME}:${VERSION} .
 
 cont-nc: ## build a non-cached service container
