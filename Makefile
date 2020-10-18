@@ -1,12 +1,12 @@
 # service specific vars
-SERVICE	 		:= api
+SERVICE			:= api
 VERSION			:= 0.0.31
-ORG		 		:= osrs-loadouts
-COMMIT      	:= $(shell git rev-parse --short HEAD)
+ORG				:= osrs-loadouts
+COMMIT			:= $(shell git rev-parse --short HEAD)
 BUILD_TIME		:= $(shell date -u '+%Y-%m-%d_%H:%M:%S')
 PACKAGE 		:= $(shell grep module go.mod | awk '{ print $$2; }')
 DOCKER_REGISTRY	:= gcr.io
-IMAGE_NAME  	:= ${DOCKER_REGISTRY}/${ORG}/${SERVICE}
+IMAGE_NAME 		:= ${DOCKER_REGISTRY}/${ORG}/${SERVICE}
 GOFLAGS			:= -mod=vendor
 GCLOUD_SERVICE	:= ${ORG}-${SERVICE}
 
@@ -51,7 +51,13 @@ deploy: context ## deploy latest built container to docker hub
 	--image ${IMAGE_NAME}:${VERSION} \
 	--platform=managed  \
 	--allow-unauthenticated \
-	--set-env-vars OSRSLOADOUTS_MONGO_ADDR="${OSRSLOADOUTS_MONGO_ADDR}",OSRSLOADOUTS_MONGO_DB=${OSRSLOADOUTS_MONGO_DB},OSRSLOADOUTS_REDIS_ADDR=${OSRSLOADOUTS_REDIS_ADDR},OSRSLOADOUTS_REDIS_PASS=${OSRSLOADOUTS_REDIS_PASS},OSRSLOADOUTS_REDIS_DB=${OSRSLOADOUTS_REDIS_DB},OSRSLOADOUTS_REDIS_TTL=${OSRSLOADOUTS_REDIS_TTL},OSRSLOADOUTS_REDIS_POOL_SIZE=${OSRSLOADOUTS_REDIS_POOL_SIZE}
+	--set-env-vars "OSRSLOADOUTS_MONGO_ADDR=${OSRSLOADOUTS_MONGO_ADDR}" \
+	--set-env-vars OSRSLOADOUTS_MONGO_DB=${OSRSLOADOUTS_MONGO_DB} \
+	--set-env-vars "OSRSLOADOUTS_REDIS_ADDR=${OSRSLOADOUTS_REDIS_ADDR}" \
+	--set-env-vars "OSRSLOADOUTS_REDIS_PASS=${OSRSLOADOUTS_REDIS_PASS}" \
+	--set-env-vars OSRSLOADOUTS_REDIS_DB=${OSRSLOADOUTS_REDIS_DB} \
+	--set-env-vars OSRSLOADOUTS_REDIS_TTL=${OSRSLOADOUTS_REDIS_TTL} \
+	--set-env-vars OSRSLOADOUTS_REDIS_POOL_SIZE=${OSRSLOADOUTS_REDIS_POOL_SIZE}
 
 dev:
 	sops exec-env secrets/dev.env go run cmd/osrsloadouts/main.go
@@ -73,11 +79,7 @@ release: cont push deploy ## build and deploy a docker container
 
 test: lint ## test service code
 	@echo "[test] running tests w/ cover"
-	go test ./... -cover
-
-test-all: lint ## test service code
-	@echo "[test] running tests w/ cover"
-	go test ./... -race -cover
+	go test ./... -cover -race
 
 db:
 	docker run -d \

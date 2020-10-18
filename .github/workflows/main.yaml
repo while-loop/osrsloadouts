@@ -49,8 +49,13 @@ jobs:
           make deps
           make test
       - name: Deploy
+        env:
+          OSRSLOADOUTS_MONGO_ADDR: ${{secrets.OSRSLOADOUTS_MONGO_ADDR}}
+          OSRSLOADOUTS_REDIS_ADDR: ${{secrets.OSRSLOADOUTS_REDIS_ADDR}}
+          OSRSLOADOUTS_REDIS_PASS: ${{secrets.OSRSLOADOUTS_REDIS_PASS}}
         run: |
           sops -d secrets/service-account.json > /tmp/account.json
           gcloud auth activate-service-account --key-file=/tmp/account.json
           gcloud config set project "${{ secrets.PROJECT_ID }}"
+          gcloud auth configure-docker
           make release-all
