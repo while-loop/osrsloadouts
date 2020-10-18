@@ -30,7 +30,7 @@ class TextPopup extends React.Component {
                 header={{padding: "13px 0 0 0"}}
                 closeable>
                     <textarea rows={this.props.showSave ? 14 : 17}
-                              cols={80}
+                              cols={70}
                               style={{background: 'transparent', marginTop: 16, resize: 'none', outline: 'none', color: '#ff9301'}}
                               value={this.state.text}
                               onChange={(e) => {
