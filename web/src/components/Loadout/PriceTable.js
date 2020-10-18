@@ -260,7 +260,7 @@ class PriceTable extends React.Component {
                     minRows={1}
                     filterAll={false}
                     data={this.state.items}
-                    defaultSorted={[{id: "total", desc: false}]}
+                    defaultSorted={[{id: "total", desc: true}]}
                     showPageJump={false}
                     loading={false} // Display the loading overlay when we need it
                     defaultPageSize={60}

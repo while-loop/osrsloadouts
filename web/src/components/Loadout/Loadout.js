@@ -14,7 +14,7 @@ import TextPopup from "./TextPopup";
 import {loadout2setup, setup2loadout} from "../../utils/inventory-setups";
 import {currentUser} from "../../utils/base";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCopy, faEye, faHeart as heartSolid, faPlus, faTimes} from "@fortawesome/free-solid-svg-icons";
+import {faCopy, faEye, faHeart as heartSolid, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {faHeart as heartOutline} from "@fortawesome/free-regular-svg-icons";
 import Humanize from "humanize-plus";
 import RSButton from "../../utils/widgets/RSButton/RSButton";
@@ -24,9 +24,8 @@ import CreatableInputOnly from "./Tags";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import "./react-tabs.css"
 import PriceTable from "./PriceTable";
-import {colorNumber, normalizeNumber} from "../../utils/js";
+import {colorNumber} from "../../utils/js";
 import Menu from "./Menu";
-import EquipmentSlot from "./EquipmentSlot";
 
 class Loadout extends React.Component {
     toastId = null;
